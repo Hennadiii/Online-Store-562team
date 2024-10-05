@@ -1,10 +1,10 @@
 import { Route, Routes } from 'react-router-dom';
-import LoginPage from './pages/loginPage';
+import HomePage from './pages/homePage';
 
 const App: React.FC = () => {
   return (
     <Routes>
-      <Route path="/" element={<LoginPage />} />
+      <Route path="/" element={<HomePage />} />
     </Routes>
   );
 };

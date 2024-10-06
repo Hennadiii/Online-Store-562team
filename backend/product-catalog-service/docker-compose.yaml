@@ -1,0 +1,27 @@
+
+services:
+  product-catalog:
+    container_name: "product-catalog"
+    build:
+      context: .
+    ports:
+      - "562:562"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/furniture_product_catalog_db
+      - SPRING_DATASOURCE_USERNAME=team562
+      - SPRING_DATASOURCE_PASSWORD=teamChallenge
+      - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.PostgreSQLDialect
+      - SPRING_JPA_PROPERTIES_HIBERNATE_DDL_AUTO=update
+      - SPRING_JPA_HIBERNATE_NAMING_PHYSICAL_STRATEGY=org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+    depends_on:
+      - db
+  db:
+    image: "postgres:latest"
+    container_name: "db"
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=team562
+      - POSTGRES_PASSWORD=teamChallenge
+      - POSTGRES_DB=furniture_product_catalog_db
+

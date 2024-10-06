@@ -18,14 +18,15 @@ public class ProductController {
 
     @GetMapping("/products")
     public ResponseEntity<Page<Product>> getProducts(
-            @RequestParam String[] filters, @RequestParam String sort, @RequestParam Integer page, @RequestParam Integer pageSize){
+            @RequestParam(required = false) String[] filters, @RequestParam(required = false) String sort,
+            @RequestParam Integer page, @RequestParam Integer pageSize){
         return ResponseEntity.ok().body(productManager.getProductList(filters, sort, page, pageSize));
     }
 
     @GetMapping("/products/search")
     public ResponseEntity<Page<Product>> searchProducts(
-            String keyword, @RequestParam String[] filters, @RequestParam String sort,
-            @RequestParam Integer page, @RequestParam Integer pageSize ){
+            @RequestParam String keyword, @RequestParam(required = false) String[] filters,
+            @RequestParam(required = false) String sort, @RequestParam Integer page, @RequestParam Integer pageSize){
         return ResponseEntity.ok().body(productManager.searchProduct(keyword, filters, sort, page, pageSize));
     }
 
@@ -38,5 +39,10 @@ public class ProductController {
                 .buildAndExpand(id)
                 .toUri();
         return ResponseEntity.created(uri).build();
+    }
+
+    @GetMapping("/products/{id}")
+    public ResponseEntity<Product> getProduct(@PathVariable Long id){
+        return ResponseEntity.ok().body(productManager.getProduct(id));
     }
 }

@@ -34,4 +34,8 @@ public class ProductManager {
     public Long addProduct(Product product){
        return productRepository.save(product).getId();
     }
+
+    public Product getProduct(Long id){
+        return productRepository.getReferenceById(id);
+    }
 }

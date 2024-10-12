@@ -1,16 +1,19 @@
 package com.furniture_store.product_catalog.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Table
 @Entity
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Product {
@@ -20,8 +23,12 @@ public class Product {
     private Long id;
 
     private String name;
-    private String description;
     private Float price;
-    private Integer quantity;
     private String category;
+    private LocalDateTime publishedTime;
+
+    @ElementCollection
+    private List<byte[]> images = new ArrayList<>();
+    @ElementCollection
+    private List<String> keywords = new ArrayList<>();
 }

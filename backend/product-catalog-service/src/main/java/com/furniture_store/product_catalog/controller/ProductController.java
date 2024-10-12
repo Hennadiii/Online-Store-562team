@@ -1,9 +1,9 @@
 package com.furniture_store.product_catalog.controller;
 
+import com.furniture_store.product_catalog.dto.PaginatedResponse;
 import com.furniture_store.product_catalog.service.ProductManager;
 import com.furniture_store.product_catalog.entity.Product;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -17,16 +17,16 @@ public class ProductController {
     private ProductManager productManager;
 
     @GetMapping("/products")
-    public ResponseEntity<Page<Product>> getProducts(
-            @RequestParam(required = false) String[] filters, @RequestParam(required = false) String sort,
+    public ResponseEntity<PaginatedResponse<Product>> getProducts(
+            @RequestParam(defaultValue = "T") String[] filters, @RequestParam(defaultValue = "publishedTime desc") String sort,
             @RequestParam Integer page, @RequestParam Integer pageSize){
         return ResponseEntity.ok().body(productManager.getProductList(filters, sort, page, pageSize));
     }
 
     @GetMapping("/products/search")
-    public ResponseEntity<Page<Product>> searchProducts(
-            @RequestParam String keyword, @RequestParam(required = false) String[] filters,
-            @RequestParam(required = false) String sort, @RequestParam Integer page, @RequestParam Integer pageSize){
+    public ResponseEntity<PaginatedResponse<Product>> searchProducts(
+            @RequestParam("q") String keyword, @RequestParam(defaultValue = "T") String[] filters,
+            @RequestParam(defaultValue = "publishedTime desc") String sort, @RequestParam Integer page, @RequestParam Integer pageSize){
         return ResponseEntity.ok().body(productManager.searchProduct(keyword, filters, sort, page, pageSize));
     }
 

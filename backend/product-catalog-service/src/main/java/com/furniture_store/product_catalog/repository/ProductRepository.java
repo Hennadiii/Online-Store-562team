@@ -12,6 +12,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query("select p from Product p where cast(:filters as boolean) order by :sort")
     Page<Product> findAllWithFilters(String filters, String sort, Pageable page);
 
-    @Query("select p from Product p where lower(concat(p.name, p.description)) like concat('%', lower(':key'), '%') and cast(:filters as boolean) order by :sort")
-    Page<Product> findAllByContainsKey(String key, String filters, String sort, Pageable page);
+    @Query(nativeQuery = true, value = "select * from product p where cast(lower(p.name) like concat('%', lower(:key), '%')" +
+            "or p.id in (select pk.product_id from product_keywords pk where lower(pk.keywords) = lower(:key)) and " +
+            ":filters as boolean)")
+    Page<Product> findAllByContainsKey(String key, String filters, Pageable page);
 }

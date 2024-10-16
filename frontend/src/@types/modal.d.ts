@@ -4,3 +4,7 @@ export interface Imodal {
   showModal: boolean;
   setShowModal: Dispatch<SetStateAction<boolean>>;
 }
+
+export interface IsetSection {
+  setSection: Dispatch<SetStateAction<number>>;
+}

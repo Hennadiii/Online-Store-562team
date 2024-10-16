@@ -1,3 +1,4 @@
+/// <reference types="vite-plugin-svgr/client" />
 import App from './routes.tsx';
 import './styles/index.css';
 import { StrictMode } from 'react';

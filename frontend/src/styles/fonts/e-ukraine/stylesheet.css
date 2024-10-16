@@ -1,48 +1,35 @@
 @font-face {
-    font-family: 'e-Ukraine';
-    src: url('e-Ukraine-Regular.woff2') format('woff2');
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
+  font-family: 'e-Ukraine';
+  src: url('./e-Ukraine-Regular.woff2') format('woff2');
+  font-weight: 400;
 }
 
 @font-face {
-    font-family: 'e-Ukraine';
-    src: url('e-Ukraine-Light.woff2') format('woff2');
-    font-weight: 300;
-    font-style: normal;
-    font-display: swap;
+  font-family: 'e-Ukraine';
+  src: url('e-Ukraine-Light.woff2') format('woff2');
+  font-weight: 300;
 }
 
 @font-face {
-    font-family: 'e-Ukraine';
-    src: url('e-Ukraine-Thin.woff2') format('woff2');
-    font-weight: 100;
-    font-style: normal;
-    font-display: swap;
+  font-family: 'e-Ukraine';
+  src: url('e-Ukraine-Thin.woff2') format('woff2');
+  font-weight: 100;
 }
 
 @font-face {
-    font-family: 'e-Ukraine';
-    src: url('e-Ukraine-UltraLight.woff2') format('woff2');
-    font-weight: 200;
-    font-style: normal;
-    font-display: swap;
+  font-family: 'e-Ukraine';
+  src: url('e-Ukraine-UltraLight.woff2') format('woff2');
+  font-weight: 200;
 }
 
 @font-face {
-    font-family: 'e-Ukraine';
-    src: url('e-Ukraine-Bold.woff2') format('woff2');
-    font-weight: bold;
-    font-style: normal;
-    font-display: swap;
+  font-family: 'e-Ukraine';
+  src: url('e-Ukraine-Bold.woff2') format('woff2');
+  font-weight: 700;
 }
 
 @font-face {
-    font-family: 'e-Ukraine';
-    src: url('e-Ukraine-Medium.woff2') format('woff2');
-    font-weight: 500;
-    font-style: normal;
-    font-display: swap;
+  font-family: 'e-Ukraine';
+  src: url('e-Ukraine-Medium.woff2') format('woff2');
+  font-weight: 500;
 }
-

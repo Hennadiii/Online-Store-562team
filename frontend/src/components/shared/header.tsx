@@ -1,16 +1,17 @@
 import { useState } from 'react';
 import Modal from './modal';
+import LogoIcon from '../../assets/logo.svg';
 
 const Header: React.FC = () => {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [showSearch, setShowsSearch] = useState<boolean>(false);
   return (
-    <header className="flex h-[120px] items-center justify-between px-20">
-      <img src="logo.svg" alt="logo" />
+    <header className="flex h-[120px] items-center justify-between px-[75px]">
+      <LogoIcon className="text-axcent" />
       <div className="relative">
-        <ul className="font-[e-ukraine Head] flex items-center gap-x-10 text-[28px]">
+        <ul className="flex items-center gap-x-20 text-[20px]">
           {['Товари', 'Про нас', 'Акції', 'Контакти'].map((item, index) => (
-            <li className="hover:text-second cursor-pointer" key={index}>
+            <li className="cursor-pointer hover:text-second" key={index}>
               <a>{item}</a>
             </li>
           ))}

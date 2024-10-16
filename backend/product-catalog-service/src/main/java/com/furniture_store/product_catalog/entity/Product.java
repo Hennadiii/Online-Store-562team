@@ -25,10 +25,10 @@ public class Product {
     private String name;
     private Float price;
     private String category;
-    private LocalDateTime publishedTime;
+    private LocalDateTime addedAt;
 
-    @ElementCollection
-    private List<byte[]> images = new ArrayList<>();
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Image> images = new ArrayList<>();
     @ElementCollection
     private List<String> keywords = new ArrayList<>();
 }

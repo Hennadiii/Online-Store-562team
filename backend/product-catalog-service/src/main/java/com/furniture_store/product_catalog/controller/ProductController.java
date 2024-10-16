@@ -1,6 +1,7 @@
 package com.furniture_store.product_catalog.controller;
 
 import com.furniture_store.product_catalog.dto.PaginatedResponse;
+import com.furniture_store.product_catalog.dto.ProductDto;
 import com.furniture_store.product_catalog.service.ProductManager;
 import com.furniture_store.product_catalog.entity.Product;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,21 +18,21 @@ public class ProductController {
     private ProductManager productManager;
 
     @GetMapping("/products")
-    public ResponseEntity<PaginatedResponse<Product>> getProducts(
+    public ResponseEntity<PaginatedResponse<ProductDto>> getProducts(
             @RequestParam(defaultValue = "T") String[] filters, @RequestParam(defaultValue = "publishedTime desc") String sort,
             @RequestParam Integer page, @RequestParam Integer pageSize){
         return ResponseEntity.ok().body(productManager.getProductList(filters, sort, page, pageSize));
     }
 
     @GetMapping("/products/search")
-    public ResponseEntity<PaginatedResponse<Product>> searchProducts(
+    public ResponseEntity<PaginatedResponse<ProductDto>> searchProducts(
             @RequestParam("q") String keyword, @RequestParam(defaultValue = "T") String[] filters,
             @RequestParam(defaultValue = "publishedTime desc") String sort, @RequestParam Integer page, @RequestParam Integer pageSize){
         return ResponseEntity.ok().body(productManager.searchProduct(keyword, filters, sort, page, pageSize));
     }
 
     @PostMapping("/products")
-    public ResponseEntity<Void> addProduct(@RequestBody Product product){
+    public ResponseEntity<Void> addProduct(@RequestBody ProductDto product){
         Long id = productManager.addProduct(product);
         URI uri = ServletUriComponentsBuilder
                 .fromCurrentRequestUri()
@@ -42,7 +43,7 @@ public class ProductController {
     }
 
     @GetMapping("/products/{id}")
-    public ResponseEntity<Product> getProduct(@PathVariable Long id){
+    public ResponseEntity<ProductDto> getProduct(@PathVariable Long id){
         return ResponseEntity.ok().body(productManager.getProduct(id));
     }
 }

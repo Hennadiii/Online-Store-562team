@@ -1,6 +1,7 @@
 package com.furniture_store.product_catalog.service;
 
 import com.furniture_store.product_catalog.dto.PaginatedResponse;
+import com.furniture_store.product_catalog.dto.ProductDto;
 import com.furniture_store.product_catalog.repository.ProductRepository;
 import com.furniture_store.product_catalog.entity.Product;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,8 +9,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 
 @Service
@@ -17,54 +16,37 @@ public class ProductManager {
 
     @Autowired
     private ProductRepository productRepository;
+    @Autowired
+    private ProductDtoConverter productDtoConverter;
 
-    public PaginatedResponse<Product> getProductList(String[] filters, String sort, Integer page, Integer pageSize){
+    public PaginatedResponse<ProductDto> getProductList(String[] filters, String sort, Integer page, Integer pageSize){
         String filterString = "T";
         if(filters != null && filters.length > 0){
             filterString = String.join(" and ", filters);
         }
         Page<Product> products = productRepository.findAllWithFilters(filterString, sort, PageRequest.of(page, pageSize));
-        products.forEach(p -> p.setImages(decodeImages(p.getImages())));
-        return new PaginatedResponse<>(products);
+        List<ProductDto> productDtoList = products.stream().map(ProductDto::new).toList();
+        return new PaginatedResponse<>(productDtoList, products);
     }
 
-    public PaginatedResponse<Product> searchProduct(String keyword, String[] filters, String sort, Integer page, Integer pageSize){
+    public PaginatedResponse<ProductDto> searchProduct(String keyword, String[] filters, String sort, Integer page, Integer pageSize){
         String filterString = "T";
         if(filters != null && filters.length > 0){
             filterString = String.join(" and ", filters);
         }
         Page<Product> foundProducts = productRepository.findAllByContainsKey(keyword, filterString, PageRequest.of(page, pageSize));
-        foundProducts.forEach(p -> p.setImages(decodeImages(p.getImages())));
-        return new PaginatedResponse<>(foundProducts);
+        List<ProductDto> productDtoList = foundProducts.stream().map(ProductDto::new).toList();
+        return new PaginatedResponse<>(productDtoList, foundProducts);
     }
 
-    public Long addProduct(Product product){
-        product.setImages(encodeImages(product.getImages()));
+    public Long addProduct(ProductDto productDto){
+        Product product = productDtoConverter.convertToProduct(productDto);
         return productRepository.save(product).getId();
     }
 
-    public Product getProduct(Long id){
+    public ProductDto getProduct(Long id){
         Product product = productRepository.getReferenceById(id);
-        product.setImages(decodeImages(product.getImages()));
-        return product;
+        return new ProductDto(product);
     }
 
-    private List<byte[]> decodeImages(List<byte[]> images){
-        if(images == null || images.isEmpty()){
-            return images;
-        }
-        List<byte[]> decodedImages = new ArrayList<>();
-        images.forEach(i -> decodedImages.add(Base64.getDecoder().decode(i)));
-        return decodedImages;
-    }
-
-    private List<byte[]> encodeImages(List<byte[]> images){
-        if(images == null || images.isEmpty()){
-            return images;
-        }
-        List<byte[]> encodedImages = new ArrayList<>();
-        images.forEach(i -> encodedImages.add(Base64.getEncoder().encode(i)));
-        System.out.println(encodedImages.size());
-        return encodedImages;
-    }
 }

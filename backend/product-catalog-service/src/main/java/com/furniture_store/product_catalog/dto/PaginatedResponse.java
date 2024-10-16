@@ -26,4 +26,16 @@ public class PaginatedResponse<T> {
         this.size = page.getSize();
     }
 
+    /**
+     * Takes all the properties except the content from the Page and the content from the List
+     * @param content: the data
+     * @param page: the properties for pagination
+     */
+    public PaginatedResponse(List<T> content, Page<?> page){
+        this.content = content;
+        this.totalElements = page.getNumberOfElements();
+        this.totalPages = page.getTotalPages();
+        this.number = page.getNumber();
+        this.size = page.getSize();
+    }
 }

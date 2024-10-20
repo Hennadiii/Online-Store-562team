@@ -7,14 +7,17 @@ services:
     ports:
       - "562:562"
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/furniture_product_catalog_db
+      - SPRING_DATASOURCE_URL=jdbc:p6spy:postgresql://db:5432/furniture_product_catalog_db
       - SPRING_DATASOURCE_USERNAME=team562
       - SPRING_DATASOURCE_PASSWORD=teamChallenge
       - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.PostgreSQLDialect
+      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=com.p6spy.engine.spy.P6SpyDriver
       - SPRING_JPA_PROPERTIES_HIBERNATE_DDL_AUTO=update
       - SPRING_JPA_HIBERNATE_NAMING_PHYSICAL_STRATEGY=org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
     depends_on:
       - db
+    volumes:
+      - C:\Users\maksimzelinskyi\IdeaProjects\Online-Store-562team\backend\product-catalog-service:/product-catalog-service
   db:
     image: "postgres:latest"
     container_name: "db"
@@ -24,4 +27,8 @@ services:
       - POSTGRES_USER=team562
       - POSTGRES_PASSWORD=teamChallenge
       - POSTGRES_DB=furniture_product_catalog_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
+volumes:
+  postgres_data:

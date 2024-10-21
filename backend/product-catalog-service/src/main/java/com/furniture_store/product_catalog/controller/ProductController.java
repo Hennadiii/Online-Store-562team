@@ -3,7 +3,6 @@ package com.furniture_store.product_catalog.controller;
 import com.furniture_store.product_catalog.dto.PaginatedResponse;
 import com.furniture_store.product_catalog.dto.ProductDto;
 import com.furniture_store.product_catalog.service.ProductManager;
-import com.furniture_store.product_catalog.entity.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,16 +18,17 @@ public class ProductController {
 
     @GetMapping("/products")
     public ResponseEntity<PaginatedResponse<ProductDto>> getProducts(
-            @RequestParam(defaultValue = "T") String[] filters, @RequestParam(defaultValue = "publishedTime desc") String sort,
-            @RequestParam Integer page, @RequestParam Integer pageSize){
-        return ResponseEntity.ok().body(productManager.getProductList(filters, sort, page, pageSize));
+            @RequestParam(defaultValue = "T") String[] filters, @RequestParam(defaultValue = "addedAt") String sort,
+            @RequestParam(defaultValue = "desc") String order, @RequestParam Integer page, @RequestParam Integer pageSize) {
+        return ResponseEntity.ok().body(productManager.getProductList(filters, sort, order, page, pageSize));
     }
 
     @GetMapping("/products/search")
     public ResponseEntity<PaginatedResponse<ProductDto>> searchProducts(
             @RequestParam("q") String keyword, @RequestParam(defaultValue = "T") String[] filters,
-            @RequestParam(defaultValue = "publishedTime desc") String sort, @RequestParam Integer page, @RequestParam Integer pageSize){
-        return ResponseEntity.ok().body(productManager.searchProduct(keyword, filters, sort, page, pageSize));
+            @RequestParam(defaultValue = "addedAt") String sort, @RequestParam(defaultValue = "desc") String order,
+            @RequestParam Integer page, @RequestParam Integer pageSize){
+        return ResponseEntity.ok().body(productManager.searchProduct(keyword, filters, sort, order, page, pageSize));
     }
 
     @PostMapping("/products")

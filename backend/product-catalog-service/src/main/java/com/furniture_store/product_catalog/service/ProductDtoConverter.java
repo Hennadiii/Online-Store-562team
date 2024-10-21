@@ -1,11 +1,12 @@
 package com.furniture_store.product_catalog.service;
 
-import com.furniture_store.product_catalog.dto.PaginatedResponse;
 import com.furniture_store.product_catalog.dto.ProductDto;
 import com.furniture_store.product_catalog.entity.Image;
 import com.furniture_store.product_catalog.entity.Product;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class ProductDtoConverter {
@@ -16,9 +17,16 @@ public class ProductDtoConverter {
                 .name(productDto.getName())
                 .price(productDto.getPrice())
                 .category(productDto.getCategory())
-                .images(productDto.getImages().stream().map(Image::new).toList())
+                .images(convertImages(productDto.getImages()))
                 .keywords(productDto.getKeywords())
                 .build();
     }
 
+    List<Image> convertImages(List<byte[]> bytes) {
+        List<Image> images = new ArrayList<>();
+        if (bytes != null && !bytes.isEmpty()) {
+            images = bytes.stream().map(Image::new).toList();
+        }
+        return images;
+    }
 }

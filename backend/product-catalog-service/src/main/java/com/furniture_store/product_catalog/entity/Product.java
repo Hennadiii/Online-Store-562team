@@ -25,7 +25,7 @@ public class Product {
     private String name;
     private Float price;
     private String category;
-    private LocalDateTime addedAt;
+    private LocalDateTime addedAt = LocalDateTime.now();
 
     @OneToMany(cascade = CascadeType.ALL)
     private List<Image> images = new ArrayList<>();

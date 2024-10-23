@@ -1,16 +1,14 @@
 package com.furniture_store.product_catalog.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @Table
 @Entity
 @Builder
@@ -23,8 +21,14 @@ public class Product {
     private Long id;
 
     private String name;
+    private String description;
     private Float price;
-    private String category;
+
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    private Category category;
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    private Producer producer;
+
     private LocalDateTime addedAt = LocalDateTime.now();
 
     @OneToMany(cascade = CascadeType.ALL)

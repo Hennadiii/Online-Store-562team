@@ -2,6 +2,8 @@ package com.furniture_store.product_catalog.service;
 
 import com.furniture_store.product_catalog.dto.PaginatedResponse;
 import com.furniture_store.product_catalog.dto.ProductDto;
+import com.furniture_store.product_catalog.repository.CategoryRepository;
+import com.furniture_store.product_catalog.repository.ProducerRepository;
 import com.furniture_store.product_catalog.repository.ProductRepository;
 import com.furniture_store.product_catalog.entity.Product;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,10 @@ public class ProductManager {
     private ProductRepository productRepository;
     @Autowired
     private ProductDtoConverter productDtoConverter;
+    @Autowired
+    private ProducerRepository producerRepository;
+    @Autowired
+    private CategoryRepository categoryRepository;
 
     @Transactional
     public PaginatedResponse<ProductDto> getProductList(Filter filter, String sort, String order, Integer page, Integer pageSize){
@@ -43,6 +49,8 @@ public class ProductManager {
     @Transactional
     public Long addProduct(ProductDto productDto){
         Product product = productDtoConverter.convertToProduct(productDto);
+        product.setCategory(categoryRepository.findByName(productDto.getCategory()).orElse(product.getCategory()));
+        product.setProducer(producerRepository.findByName(productDto.getProducer()).orElse(product.getProducer()));
         return productRepository.save(product).getId();
     }
 

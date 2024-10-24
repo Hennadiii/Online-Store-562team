@@ -16,8 +16,6 @@ services:
       - SPRING_JPA_HIBERNATE_NAMING_PHYSICAL_STRATEGY=org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
     depends_on:
       - db
-    volumes:
-      - C:\Users\maksimzelinskyi\IdeaProjects\Online-Store-562team\backend\product-catalog-service:/product-catalog-service
   db:
     image: "postgres:latest"
     container_name: "db"

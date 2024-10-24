@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
-    @Query("select p from Product p join fetch p.images where" +
+    @Query("select p from Product p where" +
             "(:categoryName is null or p.category.name = :categoryName) and" +
             "(:minPrice is null or p.price >= :minPrice) and" +
             "(:maxPrice is null or p.price <= :maxPrice) and" +
@@ -18,7 +18,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
 
     @Query("select p from Product p" +
-            " left join fetch p.images as i " +
+            " left join p.images as i " +
             " left join p.category as c" +
             " left join p.keywords as k" +
             " left join p.producer as pr" +

@@ -31,7 +31,7 @@ public class Product {
 
     private LocalDateTime addedAt = LocalDateTime.now();
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Image> images = new ArrayList<>();
     @ElementCollection
     private List<String> keywords = new ArrayList<>();

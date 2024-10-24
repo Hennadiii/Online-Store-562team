@@ -18,6 +18,7 @@ public class ProductDtoConverter {
                 .id(productDto.getId())
                 .name(productDto.getName())
                 .price(productDto.getPrice())
+                .description(productDto.getDescription())
                 .category(new Category(productDto.getCategory()))
                 .images(convertImages(productDto.getImages()))
                 .keywords(productDto.getKeywords())

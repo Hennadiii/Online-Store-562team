@@ -1,29 +1,12 @@
-import { useRef } from 'react';
 import { Button } from '../components/ui/button';
-import CategoryItem from '../components/shared/categoryItem';
 import Header from '../components/shared/header';
-import Slider from 'react-slick';
 import ProductItem from '../components/shared/productItem';
 import Footer from '../components/shared/footer';
 import StarIcon from '../assets/star.svg';
 import CounterUp from '../components/shared/counterUp';
+import CategorySlider from '../components/shared/categorySlider';
 
-const HomePage = () => {
-  let sliderRef = useRef<null>(null);
-  //@ts-ignore
-  const next = () => sliderRef.slickNext();
-  //@ts-ignore
-  const previous = () => sliderRef.slickPrev();
-
-  const settings = {
-    infinite: true,
-    speed: 500,
-    slidesToShow: 6,
-    className: 'pl-8 relative',
-    slidesToScroll: 3,
-    arrows: false,
-  };
-
+const HomePage: React.FC = () => {
   return (
     <main className="mx-auto h-full max-w-[1440px] bg-first">
       <Header />
@@ -99,41 +82,9 @@ const HomePage = () => {
       </div>
 
       {/* category */}
-      <div className="relative mt-[75px] px-[45px]">
-        <h4 className="mb-7 px-[30px] text-[64px]">Категорії</h4>
-        <img
-          onClick={previous}
-          className="absolute bottom-[168px] left-5 h-6 w-6 cursor-pointer transition-transform hover:scale-110"
-          src="arrow-left.svg"
-        />
-        <img
-          onClick={next}
-          className="absolute bottom-[168px] right-3 h-6 w-6 cursor-pointer transition-transform hover:scale-110"
-          src="arrow-right.svg"
-        />
-        <Slider
-          ref={(slider) => {
-            //@ts-ignore
-            sliderRef = slider;
-          }}
-          {...settings}
-        >
-          <CategoryItem img="chair.png">Стільці</CategoryItem>
-          <CategoryItem img="divan.png">Дивани</CategoryItem>
-          <CategoryItem img="stol.png">Столи</CategoryItem>
-          <CategoryItem img="book.png">Книжкові полиці</CategoryItem>
-          <CategoryItem img="lampa.png">Лампи</CategoryItem>
-          <CategoryItem img="decor.png">Декор</CategoryItem>
-          <CategoryItem img="stol.png">1</CategoryItem>
-          <CategoryItem img="divan.png">2</CategoryItem>
-          <CategoryItem img="stol.png">3</CategoryItem>
-          <CategoryItem img="book.png">4</CategoryItem>
-          <CategoryItem img="lampa.png">5</CategoryItem>
-          <CategoryItem img="decor.png">6</CategoryItem>
-          <CategoryItem img="stol.png">7</CategoryItem>
-          <CategoryItem img="divan.png">8</CategoryItem>
-          <CategoryItem img="stol.png">9</CategoryItem>
-        </Slider>
+      <div className="relative mt-[75px]">
+        <h4 className="mb-7 px-[75px] text-[64px]">Категорії</h4>
+        <CategorySlider />
       </div>
 
       {/* popular furnitura */}

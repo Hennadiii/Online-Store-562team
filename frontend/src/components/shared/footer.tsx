@@ -1,9 +1,17 @@
 import { Button } from '../ui/button';
 import LogoIcon from '../../assets/logo.svg';
+import ArrowTopIcon from '../../assets/arrow-top.svg';
 
 const Footer = () => {
   return (
-    <footer className="mt-[100px] flex h-[579px] justify-between bg-axcent px-[75px] py-[100px] text-white">
+    <footer className="relative mt-[100px] flex h-[579px] justify-between bg-axcent px-[75px] py-[100px] text-white">
+      <div
+        onClick={() => window.scrollTo(0, 0)}
+        className="group absolute right-[75px] top-[82px] cursor-pointer rounded-[5px] border-2 bg-white px-[12px] py-[16px] transition-all hover:scale-105 hover:bg-axcent"
+      >
+        <ArrowTopIcon className="group flex items-center justify-center text-axcent transition-colors group-hover:text-white" />
+      </div>
+
       <div>
         <LogoIcon className="text-white" />
         <p className="mt-[31px] max-w-[265px] text-[20px] leading-[120%]">

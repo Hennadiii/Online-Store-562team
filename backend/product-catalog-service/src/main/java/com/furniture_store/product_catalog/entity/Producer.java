@@ -5,16 +5,20 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Data;
-import org.hibernate.annotations.NaturalId;
+import lombok.NoArgsConstructor;
 
 @Data
 @Table
 @Entity
+@NoArgsConstructor
 public class Producer {
 
     @Id
     @GeneratedValue
     private Long id;
-    @NaturalId
     private String name;
+
+    public Producer(String name) {
+        this.name = name;
+    }
 }

@@ -2,6 +2,7 @@ package com.furniture_store.product_catalog.controller;
 
 import com.furniture_store.product_catalog.dto.PaginatedResponse;
 import com.furniture_store.product_catalog.dto.ProductDto;
+import com.furniture_store.product_catalog.service.Filter;
 import com.furniture_store.product_catalog.service.ProductManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,21 +19,26 @@ public class ProductController {
 
     @GetMapping("/products")
     public ResponseEntity<PaginatedResponse<ProductDto>> getProducts(
-            @RequestParam(defaultValue = "T") String[] filters, @RequestParam(defaultValue = "addedAt") String sort,
-            @RequestParam(defaultValue = "desc") String order, @RequestParam Integer page, @RequestParam Integer pageSize) {
-        return ResponseEntity.ok().body(productManager.getProductList(filters, sort, order, page, pageSize));
+            @RequestParam(required = false) String category, @RequestParam(required = false) Float minPrice,
+            @RequestParam(required = false) Float maxPrice, @RequestParam(required = false) String producer,
+            @RequestParam(defaultValue = "addedAt") String sort, @RequestParam(defaultValue = "desc") String order,
+            @RequestParam Integer page, @RequestParam Integer pageSize) {
+
+        return ResponseEntity.ok().body(productManager.getProductList(new Filter(category, minPrice, maxPrice, producer), sort, order, page, pageSize));
     }
 
     @GetMapping("/products/search")
     public ResponseEntity<PaginatedResponse<ProductDto>> searchProducts(
-            @RequestParam("q") String keyword, @RequestParam(defaultValue = "T") String[] filters,
-            @RequestParam(defaultValue = "addedAt") String sort, @RequestParam(defaultValue = "desc") String order,
-            @RequestParam Integer page, @RequestParam Integer pageSize){
-        return ResponseEntity.ok().body(productManager.searchProduct(keyword, filters, sort, order, page, pageSize));
+            @RequestParam("q") String keyword, @RequestParam(required = false) String category,
+            @RequestParam(required = false) Float minPrice, @RequestParam(required = false) Float maxPrice,
+            @RequestParam(required = false) String producer, @RequestParam(defaultValue = "addedAt") String sort,
+            @RequestParam(defaultValue = "desc") String order, @RequestParam Integer page, @RequestParam Integer pageSize) {
+        return ResponseEntity.ok()
+                .body(productManager.searchProduct(keyword, new Filter(category, minPrice, maxPrice, producer), sort, order, page, pageSize));
     }
 
     @PostMapping("/products")
-    public ResponseEntity<Void> addProduct(@RequestBody ProductDto product){
+    public ResponseEntity<Void> addProduct(@RequestBody ProductDto product) {
         Long id = productManager.addProduct(product);
         URI uri = ServletUriComponentsBuilder
                 .fromCurrentRequestUri()
@@ -43,7 +49,7 @@ public class ProductController {
     }
 
     @GetMapping("/products/{id}")
-    public ResponseEntity<ProductDto> getProduct(@PathVariable Long id){
+    public ResponseEntity<ProductDto> getProduct(@PathVariable Long id) {
         return ResponseEntity.ok().body(productManager.getProduct(id));
     }
 }

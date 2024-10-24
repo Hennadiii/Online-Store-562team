@@ -19,7 +19,9 @@ public class ProductDto {
     private Long id;
     private String name;
     private Float price;
+    private String description;
     private String category;
+    private String producer;
     private List<byte[]> images = new ArrayList<>();
     private List<String> keywords = new ArrayList<>();
 
@@ -27,7 +29,9 @@ public class ProductDto {
         this.id = product.getId();
         this.name = product.getName();
         this.price = product.getPrice();
-        this.category = product.getCategory();
+        this.description = product.getDescription();
+        this.category = product.getCategory().getName();
+        this.producer = product.getProducer().getName();
         this.images = product.getImages().stream().map(Image::getBytes).toList();
         this.keywords = product.getKeywords();
     }

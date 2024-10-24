@@ -1,7 +1,9 @@
 package com.furniture_store.product_catalog.service;
 
 import com.furniture_store.product_catalog.dto.ProductDto;
+import com.furniture_store.product_catalog.entity.Category;
 import com.furniture_store.product_catalog.entity.Image;
+import com.furniture_store.product_catalog.entity.Producer;
 import com.furniture_store.product_catalog.entity.Product;
 import org.springframework.stereotype.Service;
 
@@ -12,13 +14,14 @@ import java.util.List;
 public class ProductDtoConverter {
 
     public Product convertToProduct(ProductDto productDto) {
-        return Product.builder().
-                id(productDto.getId())
+        return Product.builder()
+                .id(productDto.getId())
                 .name(productDto.getName())
                 .price(productDto.getPrice())
-                .category(productDto.getCategory())
+                .category(new Category(productDto.getCategory()))
                 .images(convertImages(productDto.getImages()))
                 .keywords(productDto.getKeywords())
+                .producer(new Producer(productDto.getProducer()))
                 .build();
     }
 

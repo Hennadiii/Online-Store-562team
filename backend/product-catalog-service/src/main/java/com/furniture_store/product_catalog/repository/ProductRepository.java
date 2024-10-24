@@ -9,13 +9,25 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
-    @Query("select p from Product p join fetch p.images where cast(:filters as boolean)")
-    Page<Product> findAllWithFilters(String filters, Pageable page);
+    @Query("select p from Product p join fetch p.images where" +
+            "(:categoryName is null or p.category.name = :categoryName) and" +
+            "(:minPrice is null or p.price >= :minPrice) and" +
+            "(:maxPrice is null or p.price <= :maxPrice) and" +
+            "(:producerName is null or p.producer.name = :producerName)")
+    Page<Product> findAllWithFilters(String categoryName, Float minPrice, Float maxPrice, String producerName, Pageable page);
 
-    @Query(nativeQuery = true, value = "select p.id as id, p.name as name, p.price as price, p.category as category, p.added_at as added_at" +
-            " from product p left join product_keywords pk on p.id = pk.product_id" +
-            " where (lower(p.name) like concat('%', lower(:key), '%')" +
-            " or lower(pk.keywords) = lower(:key)) and cast(:filters as boolean)")
-    Page<Product> findAllByContainsKey(String key, String filters, Pageable page);
+
+    @Query("select p from Product p" +
+            " left join fetch p.images as i " +
+            " left join p.category as c" +
+            " left join p.keywords as k" +
+            " left join p.producer as pr" +
+            " where ((lower(coalesce(p.name, p.description, k)) like concat('%', lower(:key), '%')) or" +
+            " :key in (select pk from p.keywords pk)) and" +
+            " (:categoryName is NULL or c.name = :categoryName) and" +
+            " (:minPrice is NULL or p.price >= :minPrice) and" +
+            " (:maxPrice is NULL or p.price <= :maxPrice) and" +
+            " (:producerName is NULL or pr.name = :producerName)")
+    Page<Product> findAllByContainsKey(String key, String categoryName, Float minPrice, Float maxPrice, String producerName, Pageable page);
 
 }

@@ -5,9 +5,7 @@ import com.furniture_store.product_catalog.dto.ProductDto;
 import com.furniture_store.product_catalog.repository.ProductRepository;
 import com.furniture_store.product_catalog.entity.Product;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,26 +21,20 @@ public class ProductManager {
     private ProductDtoConverter productDtoConverter;
 
     @Transactional
-    public PaginatedResponse<ProductDto> getProductList(String[] filters, String sort, String order, Integer page, Integer pageSize){
-        String filterString = "T";
-        if(filters != null && filters.length > 0){
-            filterString = String.join(" and ", filters);
-        }
+    public PaginatedResponse<ProductDto> getProductList(Filter filter, String sort, String order, Integer page, Integer pageSize){
         Page<Product> products = productRepository.findAllWithFilters(
-                filterString, PageRequest.of(page, pageSize).withSort(parseSort(sort, order))
+                filter.category(), filter.minPrice(), filter.maxPrice(), filter.producer(),
+                PageRequest.of(page, pageSize).withSort(parseSort(sort, order))
         );
         List<ProductDto> productDtoList = products.stream().map(ProductDto::new).toList();
         return new PaginatedResponse<>(productDtoList, products);
     }
 
     @Transactional
-    public PaginatedResponse<ProductDto> searchProduct(String keyword, String[] filters, String sort, String order, Integer page, Integer pageSize){
-        String filterString = "T";
-        if(filters != null && filters.length > 0){
-            filterString = String.join(" and ", filters);
-        }
+    public PaginatedResponse<ProductDto> searchProduct(String keyword, Filter filter, String sort, String order, Integer page, Integer pageSize){
+
         Page<Product> foundProducts = productRepository.findAllByContainsKey(
-                keyword, filterString, PageRequest.of(page, pageSize).withSort(parseSort(sort, order))
+                keyword, filter.category(), filter.minPrice(), filter.maxPrice(), filter.producer(), PageRequest.of(page, pageSize).withSort(parseSort(sort, order))
         );
         List<ProductDto> productDtoList = foundProducts.stream().map(ProductDto::new).toList();
         return new PaginatedResponse<>(productDtoList, foundProducts);
@@ -71,4 +63,6 @@ public class ProductManager {
         }
         return sort;
     }
+
+
 }

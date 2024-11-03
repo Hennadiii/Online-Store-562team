@@ -19,22 +19,18 @@ public class ProductController {
 
     @GetMapping("/products")
     public ResponseEntity<PaginatedResponse<ProductDto>> getProducts(
-            @RequestParam(required = false) String category, @RequestParam(required = false) Float minPrice,
-            @RequestParam(required = false) Float maxPrice, @RequestParam(required = false) String producer,
-            @RequestParam(defaultValue = "addedAt") String sort, @RequestParam(defaultValue = "desc") String order,
-            @RequestParam Integer page, @RequestParam Integer pageSize) {
+            @RequestParam Filter filter, @RequestParam(defaultValue = "addedAt") String sort,
+            @RequestParam(defaultValue = "desc") String order, @RequestParam Integer page, @RequestParam Integer pageSize) {
 
-        return ResponseEntity.ok().body(productManager.getProductList(new Filter(category, minPrice, maxPrice, producer), sort, order, page, pageSize));
+        return ResponseEntity.ok().body(productManager.getProductList(filter, sort, order, page, pageSize));
     }
 
     @GetMapping("/products/search")
     public ResponseEntity<PaginatedResponse<ProductDto>> searchProducts(
-            @RequestParam("q") String keyword, @RequestParam(required = false) String category,
-            @RequestParam(required = false) Float minPrice, @RequestParam(required = false) Float maxPrice,
-            @RequestParam(required = false) String producer, @RequestParam(defaultValue = "addedAt") String sort,
+            @RequestParam("q") String keyword, @RequestParam Filter filter, @RequestParam(defaultValue = "addedAt") String sort,
             @RequestParam(defaultValue = "desc") String order, @RequestParam Integer page, @RequestParam Integer pageSize) {
         return ResponseEntity.ok()
-                .body(productManager.searchProduct(keyword, new Filter(category, minPrice, maxPrice, producer), sort, order, page, pageSize));
+                .body(productManager.searchProduct(keyword, filter, sort, order, page, pageSize));
     }
 
     @PostMapping("/products")

@@ -18,19 +18,18 @@ public class ProductController {
     private ProductManager productManager;
 
     @GetMapping("/products")
-    public ResponseEntity<PaginatedResponse<ProductDto>> getProducts(
+    public PaginatedResponse<ProductDto> getProducts(
             @RequestParam Filter filter, @RequestParam(defaultValue = "addedAt") String sort,
             @RequestParam(defaultValue = "desc") String order, @RequestParam Integer page, @RequestParam Integer pageSize) {
 
-        return ResponseEntity.ok().body(productManager.getProductList(filter, sort, order, page, pageSize));
+        return productManager.getProductList(filter, sort, order, page, pageSize);
     }
 
     @GetMapping("/products/search")
-    public ResponseEntity<PaginatedResponse<ProductDto>> searchProducts(
+    public PaginatedResponse<ProductDto> searchProducts(
             @RequestParam("q") String keyword, @RequestParam Filter filter, @RequestParam(defaultValue = "addedAt") String sort,
             @RequestParam(defaultValue = "desc") String order, @RequestParam Integer page, @RequestParam Integer pageSize) {
-        return ResponseEntity.ok()
-                .body(productManager.searchProduct(keyword, filter, sort, order, page, pageSize));
+        return productManager.searchProduct(keyword, filter, sort, order, page, pageSize);
     }
 
     @PostMapping("/products")
@@ -45,7 +44,7 @@ public class ProductController {
     }
 
     @GetMapping("/products/{id}")
-    public ResponseEntity<ProductDto> getProduct(@PathVariable Long id) {
-        return ResponseEntity.ok().body(productManager.getProduct(id));
+    public ProductDto getProduct(@PathVariable Long id) {
+        return productManager.getProduct(id);
     }
 }

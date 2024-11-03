@@ -4,7 +4,6 @@ import com.furniture_store.product_catalog.dto.PaginatedResponse;
 import com.furniture_store.product_catalog.dto.ProductDto;
 import com.furniture_store.product_catalog.service.Filter;
 import com.furniture_store.product_catalog.service.ProductManager;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -14,8 +13,11 @@ import java.net.URI;
 @RestController
 public class ProductController {
 
-    @Autowired
-    private ProductManager productManager;
+    private final ProductManager productManager;
+
+    public ProductController(ProductManager productManager) {
+        this.productManager = productManager;
+    }
 
     @GetMapping("/products")
     public PaginatedResponse<ProductDto> getProducts(

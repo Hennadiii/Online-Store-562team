@@ -6,7 +6,6 @@ import com.furniture_store.product_catalog.repository.CategoryRepository;
 import com.furniture_store.product_catalog.repository.ProducerRepository;
 import com.furniture_store.product_catalog.repository.ProductRepository;
 import com.furniture_store.product_catalog.entity.Product;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,14 +16,17 @@ import java.util.Optional;
 @Service
 public class ProductManager {
 
-    @Autowired
-    private ProductRepository productRepository;
-    @Autowired
-    private ProductDtoConverter productDtoConverter;
-    @Autowired
-    private ProducerRepository producerRepository;
-    @Autowired
-    private CategoryRepository categoryRepository;
+    private final ProductRepository productRepository;
+    private final ProductDtoConverter productDtoConverter;
+    private final ProducerRepository producerRepository;
+    private final CategoryRepository categoryRepository;
+
+    public ProductManager(ProductRepository productRepository, ProductDtoConverter productDtoConverter, ProducerRepository producerRepository, CategoryRepository categoryRepository) {
+        this.productRepository = productRepository;
+        this.productDtoConverter = productDtoConverter;
+        this.producerRepository = producerRepository;
+        this.categoryRepository = categoryRepository;
+    }
 
     @Transactional
     public PaginatedResponse<ProductDto> getProductList(Filter filter, String sort, String order, Integer page, Integer pageSize){
@@ -32,17 +34,16 @@ public class ProductManager {
                 filter.category(), filter.minPrice(), filter.maxPrice(), filter.producer(),
                 PageRequest.of(page, pageSize).withSort(parseSort(sort, order))
         );
-        List<ProductDto> productDtoList = products.stream().map(ProductDto::new).toList();
+        List<ProductDto> productDtoList = products.map(ProductDto::new).toList();
         return new PaginatedResponse<>(productDtoList, products);
     }
 
     @Transactional
     public PaginatedResponse<ProductDto> searchProduct(String keyword, Filter filter, String sort, String order, Integer page, Integer pageSize){
-
         Page<Product> foundProducts = productRepository.findAllByContainsKey(
                 keyword, filter.category(), filter.minPrice(), filter.maxPrice(), filter.producer(), PageRequest.of(page, pageSize).withSort(parseSort(sort, order))
         );
-        List<ProductDto> productDtoList = foundProducts.stream().map(ProductDto::new).toList();
+        List<ProductDto> productDtoList = foundProducts.map(ProductDto::new).toList();
         return new PaginatedResponse<>(productDtoList, foundProducts);
     }
 
@@ -71,6 +72,5 @@ public class ProductManager {
         }
         return sort;
     }
-
 
 }

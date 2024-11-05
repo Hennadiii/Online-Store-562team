@@ -2,6 +2,7 @@ package com.furniture_store.product_catalog.dto;
 
 import com.furniture_store.product_catalog.entity.Image;
 import com.furniture_store.product_catalog.entity.Product;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,6 +18,7 @@ import java.util.List;
 public class  ProductDto {
 
     private Long id;
+    @NotBlank
     private String name;
     private Float price;
     private String description;

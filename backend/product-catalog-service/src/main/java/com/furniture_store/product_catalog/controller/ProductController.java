@@ -5,6 +5,7 @@ import com.furniture_store.product_catalog.dto.ProductDto;
 import com.furniture_store.product_catalog.service.Filter;
 import com.furniture_store.product_catalog.service.ProductManager;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -65,7 +66,7 @@ public class ProductController {
      * @return відповідь {@link ResponseEntity} з кодом 201 Created та URI нового продукту в заголовку Location
      */
     @PostMapping("/products")
-    public ResponseEntity<Void> addProduct(@RequestBody ProductDto product) {
+    public ResponseEntity<Void> addProduct(@RequestBody @Validated ProductDto product) {
         Long id = productManager.addProduct(product);
         URI uri = ServletUriComponentsBuilder
                 .fromCurrentRequestUri()
@@ -85,5 +86,30 @@ public class ProductController {
     public ProductDto getProduct(@PathVariable Long id) {
         return productManager.getProduct(id);
     }
+    /**
+     * Видаляє продукт за його ідентифікатором.
+     * Цей метод видаляє продукт із бази даних за переданим ідентифікатором, якщо він існує.
+     *
+     * @param id Ідентифікатор продукту, який потрібно видалити
+     */
+    @DeleteMapping("/products/{id}")
+    public void deleteProduct(@PathVariable Long id) {
+        productManager.deleteProduct(id);
+    }
+
+    /**
+     * Оновлює дані існуючого продукту за його ідентифікатором.
+     * Якщо продукт із заданим ідентифікатором існує, його дані оновлюються відповідно до переданих значень.
+     * Якщо продукт не існує, створюється новий запис.
+     *
+     * @param id Ідентифікатор продукту, який потрібно оновити
+     * @param product об'єкт DTO продукту з оновленими даними
+     */
+    @PutMapping("/products/{id}")
+    public void updateProduct(@PathVariable Long id, @RequestBody @Validated ProductDto product) {
+        product.setId(id);
+        productManager.updateProduct(product);
+    }
+
 }
 

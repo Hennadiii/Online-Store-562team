@@ -101,6 +101,27 @@ public class ProductManager {
     }
 
     /**
+     * Видаляє продукт за його ідентифікатором. Якщо продукт із вказаним ідентифікатором не знайдено,
+     * метод видає помилку або завершує роботу без видалення.
+     *
+     * @param id Ідентифікатор продукту, який потрібно видалити
+     */
+    @Transactional
+    public void deleteProduct(Long id) {
+        productRepository.deleteById(id);
+    }
+
+    /**
+     * Оновлює дані продукту. Якщо продукт із вказаним ідентифікатором уже існує, його дані оновлюються,
+     * інакше створюється новий продукт.
+     *
+     * @param productDto об'єкт DTO продукту, що містить оновлені дані продукту
+     */
+    public void updateProduct(ProductDto productDto) {
+        addProduct(productDto);
+    }
+
+    /**
      * Парсить параметри сортування.
      *
      * @param property властивість для сортування -  одне з полів класу {@link Product}

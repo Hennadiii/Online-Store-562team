@@ -1,7 +1,6 @@
 package com.example.productcatalogservice.service.impl;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.stream.IntStream;
 import com.example.productcatalogservice.model.Image;
 import com.example.productcatalogservice.repository.ImageRepository;

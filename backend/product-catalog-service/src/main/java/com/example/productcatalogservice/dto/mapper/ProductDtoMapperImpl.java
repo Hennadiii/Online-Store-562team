@@ -4,10 +4,7 @@ import com.example.productcatalogservice.dto.product.ProductRequest;
 import com.example.productcatalogservice.dto.product.ProductResponse;
 import com.example.productcatalogservice.model.Category;
 import com.example.productcatalogservice.model.Product;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 

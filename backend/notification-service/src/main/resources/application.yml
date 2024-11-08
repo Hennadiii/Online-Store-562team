@@ -1,0 +1,34 @@
+server:
+  port: 777
+  tomcat:
+    uri-encoding: UTF-8
+spring:
+  application:
+    name: Notification service
+  mail:
+    host: ${SMTP_HOST}
+    username: ${SMTP_USER}
+    password: ${SMTP_PASS}
+    port: 587
+    protocol: smtp
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+management:
+  endpoints:
+    web:
+      base-path: /actuator
+      exposure:
+        include: "*"
+        exclude: "shutdown"
+  health:
+    mail:
+      enabled: true
+    defaults:
+      enabled: false
+  endpoint:
+    health:
+      show-details: always

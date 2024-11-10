@@ -6,7 +6,7 @@ spring:
   application:
     name: Notification service
   mail:
-    host: smtp.google.com
+    host: ${SMTP_HOST}
     username: ${SMTP_USER}
     password: ${SMTP_PASS}
     port: 587

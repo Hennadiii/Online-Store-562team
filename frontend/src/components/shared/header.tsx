@@ -41,6 +41,7 @@ const Header: React.FC = () => {
           className="cursor-pointer transition-transform hover:scale-110"
           src="cart.svg"
           alt="cart"
+          onClick={() => navigate('/cart')}
         />
         <img
           onClick={() => setShowModal(true)}

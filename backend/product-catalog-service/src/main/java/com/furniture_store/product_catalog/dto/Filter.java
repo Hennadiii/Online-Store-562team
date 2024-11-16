@@ -1,4 +1,4 @@
-package com.furniture_store.product_catalog.service;
+package com.furniture_store.product_catalog.dto;
 
 import lombok.Builder;
 

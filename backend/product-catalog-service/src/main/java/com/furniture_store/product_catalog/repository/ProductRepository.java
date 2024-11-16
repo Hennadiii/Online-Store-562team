@@ -21,7 +21,11 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
      * @param page параметри пагінації та сортування
      * @return сторінка з продуктами, які відповідають заданим фільтрам
      */
-    @Query("select p from Product p where" +
+    @Query("select p from Product p " +
+            " left join p.images as i" +
+            " left join p.category as c" +
+            " left join p.keywords as k" +
+            " left join p.producer as pr where" +
             "(:categoryName is null or p.category.name = :categoryName) and" +
             "(:minPrice is null or p.price >= :minPrice) and" +
             "(:maxPrice is null or p.price <= :maxPrice) and" +
@@ -54,4 +58,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     Page<Product> findAllByContainsKey(String key, String categoryName, Float minPrice, Float maxPrice, String producerName, Pageable page);
 
     Optional<Product> findByName(String name);
+
+    boolean existsByName(String name);
 }

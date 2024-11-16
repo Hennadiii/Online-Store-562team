@@ -2,7 +2,7 @@ package com.furniture_store.product_catalog.controller;
 
 import com.furniture_store.product_catalog.dto.PaginatedResponse;
 import com.furniture_store.product_catalog.dto.ProductDto;
-import com.furniture_store.product_catalog.service.Filter;
+import com.furniture_store.product_catalog.dto.Filter;
 import com.furniture_store.product_catalog.service.ProductManager;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -35,7 +35,7 @@ public class ProductController {
      */
     @GetMapping("/products")
     public PaginatedResponse<ProductDto> getProducts(
-            @RequestParam Filter filter, @RequestParam(defaultValue = "addedAt") String sort,
+            Filter filter, @RequestParam(defaultValue = "addedAt") String sort,
             @RequestParam(defaultValue = "desc") String order, @RequestParam Integer page, @RequestParam Integer pageSize) {
 
         return productManager.getProductList(filter, sort, order, page, pageSize);
@@ -54,7 +54,7 @@ public class ProductController {
      */
     @GetMapping("/products/search")
     public PaginatedResponse<ProductDto> searchProducts(
-            @RequestParam("q") String keyword, @RequestParam Filter filter, @RequestParam(defaultValue = "addedAt") String sort,
+            @RequestParam("q") String keyword, Filter filter, @RequestParam(defaultValue = "addedAt") String sort,
             @RequestParam(defaultValue = "desc") String order, @RequestParam Integer page, @RequestParam Integer pageSize) {
         return productManager.searchProduct(keyword, filter, sort, order, page, pageSize);
     }

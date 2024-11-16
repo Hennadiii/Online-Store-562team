@@ -20,7 +20,6 @@ public class Product {
     @Id
     @GeneratedValue
     private Long id;
-    @NotBlank
     @NaturalId
     private String name;
     private String description;
@@ -37,4 +36,5 @@ public class Product {
     private List<Image> images = new ArrayList<>();
     @ElementCollection
     private List<String> keywords = new ArrayList<>();
+
 }

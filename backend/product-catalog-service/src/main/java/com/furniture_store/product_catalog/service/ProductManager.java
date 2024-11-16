@@ -1,11 +1,11 @@
 package com.furniture_store.product_catalog.service;
 
+import com.furniture_store.product_catalog.dto.Filter;
 import com.furniture_store.product_catalog.dto.PaginatedResponse;
 import com.furniture_store.product_catalog.dto.ProductDto;
-import com.furniture_store.product_catalog.entity.Category;
-import com.furniture_store.product_catalog.entity.Producer;
 import com.furniture_store.product_catalog.entity.Product;
 import com.furniture_store.product_catalog.exception.ProductAlreadyExistsException;
+import com.furniture_store.product_catalog.exception.ProductNotFoundException;
 import com.furniture_store.product_catalog.repository.CategoryRepository;
 import com.furniture_store.product_catalog.repository.ProducerRepository;
 import com.furniture_store.product_catalog.repository.ProductRepository;
@@ -53,7 +53,7 @@ public class ProductManager {
                 filter.category(), filter.minPrice(), filter.maxPrice(), filter.producer(),
                 PageRequest.of(page, pageSize).withSort(parseSort(sort, order))
         );
-        List<ProductDto> productDtoList = products.map(ProductDto::new).toList();
+        List<ProductDto> productDtoList = products.map(productDtoConverter::convertToDto).toList();
         return new PaginatedResponse<>(productDtoList, products);
     }
 
@@ -74,7 +74,7 @@ public class ProductManager {
         Page<Product> foundProducts = productRepository.findAllByContainsKey(
                 keyword, filter.category(), filter.minPrice(), filter.maxPrice(), filter.producer(), PageRequest.of(page, pageSize).withSort(parseSort(sort, order))
         );
-        List<ProductDto> productDtoList = foundProducts.map(ProductDto::new).toList();
+        List<ProductDto> productDtoList = foundProducts.map(productDtoConverter::convertToDto).toList();
         return new PaginatedResponse<>(productDtoList, foundProducts);
     }
 
@@ -90,10 +90,10 @@ public class ProductManager {
         if (productDto.getId()!=null && getProduct(productDto.getId()) != null) {
             throw new ProductAlreadyExistsException("Product with such id already exists");
         }
-        if (getProduct(productDto.getName()).isPresent()) {
+        if (productRepository.existsByName(productDto.getName())) {
             throw new ProductAlreadyExistsException("Product with such name already exists");
         }
-        Product product = productDtoConverter.convertToProduct(productDto);
+        Product product = productDtoConverter.convertToEntity(productDto);
         try {
             product.setCategory(categoryRepository.findByName(productDto.getCategory()).orElseThrow());
         } catch (Exception e) {
@@ -108,10 +108,6 @@ public class ProductManager {
         return product.getId();
     }
 
-    public Optional<Product> getProduct(String name) {
-        return productRepository.findByName(name);
-    }
-
     /**
      * Повертає товар за його ідентифікатором.
      *
@@ -120,8 +116,8 @@ public class ProductManager {
      */
     @Transactional
     public ProductDto getProduct(Long id) {
-        Product product = productRepository.getReferenceById(id);
-        return new ProductDto(product);
+        Product product = productRepository.findById(id).orElseThrow(ProductNotFoundException::new);
+        return productDtoConverter.convertToDto(product);
     }
 
     /**
@@ -142,7 +138,7 @@ public class ProductManager {
      * @param productDto об'єкт DTO продукту, що містить оновлені дані продукту
      */
     public void updateProduct(ProductDto productDto) {
-        Product product = productDtoConverter.convertToProduct(productDto);
+        Product product = productDtoConverter.convertToEntity(productDto);
         product.setCategory(categoryRepository.findByName(productDto.getCategory()).orElse(product.getCategory()));
         product.setProducer(producerRepository.findByName(productDto.getProducer()).orElse(product.getProducer()));
         productRepository.save(product);

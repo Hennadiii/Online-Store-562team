@@ -1,7 +1,9 @@
 package com.furniture_store.product_catalog.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
+import org.hibernate.annotations.NaturalId;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -11,7 +13,6 @@ import java.util.List;
 @Setter
 @Table
 @Entity
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Product {
@@ -19,14 +20,15 @@ public class Product {
     @Id
     @GeneratedValue
     private Long id;
-
+    @NotBlank
+    @NaturalId
     private String name;
     private String description;
     private Float price;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne
     private Category category;
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne
     private Producer producer;
 
     private LocalDateTime addedAt = LocalDateTime.now();

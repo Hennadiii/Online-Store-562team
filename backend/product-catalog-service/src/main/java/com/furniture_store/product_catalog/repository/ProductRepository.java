@@ -7,6 +7,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.Optional;
+
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
     /**
@@ -51,4 +53,5 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             " (:producerName is NULL or pr.name = :producerName)")
     Page<Product> findAllByContainsKey(String key, String categoryName, Float minPrice, Float maxPrice, String producerName, Pageable page);
 
+    Optional<Product> findByName(String name);
 }

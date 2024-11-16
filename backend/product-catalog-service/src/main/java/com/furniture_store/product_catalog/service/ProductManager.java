@@ -2,11 +2,16 @@ package com.furniture_store.product_catalog.service;
 
 import com.furniture_store.product_catalog.dto.PaginatedResponse;
 import com.furniture_store.product_catalog.dto.ProductDto;
+import com.furniture_store.product_catalog.entity.Category;
+import com.furniture_store.product_catalog.entity.Producer;
+import com.furniture_store.product_catalog.entity.Product;
+import com.furniture_store.product_catalog.exception.ProductAlreadyExistsException;
 import com.furniture_store.product_catalog.repository.CategoryRepository;
 import com.furniture_store.product_catalog.repository.ProducerRepository;
 import com.furniture_store.product_catalog.repository.ProductRepository;
-import com.furniture_store.product_catalog.entity.Product;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,15 +40,15 @@ public class ProductManager {
     /**
      * Отримує список продуктів із застосуванням фільтрації та сортування.
      *
-     * @param filter об'єкт фільтра для фільтрації продуктів
-     * @param sort поле для сортування
-     * @param order порядок сортування (ASC або DESC)
-     * @param page номер сторінки
+     * @param filter   об'єкт фільтра для фільтрації продуктів
+     * @param sort     поле для сортування
+     * @param order    порядок сортування (ASC або DESC)
+     * @param page     номер сторінки
      * @param pageSize розмір сторінки
      * @return список продуктів у вигляді об'єкта {@link PaginatedResponse}
      */
     @Transactional
-    public PaginatedResponse<ProductDto> getProductList(Filter filter, String sort, String order, Integer page, Integer pageSize){
+    public PaginatedResponse<ProductDto> getProductList(Filter filter, String sort, String order, Integer page, Integer pageSize) {
         Page<Product> products = productRepository.findAllWithFilters(
                 filter.category(), filter.minPrice(), filter.maxPrice(), filter.producer(),
                 PageRequest.of(page, pageSize).withSort(parseSort(sort, order))
@@ -56,16 +61,16 @@ public class ProductManager {
      * Пошук продуктів за ключовим словом з фільтрацією, сортуванням та пагінацією.
      * Пошук відбувається в назві, описі або ключових словах товару
      *
-     * @param keyword ключове слово для пошуку
-     * @param filter об'єкт фільтра для фільтрації продуктів
-     * @param sort поле для сортування
-     * @param order порядок сортування (ASC або DESC)
-     * @param page номер сторінки
+     * @param keyword  ключове слово для пошуку
+     * @param filter   об'єкт фільтра для фільтрації продуктів
+     * @param sort     поле для сортування
+     * @param order    порядок сортування (ASC або DESC)
+     * @param page     номер сторінки
      * @param pageSize розмір сторінки
      * @return список продуктів у вигляді об'єкта {@link PaginatedResponse}
      */
     @Transactional
-    public PaginatedResponse<ProductDto> searchProduct(String keyword, Filter filter, String sort, String order, Integer page, Integer pageSize){
+    public PaginatedResponse<ProductDto> searchProduct(String keyword, Filter filter, String sort, String order, Integer page, Integer pageSize) {
         Page<Product> foundProducts = productRepository.findAllByContainsKey(
                 keyword, filter.category(), filter.minPrice(), filter.maxPrice(), filter.producer(), PageRequest.of(page, pageSize).withSort(parseSort(sort, order))
         );
@@ -81,11 +86,30 @@ public class ProductManager {
      * @return ідентифікатор збереженого товару
      */
     @Transactional
-    public Long addProduct(ProductDto productDto){
+    public Long addProduct(ProductDto productDto) {
+        if (productDto.getId()!=null && getProduct(productDto.getId()) != null) {
+            throw new ProductAlreadyExistsException("Product with such id already exists");
+        }
+        if (getProduct(productDto.getName()).isPresent()) {
+            throw new ProductAlreadyExistsException("Product with such name already exists");
+        }
         Product product = productDtoConverter.convertToProduct(productDto);
-        product.setCategory(categoryRepository.findByName(productDto.getCategory()).orElse(product.getCategory()));
-        product.setProducer(producerRepository.findByName(productDto.getProducer()).orElse(product.getProducer()));
-        return productRepository.save(product).getId();
+        try {
+            product.setCategory(categoryRepository.findByName(productDto.getCategory()).orElseThrow());
+        } catch (Exception e) {
+            categoryRepository.saveAndFlush(product.getCategory());
+        }
+        try {
+            product.setProducer(producerRepository.findByName(productDto.getProducer()).orElseThrow());
+        } catch (Exception e) {
+            producerRepository.saveAndFlush(product.getProducer());
+        }
+        productRepository.save(product);
+        return product.getId();
+    }
+
+    public Optional<Product> getProduct(String name) {
+        return productRepository.findByName(name);
     }
 
     /**
@@ -95,7 +119,7 @@ public class ProductManager {
      * @return об'єкт DTO продукту
      */
     @Transactional
-    public ProductDto getProduct(Long id){
+    public ProductDto getProduct(Long id) {
         Product product = productRepository.getReferenceById(id);
         return new ProductDto(product);
     }
@@ -118,23 +142,26 @@ public class ProductManager {
      * @param productDto об'єкт DTO продукту, що містить оновлені дані продукту
      */
     public void updateProduct(ProductDto productDto) {
-        addProduct(productDto);
+        Product product = productDtoConverter.convertToProduct(productDto);
+        product.setCategory(categoryRepository.findByName(productDto.getCategory()).orElse(product.getCategory()));
+        product.setProducer(producerRepository.findByName(productDto.getProducer()).orElse(product.getProducer()));
+        productRepository.save(product);
     }
 
     /**
      * Парсить параметри сортування.
      *
      * @param property властивість для сортування -  одне з полів класу {@link Product}
-     * @param order порядок сортування (ASC або DESC)
+     * @param order    порядок сортування (ASC або DESC)
      * @return об'єкт {@link Sort} для сортування
      */
-    Sort parseSort(String property, String order){
+    Sort parseSort(String property, String order) {
         Sort sort;
         Optional<Sort.Direction> direction = Sort.Direction.fromOptionalString(order);
-        try{
+        try {
             Product.class.getDeclaredField(property);
             sort = Sort.by(direction.orElse(Sort.Direction.ASC), property);
-        }catch(NoSuchFieldException e){
+        } catch (NoSuchFieldException e) {
             sort = Sort.by(Sort.Direction.DESC, "addedAt");
         }
         return sort;

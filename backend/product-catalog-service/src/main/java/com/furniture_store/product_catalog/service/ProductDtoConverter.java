@@ -14,16 +14,16 @@ import java.util.List;
 public class ProductDtoConverter {
 
     public Product convertToProduct(ProductDto productDto) {
-        return Product.builder()
-                .id(productDto.getId())
-                .name(productDto.getName())
-                .price(productDto.getPrice())
-                .description(productDto.getDescription())
-                .category(new Category(productDto.getCategory()))
-                .images(convertImages(productDto.getImages()))
-                .keywords(productDto.getKeywords())
-                .producer(new Producer(productDto.getProducer()))
-                .build();
+        Product product = new Product();
+        product.setId(productDto.getId());
+        product.setName(productDto.getName());
+        product.setPrice(productDto.getPrice());
+        product.setDescription(productDto.getDescription());
+        product.setCategory(new Category(productDto.getCategory()));
+        product.setImages(convertImages(productDto.getImages()));
+        product.setKeywords(productDto.getKeywords());
+        product.setProducer(new Producer(productDto.getProducer()));
+        return product;
     }
 
     List<Image> convertImages(List<byte[]> bytes) {

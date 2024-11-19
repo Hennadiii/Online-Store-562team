@@ -1,0 +1,71 @@
+server:
+  port: 9080
+
+---
+
+spring:
+  profiles:
+    active: dev
+
+# Production profile configuration
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+  sql:
+    init:
+      mode: never
+      data-locations: classpath:data-h2.sql
+      schema-locations: classpath:schema-h2.sql
+  datasource:
+    url: jdbc:postgresql://localhost:5432/furniture_shopping_cart_db
+    username: team562
+    password: teamChallenge
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    open-in-view: false
+    defer-datasource-initialization: true
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        generate_statistics: false
+    show-sql: false
+  logging:
+    level:
+      org: info
+      com: off
+---
+
+spring:
+  sql:
+    init:
+      mode: never
+      data-locations: classpath:data-h2.sql
+      schema-locations: classpath:schema-h2.sql
+  datasource:
+    url: jdbc:h2:mem:shopCart
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    defer-datasource-initialization: false
+    show-sql: true
+    hibernate:
+      id:
+        new_generator_mappings: true
+      ddl-auto: none
+  config:
+    activate:
+      on-profile: dev
+
+---
+spring:
+  jpa:
+    properties:
+      hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
+
+

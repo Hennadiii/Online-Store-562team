@@ -1,0 +1,27 @@
+package com.furniture_store.shoppingcartservice.entity;
+
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@Table
+@Entity
+@NoArgsConstructor
+@AllArgsConstructor
+public class CartItem {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "shopping_cart_id", nullable = false)
+    private ShoppingCart shoppingCart;
+
+    private Long productId;
+    private Integer quantity;
+    private Double price;
+}
+

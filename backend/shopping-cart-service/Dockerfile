@@ -10,7 +10,7 @@ WORKDIR /shopping-cart-service
 # Копіюємо jar-файл, який буде виконуватись
 COPY target/shopping-cart-service-0.0.1-SNAPSHOT.jar shopping-cart-service.jar
 
-# Відкриваємо порт 8080
+# Відкриваємо порт 9080
 EXPOSE 9080
 
 # Вказуємо команду для запуску програми

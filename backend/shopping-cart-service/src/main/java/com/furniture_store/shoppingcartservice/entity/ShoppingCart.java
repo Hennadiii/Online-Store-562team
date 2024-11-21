@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@Table
+@Table(name = "shopping_cart")
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor

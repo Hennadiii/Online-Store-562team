@@ -5,7 +5,7 @@ server:
 
 spring:
   profiles:
-    active: dev
+    active: prod
 
 # Production profile configuration
 
@@ -16,7 +16,7 @@ spring:
       on-profile: prod
   sql:
     init:
-      mode: never
+      mode: always
       data-locations: classpath:data-h2.sql
       schema-locations: classpath:schema-h2.sql
   datasource:

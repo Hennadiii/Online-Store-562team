@@ -3,23 +3,34 @@ export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     fontFamily: {
-      main: ['e-Ukraine'],
-      second: ['e-Ukraine Header'],
+      main: ['Montserrat'],
+      second: ['TT Norms Pro Serif Trl'],
     },
     variants: {
       fill: ['hover', 'focus'], // this line does the trick
     },
     colors: {
-      axcent: '#3c767e',
-      white: '#f4f4f4',
-      main: '#1e2426',
-      second: '#afd2d7',
-      first: '#f4f4f4',
-      red: '#ff0000',
+      white: '#fff',
+      black: '#0c1a1a',
+      accent: '#3c767e',
+      grey: '#c3c3c3',
+      lightGrey: '#f3f3f3',
+      red: '#ff1f00',
     },
     extend: {
       backgroundImage: {
-        home: "url('bg-main.png')",
+        home: "url('main.png')",
+      },
+      padding: {
+        '80px': '80px',
+      },
+      fontSize: {
+        h1: '140px',
+        h2: '64px',
+        h3: '32px',
+        h4: '28px',
+        h5: '24px',
+        h6: '16px',
       },
     },
   },

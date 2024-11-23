@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Imodal } from '../../@types/modal';
-import LoginForm from './loginForm';
-import RegisterForm from './registerForm';
-import ForgotPassword from './forgotPassword';
+// import LoginForm from './loginForm';
+// import RegisterForm from './registerForm';
+// import ForgotPassword from './forgotPassword';
 
 const Modal: React.FC<Imodal> = ({ setShowModal, showModal }) => {
   const [section, setSection] = useState<number>(1);
@@ -16,13 +16,13 @@ const Modal: React.FC<Imodal> = ({ setShowModal, showModal }) => {
         onClick={(e) => e.stopPropagation()}
         className={`overflow-y-auto rounded-[10px] bg-[#fff] shadow transition-all ${showModal ? 'scale-100 opacity-100' : 'scale-125 opacity-0'} `}
       >
-        {
+        {/* {
           [
             <LoginForm setSection={setSection} />,
             <RegisterForm setSection={setSection} />,
             <ForgotPassword setSection={setSection} />,
           ][section - 1]
-        }
+        } */}
       </div>
     </section>
   );

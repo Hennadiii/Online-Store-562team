@@ -2,13 +2,12 @@ import { VariantProps, cva } from 'class-variance-authority';
 import { cn } from '../../utils/classesMerge';
 
 const buttonsVariants = cva(
-  'text-center bg-[#1e2426] text-[#f4f4f4] rounded-[10px] hover:text-main hover:bg-[#fff] border-2 transition-colors',
+  'text-center px-8 py-4 uppercase text-[20px] w-[297px] h-[56px] flex items-center justify-center transition-colors border-[1px] border-white hover:text-accent hover:border-accent active:bg-accent active:text-white',
   {
     variants: {
       variant: {
-        small: 'w-[300px] text-[20px] py-[10px]',
-        default: 'w-full py-[10px] text-[28px]',
-        big: 'w-[200px]',
+        default: 'bg-white text-black',
+        second: 'bg-transparent text-white',
       },
     },
     defaultVariants: {

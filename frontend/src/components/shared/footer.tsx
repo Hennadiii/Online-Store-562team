@@ -1,75 +1,101 @@
 import { Button } from '../ui/button';
-import LogoIcon from '../../assets/logo.svg';
-import ArrowTopIcon from '../../assets/arrow-top.svg';
+import FacebookIcon from '../../assets/facebook.svg';
+import LinkedinIcon from '../../assets/linkedin.svg';
+import InstagramIcon from '../../assets/instagram.svg';
+import PinterestIcon from '../../assets/painterest.svg';
+import WhatsAppIcon from '../../assets/whatsApp.svg';
 
 const Footer = () => {
   return (
-    <footer className="relative mt-[100px] flex h-[579px] justify-between bg-axcent px-[75px] py-[100px] text-white">
-      <div
-        onClick={() => window.scrollTo(0, 0)}
-        className="group absolute right-[75px] top-[82px] cursor-pointer rounded-[5px] border-2 bg-white px-[12px] py-[16px] transition-all hover:scale-105 hover:bg-axcent"
-      >
-        <ArrowTopIcon className="group flex items-center justify-center text-axcent transition-colors group-hover:text-white" />
-      </div>
+    <footer className="mt-[100px]">
+      <div className="flex justify-between">
+        <div className="mt-[22px] flex flex-col">
+          <span className="text-[24px]">cozycorners@gmail.com</span>
+          <span className="mt-2 text-[24px]">+380( 011) 621 16 12</span>
+          <p className="mt-4 max-w-[170px] text-[12px] leading-[120%]">
+            Графік роботи call-центру: з 09:00 до 20:00 <br /> Без вихідних
+          </p>
 
-      <div>
-        <LogoIcon className="text-white" />
-        <p className="mt-[31px] max-w-[265px] text-[20px] leading-[120%]">
-          Potter ipsum wand elf parchment wingardium. Would will glasses got
-          suck.
-        </p>
-        <h6 className="mt-[31px] text-[24px]">Підпишіться на нас</h6>
-        <ul className="mt-[25px] flex items-center gap-x-8">
-          <li>
-            <a>
-              {' '}
-              <img src="instagram.svg" />
-            </a>
-          </li>
-          <li>
-            <a>
-              {' '}
-              <img src="facebook.svg" />
-            </a>
-          </li>
-          <li>
-            <a>
-              {' '}
-              <img src="twitter.svg" />
-            </a>
-          </li>
-        </ul>
-      </div>
+          <nav className="mt-[64px]">
+            <ul className="flex items-center gap-x-2">
+              <li>
+                <a>
+                  <FacebookIcon className="cursor-pointer transition-all hover:scale-110" />
+                </a>
+              </li>
 
-      <ul className="mt-14 flex flex-col gap-y-10 text-[20px]">
-        <li className="cursor-pointer hover:text-second">
-          <a>Товари</a>
-        </li>
-        <li className="cursor-pointer hover:text-second">
-          <a>Про нас</a>
-        </li>
-        <li className="cursor-pointer hover:text-second">
-          <a>Акції</a>
-        </li>
-        <li className="cursor-pointer hover:text-second">
-          <a>Контакти</a>
-        </li>
-      </ul>
+              <li>
+                <a>
+                  <LinkedinIcon className="cursor-pointer transition-all hover:scale-110" />
+                </a>
+              </li>
 
-      <div className="mt-20 flex w-[382px] flex-col gap-y-2 leading-[180%]">
-        <h6 className="text-[24px]">ПІдписатися</h6>
-        <span className="text-[20px]">Підпишіться на новини</span>
-        <input
-          className="h-10 rounded-[8px] border-[1px] border-white bg-axcent px-3 focus:outline-none"
-          placeholder="Електронна пошта"
-        />
-        <div className="mt-4 flex items-center justify-center gap-x-8">
-          <a className="cursor-pointer text-[20px]">Відмінити</a>
-          <Button className="h-11 w-[166px] border-0 bg-white p-3 py-0 text-[20px] text-main">
-            Підписатися
-          </Button>
+              <li>
+                <a>
+                  <InstagramIcon className="cursor-pointer transition-all hover:scale-110" />
+                </a>
+              </li>
+
+              <li>
+                <a>
+                  <PinterestIcon className="cursor-pointer transition-all hover:scale-110" />
+                </a>
+              </li>
+
+              <li>
+                <a>
+                  <WhatsAppIcon className="cursor-pointer transition-all hover:scale-110" />
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+
+        <div className="flex items-center gap-x-[64px] text-center leading-[120%]">
+          <nav>
+            <ul className="flex flex-col gap-y-6">
+              <li className="hover:text-grey cursor-pointer p-2 transition-colors">
+                <a>Каталог</a>
+              </li>
+              <li className="hover:text-grey cursor-pointer p-2 transition-colors">
+                <a>Про нас</a>
+              </li>
+              <li className="hover:text-grey cursor-pointer p-2 transition-colors">
+                <a>Доставка і оплата</a>
+              </li>
+              <li className="hover:text-grey cursor-pointer p-2 transition-colors">
+                <a>Контакти</a>
+              </li>
+              <li className="hover:text-grey cursor-pointer p-2 transition-colors">
+                <a>Умови і положення</a>
+              </li>
+            </ul>
+          </nav>
+          <nav>
+            <ul className="flex flex-col gap-y-6">
+              <li className="hover:text-grey cursor-pointer p-2 transition-colors">
+                <a>Гарантія якості</a>
+              </li>
+              <li className="hover:text-grey cursor-pointer p-2 transition-colors">
+                <a>Партнери</a>
+              </li>
+              <li className="hover:text-grey cursor-pointer p-2 transition-colors">
+                <a>Договір оферти</a>
+              </li>
+              <li className="hover:text-grey cursor-pointer p-2 transition-colors">
+                <a>Умови повернення</a>
+              </li>
+              <li className="hover:text-grey cursor-pointer p-2 transition-colors">
+                <a>Політика конфіденційності</a>
+              </li>
+            </ul>
+          </nav>
         </div>
       </div>
+      <h6 className="mt-[65px] text-center text-[180px] font-bold leading-[120%]">
+        Cozy Corners
+      </h6>
+      <span className="p ml-6 block pt-4 text-[12px]">2024 ©</span>
     </footer>
   );
 };

@@ -1,5 +1,5 @@
-@import './e-ukraine.css';
-@import './e-ukraine-header.css';
+@import './fonts/montSerrat/montSerrat.css';
+@import './fonts/TT-Norms-Pro-Serif/ttNormsProSerif.css';
 @import 'slick-carousel/slick/slick.css';
 @import 'slick-carousel/slick/slick-theme.css';
 @tailwind base;
@@ -7,5 +7,5 @@
 @tailwind utilities;
 
 :root {
-  font-family: 'e-Ukraine';
+  font-family: 'Montserrat';
 }

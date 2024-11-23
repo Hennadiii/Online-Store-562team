@@ -1,25 +1,29 @@
-import CartIcon from '../../assets/cart-white.svg';
+interface props {
+  image: string;
+  name: string;
+  variant?: true;
+  price?: string;
+}
 
-const ProductItem: React.FC = () => {
+const ProductItem: React.FC<props> = ({ image, name, price, variant }) => {
   return (
-    <article>
-      <div>
+    <article
+      className={`group ${variant ? 'h-[389px] w-[49%]' : 'h-[350px] w-[282px]'}`}
+    >
+      <div
+        className={`flex ${variant ? 'w-40% h-[357px]' : 'h-[316px] w-[282px]'} cursor-pointer items-center justify-center bg-[#f1f1f1]`}
+      >
         <img
-          className="cursor-pointer transition-transform hover:scale-[1.02]"
-          src="product.png"
+          src={image}
           alt="product"
+          className="w-full transition-transform group-hover:scale-110"
         />
       </div>
-      <div className="mt-3 flex items-end justify-between">
-        <div className="flex flex-col gap-y-4">
-          <h6 className="cursor-pointer text-[24px] font-bold">Potter ipsum</h6>
-          <span className="text-[24px] font-extralight">
-            Price <strong className="ml-2">$1 755</strong>
-          </span>
-        </div>
-        <div className="group mb-2 cursor-pointer rounded-[13px] border-2 bg-main p-2 transition-all hover:scale-105 hover:bg-[#fff]">
-          <CartIcon className="group text-[#fff] group-hover:text-[#000]" />
-        </div>
+      <div className="flex items-center justify-between gap-x-2">
+        <span className="mt-[6px] block text-[20px]">{name}</span>
+        <data value={price}>
+          {price} {price ? '₴' : null}
+        </data>
       </div>
     </article>
   );

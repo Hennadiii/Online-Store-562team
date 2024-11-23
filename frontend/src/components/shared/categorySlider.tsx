@@ -1,34 +1,58 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import Slider from 'react-slick';
-import CategoryItem from './categoryItem';
+import CategoryItem from './productItem';
+import ArrowRight from '../../assets/arrow-right.svg';
+import ArrowLeft from '../../assets/arrow-left.svg';
+
+const data = [
+  <CategoryItem name="Дивани" image="divan.png" />,
+  <CategoryItem name="Ліжка" image="divan.png" />,
+  <CategoryItem name="Тумби" image="divan.png" />,
+  <CategoryItem name="Крісла" image="divan.png" />,
+  <CategoryItem name="Комоди" image="divan.png" />,
+  <CategoryItem name="Дивани" image="divan.png" />,
+  <CategoryItem name="Дивани2" image="divan.png" />,
+  <CategoryItem name="Дивани3" image="divan.png" />,
+  <CategoryItem name="Дивани4" image="divan.png" />,
+];
 
 const CategorySlider: React.FC = () => {
+  const [index, setIndex] = useState<number>(0);
   let sliderRef = useRef<null>(null);
   //@ts-ignore
   const next = () => sliderRef.slickNext();
   //@ts-ignore
   const previous = () => sliderRef.slickPrev();
 
-  const settings = {
-    infinite: true,
-    speed: 500,
-    slidesToShow: 6,
-    className: 'pl-[78px] pr-[45px] relative ',
-    slidesToScroll: 3,
-    arrows: false,
+  //@ts-ignore
+  const beforeChange = (prev, next) => {
+    setIndex(Math.floor(next));
+    console.log(next, data.length - 5);
   };
+
+  const settings = {
+    infinite: false,
+    centerMode: false,
+    speed: 500,
+    slidesToShow: 4.25,
+    className: 'relative flex items-center',
+    slidesToScroll: 1,
+    arrows: false,
+    beforeChange: beforeChange,
+  };
+
   return (
     <div className="relative">
-      <img
+      <ArrowLeft
         onClick={previous}
-        className="absolute bottom-[168px] left-5 h-6 w-6 cursor-pointer transition-transform hover:scale-110"
-        src="arrow-left.svg"
+        className={`absolute right-[165px] top-[-80px] h-6 w-6 transition-transform hover:scale-110 ${index === 0 ? 'text-grey' : 'cursor-pointer'} `}
       />
-      <img
+
+      <ArrowRight
         onClick={next}
-        className="absolute bottom-[168px] right-3 h-6 w-6 cursor-pointer transition-transform hover:scale-110"
-        src="arrow-right.svg"
+        className={`absolute right-2 top-[-80px] h-6 w-6 transition-transform hover:scale-110 ${index >= data.length - 5 ? 'text-grey' : 'cursor-pointer'} `}
       />
+
       <Slider
         ref={(slider) => {
           //@ts-ignore
@@ -36,7 +60,8 @@ const CategorySlider: React.FC = () => {
         }}
         {...settings}
       >
-        <CategoryItem img="chair.png">Стільці</CategoryItem>
+        {data.map((item) => item)}
+        {/* <CategoryItem img="chair.png">Стільці</CategoryItem>
         <CategoryItem img="divan.png">Дивани</CategoryItem>
         <CategoryItem img="stol.png">Столи</CategoryItem>
         <CategoryItem img="book.png">Книжкові полиці</CategoryItem>
@@ -50,7 +75,7 @@ const CategorySlider: React.FC = () => {
         <CategoryItem img="decor.png">6</CategoryItem>
         <CategoryItem img="stol.png">7</CategoryItem>
         <CategoryItem img="divan.png">8</CategoryItem>
-        <CategoryItem img="stol.png">9</CategoryItem>
+        <CategoryItem img="stol.png">9</CategoryItem> */}
       </Slider>
     </div>
   );

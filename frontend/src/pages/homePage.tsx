@@ -105,7 +105,7 @@ const HomePage: React.FC = () => {
         </div>
       </div>
 
-      {/* Build Design with us */}
+      {/* Contact us */}
 
       <div className="mt-[106px] flex justify-between gap-x-9">
         <div className="max-w-[624px]">
@@ -133,7 +133,7 @@ const HomePage: React.FC = () => {
               placeholder="Email"
             />
 
-            <Button type="submit" className="bg-black mt-10 w-full text-white">
+            <Button type="submit" className="mt-10 w-full" variant="black">
               Відправити
             </Button>
           </form>

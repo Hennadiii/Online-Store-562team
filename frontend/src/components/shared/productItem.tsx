@@ -3,15 +3,21 @@ interface props {
   name: string;
   variant?: true;
   price?: string;
+  heightDiv?: string;
+  heightImage?: string;
 }
 
-const ProductItem: React.FC<props> = ({ image, name, price, variant }) => {
+const ProductItem: React.FC<props> = ({
+  image,
+  name,
+  price,
+  variant,
+  heightImage = 'h-[357px]',
+}) => {
   return (
-    <article
-      className={`group ${variant ? 'h-[389px] w-[49%]' : 'h-[350px] w-[282px]'}`}
-    >
+    <article className={`group ${variant ? `w-[49%]` : 'w-[282px]'}`}>
       <div
-        className={`flex ${variant ? 'w-40% h-[357px]' : 'h-[316px] w-[282px]'} cursor-pointer items-center justify-center bg-[#f1f1f1]`}
+        className={`flex ${variant ? `${heightImage} w-40%` : 'h-[316px] w-[282px]'} cursor-pointer items-center justify-center bg-[#f1f1f1]`}
       >
         <img
           src={image}

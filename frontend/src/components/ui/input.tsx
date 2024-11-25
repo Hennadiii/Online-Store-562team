@@ -1,9 +1,10 @@
 import { VariantProps, cva } from 'class-variance-authority';
 import { cn } from '../../utils/classesMerge';
-import { FieldError, FieldErrors, UseFormRegister } from 'react-hook-form';
+import { FieldError, UseFormRegister } from 'react-hook-form';
+import { IloginFormInputs, iRegisterFormInputs } from '../../@types/forms';
 
 const selectorVariants = cva(
-  'border-[2px] rounded-[10px] border-[#e3e8ee] px-[22px] h-[50px] border-axcent focus:outline-none',
+  'h-[40px] border-b-[1px] px-2 focus:outline-none',
   {
     variants: {
       variant: {
@@ -21,7 +22,9 @@ interface InputProps
     VariantProps<typeof selectorVariants> {
   // register: any;
   // name: any;
-  register: UseFormRegister<any>;
+  register:
+    | UseFormRegister<IloginFormInputs | iRegisterFormInputs>
+    | UseFormRegister<iRegisterFormInputs>;
   name: 'email' | 'password' | 'first_name' | 'second_name' | 'passwordConfirm';
   error: FieldError | undefined;
 }
@@ -34,15 +37,17 @@ const Input: React.FC<InputProps> = ({
   error,
   ...props
 }) => {
+  console.log(error);
+
   return (
-    <div className="relative mb-2">
+    <div className="relative mb-1">
       <input
         className={cn(selectorVariants({ variant, className }))}
         {...props}
         {...register(name)}
       />
       <p
-        className={`text-red ${error ? 'opacity-100' : 'opacity-0'} absolute bottom-[-25px] text-[13px] transition-opacity delay-75 duration-150 ease-in-out`}
+        className={`text-red ${error ? 'opacity-100' : 'opacity-0'} absolute bottom-[-25px] text-[12px] transition-opacity delay-150 duration-300 ease-in-out`}
       >
         {error?.message}
       </p>

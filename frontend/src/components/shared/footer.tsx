@@ -1,4 +1,3 @@
-import { Button } from '../ui/button';
 import FacebookIcon from '../../assets/facebook.svg';
 import LinkedinIcon from '../../assets/linkedin.svg';
 import InstagramIcon from '../../assets/instagram.svg';

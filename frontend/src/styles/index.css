@@ -6,6 +6,11 @@
 @tailwind components;
 @tailwind utilities;
 
+body,
+html,
+:host,
 :root {
-  font-family: 'Montserrat';
+  font-family: 'Montserrat', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }

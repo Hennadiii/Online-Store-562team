@@ -2,11 +2,9 @@ import { Button } from '../components/ui/button';
 import Header from '../components/shared/header';
 import ProductItem from '../components/shared/productItem';
 import Footer from '../components/shared/footer';
-import StarIcon from '../assets/star.svg';
 import CategorySlider from '../components/shared/categorySlider';
 import BedArrow from '../assets/bed-arrow.svg';
-import CategoryItem from '../components/shared/productItem';
-import { Input } from 'postcss';
+import { motion } from 'framer-motion';
 
 const tabs = [
   'Дивани',
@@ -23,21 +21,55 @@ const tabs = [
 ];
 
 const HomePage: React.FC = () => {
+  const pullupVariant = {
+    initial: { y: 250, opacity: 0 },
+    animate: () => ({
+      y: 0,
+      opacity: 1,
+      transition: {
+        delay: 0.1,
+        duration: 1,
+      },
+    }),
+  };
+
   return (
-    <section className="px-80px mx-auto h-full max-w-[1440px] bg-first pb-[32px]">
+    <motion.section
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
+      className="px-80px mx-auto h-full max-w-[1440px] bg-first pb-[32px]"
+    >
       <Header />
 
       {/* content top */}
       <div>
         <div className="relative h-fit">
-          <h1 className="mt-1 text-[200px] font-bold">Cozy</h1>
-          <h1 className="text-right text-[200px] font-bold leading-[20%]">
+          <motion.h1
+            initial="initial"
+            animate="animate"
+            variants={pullupVariant}
+            className="mt-1 text-[200px] font-bold"
+          >
+            Cozy
+          </motion.h1>
+          <motion.h1
+            initial="initial"
+            animate="animate"
+            variants={pullupVariant}
+            className="text-right text-[200px] font-bold leading-[20%]"
+          >
             Corners
-          </h1>
-          <p className="absolute right-[163px] top-[134px] max-w-[350px] text-right font-second text-[24px] leading-[120%]">
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0, x: 300 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 1 }}
+            className="absolute right-[163px] top-[134px] max-w-[350px] text-right font-second text-[24px] leading-[120%]"
+          >
             створює меблі, які перетворюють спальню на простір затишку та
             гармонії
-          </p>
+          </motion.p>
         </div>
 
         <div className="relative mt-[90px] flex h-[481px] w-[1280px] flex-col items-center justify-center gap-y-[10px] bg-home pt-[235px]">
@@ -61,7 +93,7 @@ const HomePage: React.FC = () => {
       {/* Popular */}
       <div className="mt-[90px]">
         <div className="relative">
-          <h3 className="text-h2 uppercase">Популярне</h3>
+          <h2 className="text-h2 uppercase">Популярне</h2>
           <ul className="mt-[18px] flex items-center gap-x-[4.5px]">
             {tabs.map((item, index) => (
               <li key={index} className="p-2">
@@ -149,7 +181,7 @@ const HomePage: React.FC = () => {
           </p>
         </div>
         <div>
-          <img src="homeDesign.png" />
+          <img src="homeDesign.png" alt="contact us" />
         </div>
       </div>
 
@@ -159,7 +191,7 @@ const HomePage: React.FC = () => {
         <h4 className="text-h2">ПРО НАС</h4>
 
         <div className="mt-5 flex gap-x-9">
-          <img src="about-us.png" />
+          <img src="about-us.png" alt="about-us" />
 
           <div>
             <div className="text-[80px] font-medium uppercase leading-[120%]">
@@ -185,7 +217,7 @@ const HomePage: React.FC = () => {
       </div>
 
       <Footer />
-    </section>
+    </motion.section>
   );
 };
 

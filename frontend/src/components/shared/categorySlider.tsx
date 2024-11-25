@@ -5,15 +5,15 @@ import ArrowRight from '../../assets/arrow-right.svg';
 import ArrowLeft from '../../assets/arrow-left.svg';
 
 const data = [
-  <CategoryItem name="Дивани" image="divan.png" />,
-  <CategoryItem name="Ліжка" image="divan.png" />,
-  <CategoryItem name="Тумби" image="divan.png" />,
-  <CategoryItem name="Крісла" image="divan.png" />,
-  <CategoryItem name="Комоди" image="divan.png" />,
-  <CategoryItem name="Дивани" image="divan.png" />,
-  <CategoryItem name="Дивани2" image="divan.png" />,
-  <CategoryItem name="Дивани3" image="divan.png" />,
-  <CategoryItem name="Дивани4" image="divan.png" />,
+  'Дивани',
+  'Ліжка',
+  'Тумби',
+  'Крісла',
+  'Комоди',
+  'Дивани',
+  'Дивани2',
+  'Дивани3',
+  'Дивани4',
 ];
 
 const CategorySlider: React.FC = () => {
@@ -60,7 +60,9 @@ const CategorySlider: React.FC = () => {
         }}
         {...settings}
       >
-        {data.map((item) => item)}
+        {data.map((item, index) => (
+          <CategoryItem name={item} key={index} image="divan.png" />
+        ))}
         {/* <CategoryItem img="chair.png">Стільці</CategoryItem>
         <CategoryItem img="divan.png">Дивани</CategoryItem>
         <CategoryItem img="stol.png">Столи</CategoryItem>

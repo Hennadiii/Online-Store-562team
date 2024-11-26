@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom';
 import { IsetSection } from '../../@types/modal';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Button } from '../ui/button';
@@ -17,11 +16,10 @@ let Loginschema = yup.object().shape({
     .max(24, 'password must be shorter than 24 characters'),
 });
 
-const LoginForm: React.FC<IsetSection> = ({ setSection }) => {
+const LoginForm: React.FC<IsetSection> = ({ setSection, setShowModal }) => {
   const {
     register,
     handleSubmit,
-    reset,
     formState: { errors },
   } = useForm<IloginFormInputs>({
     resolver: yupResolver(Loginschema),
@@ -36,9 +34,14 @@ const LoginForm: React.FC<IsetSection> = ({ setSection }) => {
       animate={{ opacity: 1 }}
       transition={{ duration: 1 }}
       onSubmit={handleSubmit(onSubmit)}
-      className="relative flex h-[527px] w-[470px] flex-col gap-y-6 px-[44px] pb-[52px] pt-16"
+      className="relative flex h-[527px] w-[470px] flex-col gap-y-6 bg-white px-[44px] pb-[52px] pt-16"
     >
-      <img src="close.svg" className="absolute right-6 top-6 h-6 w-6" />
+      <div
+        onClick={() => setShowModal(false)}
+        className="absolute right-4 top-4 cursor-pointer rounded-[50%] p-2 transition-colors duration-500 hover:bg-grey"
+      >
+        <img src="close.svg" className="h-6 w-6" alt="closeIcon" />
+      </div>
       <span className="block text-center font-bold leading-[120%]">Вхід</span>
 
       <Input
@@ -71,7 +74,7 @@ const LoginForm: React.FC<IsetSection> = ({ setSection }) => {
       </Button>
       <Button
         type="submit"
-        className="border-black flex w-full gap-x-[30px] pl-3 text-[20px]"
+        className="flex w-full gap-x-[30px] border-black pl-3 text-[20px]"
       >
         <img className="h-6 w-6" src="google.svg" /> увійти через google
       </Button>

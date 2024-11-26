@@ -38,7 +38,7 @@ const HomePage: React.FC = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
-      className="px-80px mx-auto h-full max-w-[1440px] bg-first pb-[32px]"
+      className="bg-first mx-auto h-full max-w-[1440px] overflow-x-hidden px-80px pb-[32px]"
     >
       <Header />
 
@@ -86,7 +86,7 @@ const HomePage: React.FC = () => {
 
       {/* catalog */}
       <div className="mt-[95px]">
-        <h1 className="text-h2 mb-[22px]">КАТАЛОГ</h1>
+        <h1 className="mb-[22px] text-h2">КАТАЛОГ</h1>
         <CategorySlider />
       </div>
 
@@ -101,7 +101,7 @@ const HomePage: React.FC = () => {
               </li>
             ))}
           </ul>
-          <Button className="border-black absolute right-[10px] top-[54px]">
+          <Button className="absolute right-[10px] top-[54px] border-black">
             Каталог
           </Button>
         </div>
@@ -142,7 +142,7 @@ const HomePage: React.FC = () => {
       <div className="mt-[106px] flex justify-between gap-x-9">
         <div className="max-w-[624px]">
           <p className="text-justify text-[50px] font-medium uppercase leading-[119%]">
-            Створіть <span className="text-accent font-second">дім</span> своєї
+            Створіть <span className="font-second text-accent">дім</span> своєї
             мрії з нашим дизайнером
           </p>
 
@@ -188,15 +188,15 @@ const HomePage: React.FC = () => {
       {/* About Us */}
 
       <div className="mt-[100px]">
-        <h4 className="text-h2">ПРО НАС</h4>
+        <h3 className="text-h2">ПРО НАС</h3>
 
         <div className="mt-5 flex gap-x-9">
           <img src="about-us.png" alt="about-us" />
 
           <div>
             <div className="text-[80px] font-medium uppercase leading-[120%]">
-              <h5 className="">Наповни</h5>
-              <h5 className="text-accent float-right mr-[125px] font-second font-medium lowercase">
+              <h4>Наповни</h4>
+              <h5 className="float-right mr-[125px] font-second font-medium lowercase text-accent">
                 дім
               </h5>
               <h5 className="ml-[90px]">гармонією</h5>
@@ -211,7 +211,7 @@ const HomePage: React.FC = () => {
               задовольнять найвибагливіші смаки.
             </p>
 
-            <Button className="border-black mt-8 w-full">Більше про нас</Button>
+            <Button className="mt-8 w-full border-black">Більше про нас</Button>
           </div>
         </div>
       </div>

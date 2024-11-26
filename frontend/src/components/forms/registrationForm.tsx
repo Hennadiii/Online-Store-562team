@@ -28,11 +28,10 @@ let registerForm = yup.object().shape({
     .oneOf([yup.ref('password'), undefined!], 'Passwords must match'),
 });
 
-const RegisterForm: React.FC<IsetSection> = ({ setSection }) => {
+const RegisterForm: React.FC<IsetSection> = ({ setSection, setShowModal }) => {
   const {
     register,
     handleSubmit,
-    reset,
     formState: { errors },
   } = useForm<iRegisterFormInputs>({
     resolver: yupResolver(registerForm),
@@ -48,30 +47,37 @@ const RegisterForm: React.FC<IsetSection> = ({ setSection }) => {
       animate={{ opacity: 1 }}
       transition={{ duration: 1 }}
       onSubmit={handleSubmit(onSubmit)}
-      className="relative flex w-[470px] flex-col gap-y-6 px-[44px] pb-[22px] pt-16"
+      className="relative flex w-[470px] flex-col gap-y-6 bg-white px-[44px] pb-[22px] pt-16"
     >
-      <img src="close.svg" className="absolute right-6 top-6 h-6 w-6" />
+      <div
+        onClick={() => setShowModal(false)}
+        className="absolute right-4 top-4 cursor-pointer rounded-[50%] p-2 transition-colors duration-500 hover:bg-grey"
+      >
+        <img src="close.svg" className="h-6 w-6" alt="closeIcon" />
+      </div>
       <span className="block text-center font-bold leading-[120%]">
         Зареєструватись
       </span>
 
-      <Input
-        register={register}
-        type="text"
-        placeholder="Прізвище"
-        name="second_name"
-        error={errors.second_name}
-        required
-      />
+      <div className="flex items-center justify-between gap-x-5">
+        <Input
+          register={register}
+          type="text"
+          placeholder="Ім'я"
+          name="first_name"
+          error={errors.first_name}
+          required
+        />
 
-      <Input
-        register={register}
-        type="text"
-        placeholder="Ім'я"
-        name="first_name"
-        error={errors.first_name}
-        required
-      />
+        <Input
+          register={register}
+          type="text"
+          placeholder="Прізвище"
+          name="second_name"
+          error={errors.second_name}
+          required
+        />
+      </div>
 
       <Input
         register={register}

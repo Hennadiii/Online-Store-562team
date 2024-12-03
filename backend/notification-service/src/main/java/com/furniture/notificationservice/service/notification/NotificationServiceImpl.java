@@ -43,27 +43,18 @@ public class NotificationServiceImpl implements NotificationService {
         final String subjectHeader = subject.getSubjectText();
         final String formattedMessage = String.format(Locale.getDefault(), templateString, args.toArray());
         final List<NameAndEmail> addressesTo = notificationRequest.addressesTo();
-        final List<NameAndEmail> addressesCc = notificationRequest.addressesCc();
 
         if (addressesTo.isEmpty()) {
             throw new IllegalArgumentException("Must be at least 1 addressee");
         }
 
-        final List<Recipient> recipientsTo = getRecipients(notificationRequest.addressesTo(), Message.RecipientType.TO);
+        final List<Recipient> recipientsTo = getRecipients(notificationRequest.addressesTo());
 
         final var emailBuilder = EmailBuilder.startingBlank()
                 .from(from)
                 .to(recipientsTo)
                 .withSubject(subjectHeader)
                 .withHTMLText(formattedMessage);
-
-        if (!addressesCc.isEmpty()) {
-            final List<Recipient> recipientsCc = getRecipients(
-                    notificationRequest.addressesCc(),
-                    Message.RecipientType.CC
-            );
-            emailBuilder.cc(recipientsCc);
-        }
 
         final Email email = emailBuilder.buildEmail();
 
@@ -95,9 +86,9 @@ public class NotificationServiceImpl implements NotificationService {
         }
     }
 
-    private List<Recipient> getRecipients(List<NameAndEmail> addressees, Message.RecipientType type) {
+    private List<Recipient> getRecipients(List<NameAndEmail> addressees) {
         return addressees.stream()
-                .map(addressee -> new Recipient(addressee.name(), addressee.email(), type))
+                .map(addressee -> new Recipient(addressee.name(), addressee.email(), Message.RecipientType.TO))
                 .toList();
     }
 }

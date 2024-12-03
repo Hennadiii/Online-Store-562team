@@ -1,0 +1,14 @@
+{
+  "addressesTo": [
+    {
+      "name": "name",
+      "email": "example@example.com"
+    }
+  ],
+  "subject": "ORDER_DELIVERED",
+  "mailArguments": [
+    "name",
+    "4615316",
+    "16515615631165"
+  ]
+}

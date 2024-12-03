@@ -1,0 +1,13 @@
+{
+  "addressesTo": [
+    {
+      "name": "name",
+      "email": "example@example.com"
+    }
+  ],
+  "subject": "PROMOTIONAL_OFFER",
+  "mailArguments": [
+    "name",
+    "http://ad"
+  ]
+}

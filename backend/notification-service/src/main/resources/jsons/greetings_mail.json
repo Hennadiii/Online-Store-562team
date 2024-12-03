@@ -1,0 +1,12 @@
+{
+  "addressesTo": [
+    {
+      "name": "name",
+      "email": "example@example.com"
+    }
+  ],
+  "subject": "GREETINGS_MAIL",
+  "mailArguments": [
+    "name"
+  ]
+}

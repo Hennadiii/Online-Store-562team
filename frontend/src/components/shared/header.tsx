@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import SearchIcon from '../../assets/search.svg';
 import UserIcon from '../../assets/user.svg';
 import FavoriteIcon from '../../assets/favorite.svg';
@@ -35,24 +35,20 @@ const Header: React.FC = () => {
     return () => clearTimeout(timer);
   };
 
-  const navigate = useNavigate();
   return (
     <header className="mt-8 flex h-fit items-center justify-between">
-      <img
-        className="cursor-pointer"
-        onClick={() => navigate('/')}
-        src="logo.svg"
-        alt="logo"
-      />
+      <Link to="/">
+        <img className="cursor-pointer" src="logo.svg" alt="logo" />
+      </Link>
 
       <nav>
         <ul className="flex items-center gap-x-6">
           <li className="group cursor-pointer p-2 transition duration-300">
-            <a onClick={() => navigate('/catalog')}>Каталог</a>
+            <Link to="/catalog">Каталог</Link>
             <span className="block h-0.5 max-w-0 bg-accent transition-all duration-500 group-hover:max-w-full"></span>
           </li>
           <li className="group cursor-pointer p-2 transition duration-300">
-            <a>Про нас</a>
+            <Link to="/about-us">Про нас</Link>
             <span className="block h-0.5 max-w-0 bg-accent transition-all duration-500 group-hover:max-w-full"></span>
           </li>
           <li className="group cursor-pointer p-2 transition duration-300">

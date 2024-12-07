@@ -19,7 +19,7 @@ export default {
     },
     extend: {
       backgroundImage: {
-        home: "url('main.png')",
+        home: "url('./main.png')",
       },
       padding: {
         '80px': '80px',

@@ -4,7 +4,7 @@ import { IsetSection } from '../../@types/modal';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import * as yup from 'yup';
-import { iRegisterFormInputs } from '../../@types/forms';
+import { IregisterFormInputs } from '../../@types/forms';
 import { motion } from 'framer-motion';
 
 let registerForm = yup.object().shape({
@@ -33,7 +33,7 @@ const RegisterForm: React.FC<IsetSection> = ({ setSection, setShowModal }) => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<iRegisterFormInputs>({
+  } = useForm<IregisterFormInputs>({
     resolver: yupResolver(registerForm),
     mode: 'onBlur',
   });

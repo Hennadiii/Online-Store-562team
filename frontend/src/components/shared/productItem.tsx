@@ -5,6 +5,8 @@ interface props {
   price?: string;
   heightDiv?: string;
   heightImage?: string;
+  widthImage?: string;
+  widthDiv?: string;
 }
 
 const ProductItem: React.FC<props> = ({
@@ -12,12 +14,15 @@ const ProductItem: React.FC<props> = ({
   name,
   price,
   variant,
+  heightDiv = 'h-[316px]',
+  widthDiv = 'w-[282px]',
+  widthImage = 'w-[282px]',
   heightImage = 'h-[357px]',
 }) => {
   return (
-    <article className={`group ${variant ? `w-[49%]` : 'w-[282px]'}`}>
+    <article className={`group ${variant ? `w-[49%]` : `${widthDiv}`}`}>
       <div
-        className={`flex ${variant ? `${heightImage} w-40%` : 'h-[316px] w-[282px]'} cursor-pointer items-center justify-center bg-[#f1f1f1]`}
+        className={`flex ${variant ? `${heightImage} w-40%` : `${heightDiv} ${widthImage}`} cursor-pointer items-center justify-center bg-[#f1f1f1]`}
       >
         <img
           src={image}

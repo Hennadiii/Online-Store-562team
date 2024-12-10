@@ -6,6 +6,8 @@ import PreLoader from './components/shared/preLoader';
 const HomePage = lazy(() => import('./pages/homePage'));
 const CatalogPage = lazy(() => import('./pages/catalogPage'));
 const AboutUsPage = lazy(() => import('./pages/aboutUsPage'));
+const DivansPage = lazy(() => import('./pages/divans'));
+const CheckoutPage = lazy(() => import('./pages/checkoutPage'));
 
 const App: React.FC = () => {
   const location = useLocation();
@@ -35,6 +37,24 @@ const App: React.FC = () => {
           element={
             <Suspense fallback={<PreLoader />}>
               <AboutUsPage />
+            </Suspense>
+          }
+        />
+
+        <Route
+          path="/divans"
+          element={
+            <Suspense fallback={<PreLoader />}>
+              <DivansPage />
+            </Suspense>
+          }
+        />
+
+        <Route
+          path="/checkout"
+          element={
+            <Suspense fallback={<PreLoader />}>
+              <CheckoutPage />
             </Suspense>
           }
         />

@@ -3,8 +3,11 @@ export interface IloginFormInputs {
   password: string;
 }
 
-export interface iRegisterFormInputs extends IloginFormInputs {
+export interface IregisterFormInputs extends IloginFormInputs {
   first_name: string;
   second_name: string;
   passwordConfirm: string;
 }
+
+export interface IrestorePasswordInputs
+  extends Pick<IloginFormInputs, 'email'> {}

@@ -20,6 +20,7 @@ export default {
     extend: {
       backgroundImage: {
         home: "url('./main.png')",
+        404: "url('/404.png')",
       },
       padding: {
         '80px': '80px',

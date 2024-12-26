@@ -1,6 +1,6 @@
 /// <reference types="vite-plugin-svgr/client" />
 import './styles/index.css';
-import App from './routes.tsx';
+import App from './routes/routes.tsx';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';

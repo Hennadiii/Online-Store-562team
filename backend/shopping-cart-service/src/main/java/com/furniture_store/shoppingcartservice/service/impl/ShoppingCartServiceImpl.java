@@ -5,13 +5,12 @@ import com.furniture_store.shoppingcartservice.entity.ShoppingCart;
 import com.furniture_store.shoppingcartservice.repository.CartItemRepository;
 import com.furniture_store.shoppingcartservice.repository.ShoppingCartRepository;
 import com.furniture_store.shoppingcartservice.service.ShoppingCartService;
-import jdk.dynalink.Operation;
+import com.furniture_store.shoppingcartservice.exception.CartNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,132 +24,84 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 
     @Override
     public ShoppingCart createCart(Long userId) {
-        Optional<ShoppingCart> existingCart = shoppingCartRepository.findShoppingCartByUserId(userId);
-        if (existingCart.isPresent()) {
-            throw new RuntimeException("Shopping cart already exists for user with ID: " + userId);
-        }
-
-        ShoppingCart newCart = new ShoppingCart();
-        newCart.setUserId(userId);
-        newCart.setCreatedDate(LocalDateTime.now());
-        newCart.setItems(new ArrayList<>());
-        newCart.setTotalPrice(0.0);
-
-        return shoppingCartRepository.save(newCart);
-
-
+        ShoppingCart cart = new ShoppingCart();
+        cart.setUserId(userId);
+        cart.setCreatedDate(LocalDateTime.now());
+        cart.setItems(List.of());
+        cart.setTotalPrice(0.0);
+        return shoppingCartRepository.save(cart);
     }
 
     @Override
-    public ShoppingCart getCartByUserId(Long userId) {
-        Optional<ShoppingCart> userCart = shoppingCartRepository.findShoppingCartByUserId(userId);
+    public ShoppingCart getCartById(Long cartId) {
+        return shoppingCartRepository.findById(cartId)
+                .orElseThrow(() -> new CartNotFoundException("Cart not found with ID: " + cartId));
+    }
 
-        if (userCart.isEmpty()) {
-            throw new RuntimeException("Shopping cart not found for user with ID: " + userId);
+    @Override
+    public ShoppingCart addItemToCart(Long cartId, Long productId, int quantity, double price) {
+        ShoppingCart cart = getCartById(cartId);
+
+        Optional<CartItem> existingItem = cartItemRepository.findByShoppingCart_IdAndProductId(cartId, productId);
+        if (existingItem.isPresent()) {
+            CartItem item = existingItem.get();
+            item.setQuantity(item.getQuantity() + quantity);
+            cart.setTotalPrice(cart.getItems().stream().mapToDouble(i -> i.getPrice() * i.getQuantity()).sum());
+            shoppingCartRepository.save(cart);
+            return cart;
         }
 
-        return userCart.get();
+        CartItem newItem = new CartItem();
+        newItem.setProductId(productId);
+        newItem.setQuantity(quantity);
+        newItem.setPrice(price);
+        newItem.setShoppingCart(cart);
+
+        cart.getItems().add(newItem);
+        cart.setTotalPrice(cart.getItems().stream().mapToDouble(i -> i.getPrice() * i.getQuantity()).sum());
+
+        shoppingCartRepository.save(cart);
+
+        return cart;
+    }
+
+
+    @Override
+    public ShoppingCart updateItemQuantity(Long cartId, Long productId, int quantity) {
+        ShoppingCart cart = getCartById(cartId);
+        CartItem item = cart.getItems().stream()
+                .filter(i -> i.getProductId().equals(productId))
+                .findFirst()
+                .orElseThrow(() -> new CartNotFoundException("Product not found in cart"));
+
+        if (quantity == 0) {
+            cart.getItems().remove(item);
+        } else {
+            item.setQuantity(quantity);
+        }
+
+        cart.setTotalPrice(cart.getItems().stream().mapToDouble(i -> i.getPrice() * i.getQuantity()).sum());
+        return shoppingCartRepository.save(cart);
+    }
+
+    @Override
+    public ShoppingCart removeItemFromCart(Long cartId, Long productId) {
+        ShoppingCart cart = getCartById(cartId);
+        CartItem item = cart.getItems().stream()
+                .filter(i -> i.getProductId().equals(productId))
+                .findFirst()
+                .orElseThrow(() -> new CartNotFoundException("Product not found in cart"));
+
+        cart.getItems().remove(item);
+        cart.setTotalPrice(cart.getItems().stream().mapToDouble(i -> i.getPrice() * i.getQuantity()).sum());
+        return shoppingCartRepository.save(cart);
     }
 
     @Override
     public void clearCart(Long cartId) {
-        ShoppingCart cart = shoppingCartRepository.findById(cartId)
-                .orElseThrow(() -> new RuntimeException("Shopping cart not found with ID:" + cartId));
-
+        ShoppingCart cart = getCartById(cartId);
         cart.getItems().clear();
         cart.setTotalPrice(0.0);
-
         shoppingCartRepository.save(cart);
     }
-
-    @Override
-    public void deleteCart(Long cartId) {
-        ShoppingCart cart = shoppingCartRepository.findById(cartId)
-                .orElseThrow(() -> new RuntimeException("Shopping cart not found with ID:" + cartId));
-
-        shoppingCartRepository.delete(cart);
-
-    }
-
-    @Override
-    public void addItemToCart(Long cartId, Long productId, int quantity, double price) {
-        ShoppingCart cart = shoppingCartRepository.findById(cartId)
-                .orElseThrow(() -> new RuntimeException("Shopping cart not found with ID:" + cartId));
-
-        CartItem existingItem = cart.getItems().stream()
-                .filter(item -> item.getProductId().equals(productId))
-                .findFirst()
-                .orElse(null);
-
-        if (existingItem != null) {
-            existingItem.setQuantity(existingItem.getQuantity() + quantity);
-            existingItem.setPrice(existingItem.getPrice() + (price * quantity));
-        } else {
-            CartItem newItem = new CartItem();
-            newItem.setShoppingCart(cart);
-            newItem.setProductId(productId);
-            newItem.setQuantity(quantity);
-            newItem.setPrice(price * quantity);
-            cart.getItems().add(newItem);
-        }
-
-        double updateTotalPrice = cart.getItems().stream()
-                .mapToDouble(CartItem::getPrice)
-                .sum();
-        cart.setTotalPrice(updateTotalPrice);
-
-        shoppingCartRepository.save(cart);
-
-    }
-
-    @Override
-    public void updateItemQuantity(Long cartId, Long productId, int newQuantity) {
-        CartItem cartItem = cartItemRepository.findByShoppingCart_IdAndProductId(cartId, productId)
-                .orElseThrow(() -> new RuntimeException("Cart item not found with product ID: " + productId));
-
-        double unitPrice = cartItem.getPrice() / cartItem.getQuantity();
-        cartItem.setQuantity(newQuantity);
-        cartItem.setPrice(unitPrice * newQuantity);
-        cartItemRepository.save(cartItem);
-
-        ShoppingCart cart = shoppingCartRepository.findById(cartId)
-                .orElseThrow(() -> new RuntimeException("Shopping cart not found with ID: " + cartId));
-        double updatedTotalPrice = cartItemRepository.findByShoppingCart_Id(cartId).stream()
-                .mapToDouble(CartItem::getPrice)
-                .sum();
-        cart.setTotalPrice(updatedTotalPrice);
-        shoppingCartRepository.save(cart);
-    }
-
-
-    @Override
-    public void removeItemFromCart(Long cartId, Long productId) {
-        cartItemRepository.deleteByShoppingCart_Id(cartId);
-
-        ShoppingCart cart = shoppingCartRepository.findById(cartId)
-                .orElseThrow(() -> new RuntimeException("Shopping cart not found with ID: " + cartId));
-        double updatedTotalPrice = cartItemRepository.findByShoppingCart_Id(cartId).stream()
-                .mapToDouble(CartItem::getPrice)
-                .sum();
-        cart.setTotalPrice(updatedTotalPrice);
-        shoppingCartRepository.save(cart);
-    }
-
-
-    @Override
-    public double calculateTotalPrice(Long cartId) {
-        ShoppingCart cart = shoppingCartRepository.findById(cartId)
-                .orElseThrow(() -> new RuntimeException("Shopping cart not found with ID: " + cartId));
-
-        return cart.getItems().stream()
-                .mapToDouble(CartItem::getPrice)
-                .sum();
-    }
-
-
-    @Override
-    public List<CartItem> getCartItems(Long cartId) {
-        return cartItemRepository.findByShoppingCart_Id(cartId);
-    }
-
 }

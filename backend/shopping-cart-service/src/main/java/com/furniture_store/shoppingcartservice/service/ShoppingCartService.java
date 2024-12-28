@@ -1,26 +1,19 @@
 package com.furniture_store.shoppingcartservice.service;
 
-import com.furniture_store.shoppingcartservice.entity.CartItem;
 import com.furniture_store.shoppingcartservice.entity.ShoppingCart;
 
-import java.util.List;
 
 public interface ShoppingCartService {
     ShoppingCart createCart(Long userId);
 
-    ShoppingCart getCartByUserId(Long userId);
-
     void clearCart(Long cartId);
 
-    void deleteCart(Long cartId);
+    ShoppingCart addItemToCart(Long cartId, Long productId, int quantity, double price);
 
-    void addItemToCart(Long cartId, Long productId, int quantity, double price);
+    ShoppingCart updateItemQuantity(Long cartId, Long productId, int newQuantity);
 
-    void updateItemQuantity(Long cartId, Long productId, int newQuantity);
+    ShoppingCart removeItemFromCart(Long cartId, Long productId);
 
-    void removeItemFromCart(Long cartId, Long productId);
+    ShoppingCart getCartById(Long cartId);
 
-    double calculateTotalPrice(Long cartId);
-
-    List<CartItem> getCartItems(Long cartId);
 }

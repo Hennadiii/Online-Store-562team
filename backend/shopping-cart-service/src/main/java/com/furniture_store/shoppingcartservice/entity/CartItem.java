@@ -1,6 +1,8 @@
 package com.furniture_store.shoppingcartservice.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,8 +20,8 @@ public class CartItem {
 
     @ManyToOne
     @JoinColumn(name = "shopping_cart_id", nullable = false)
+    @JsonBackReference
     private ShoppingCart shoppingCart;
-
     private Long productId;
     private Integer quantity;
     private Double price;

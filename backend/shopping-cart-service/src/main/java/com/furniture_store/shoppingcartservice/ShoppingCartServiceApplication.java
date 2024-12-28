@@ -15,7 +15,6 @@ public class ShoppingCartServiceApplication implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
         System.out.println("http://localhost:9080/swagger-ui/index.html");
-        System.out.println("http://localhost:9080/h2-console");
     }
 
 }

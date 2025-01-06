@@ -1,7 +1,6 @@
 package com.furniture_store.product_catalog.dto;
 
-import com.furniture_store.product_catalog.entity.Image;
-import com.furniture_store.product_catalog.entity.Product;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,6 +16,7 @@ import java.util.List;
 public class  ProductDto {
 
     private Long id;
+    @NotBlank
     private String name;
     private Float price;
     private String description;
@@ -25,14 +25,4 @@ public class  ProductDto {
     private List<byte[]> images = new ArrayList<>();
     private List<String> keywords = new ArrayList<>();
 
-    public ProductDto(Product product) {
-        this.id = product.getId();
-        this.name = product.getName();
-        this.price = product.getPrice();
-        this.description = product.getDescription();
-        this.category = product.getCategory().getName();
-        this.producer = product.getProducer().getName();
-        this.images = product.getImages().stream().map(Image::getBytes).toList();
-        this.keywords = product.getKeywords();
-    }
 }

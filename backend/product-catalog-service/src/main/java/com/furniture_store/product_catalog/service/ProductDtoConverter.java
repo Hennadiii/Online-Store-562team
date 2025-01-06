@@ -13,17 +13,32 @@ import java.util.List;
 @Service
 public class ProductDtoConverter {
 
-    public Product convertToProduct(ProductDto productDto) {
-        return Product.builder()
-                .id(productDto.getId())
-                .name(productDto.getName())
-                .price(productDto.getPrice())
-                .description(productDto.getDescription())
-                .category(new Category(productDto.getCategory()))
-                .images(convertImages(productDto.getImages()))
-                .keywords(productDto.getKeywords())
-                .producer(new Producer(productDto.getProducer()))
-                .build();
+    public Product convertToEntity(ProductDto productDto) {
+        Product product = new Product();
+        product.setId(productDto.getId());
+        product.setName(productDto.getName());
+        product.setPrice(productDto.getPrice());
+        product.setDescription(productDto.getDescription());
+        product.setCategory(new Category(productDto.getCategory()));
+        product.setImages(convertImages(productDto.getImages()));
+        product.setKeywords(productDto.getKeywords());
+        product.setProducer(new Producer(productDto.getProducer()));
+        return product;
+    }
+    
+    public ProductDto convertToDto(Product product) {
+        ProductDto productDto = new ProductDto();
+        productDto.setId(product.getId());
+        productDto.setName(product.getName());
+        productDto.setPrice(product.getPrice());
+        productDto.setDescription(product.getDescription());
+        Category category = product.getCategory();
+        productDto.setCategory(category!=null ? product.getCategory().getName() : null);
+        Producer producer = product.getProducer();
+        productDto.setProducer(producer!=null ? product.getProducer().getName() : null);
+        productDto.setImages(product.getImages().stream().map(Image::getBytes).toList());
+        productDto.setKeywords(product.getKeywords());
+        return productDto;
     }
 
     List<Image> convertImages(List<byte[]> bytes) {

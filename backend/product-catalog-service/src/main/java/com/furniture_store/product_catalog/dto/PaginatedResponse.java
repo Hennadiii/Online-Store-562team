@@ -7,6 +7,13 @@ import org.springframework.data.domain.Page;
 
 import java.util.List;
 
+/**
+ * Клас, що представляє пагіновану відповідь з метаданими про кількість елементів, загальну кількість сторінок,
+ * номер сторінки та розмір сторінки.
+ * Служить для зміни типу даних зі збереженням властивостей оригінальної сторінки {@link Page}
+ *
+ * @param <T> тип об'єктів у списку content
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,18 +25,10 @@ public class PaginatedResponse<T> {
     private int number;
     private int size;
 
-    public PaginatedResponse(Page<T> page) {
-        this.content = page.getContent();
-        this.totalElements = page.getNumberOfElements();
-        this.totalPages = page.getTotalPages();
-        this.number = page.getNumber();
-        this.size = page.getSize();
-    }
-
     /**
-     * Takes all the properties except the content from the Page and the content from the List
-     * @param content: the data
-     * @param page: the properties for pagination
+     * Приймає всі властивості з об'єкта Page, окрім вмісту, а сам вміст бере з об'єкта List.
+     * @param content: Дані
+     * @param page: властивості сторінки
      */
     public PaginatedResponse(List<T> content, Page<?> page){
         this.content = content;

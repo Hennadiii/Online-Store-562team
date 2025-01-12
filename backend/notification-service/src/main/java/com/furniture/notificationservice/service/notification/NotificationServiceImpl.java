@@ -1,7 +1,6 @@
 package com.furniture.notificationservice.service.notification;
 
 import com.furniture.notificationservice.exception.NotificationException;
-import com.furniture.notificationservice.service.iface.MailTemplateManager;
 import com.furniture.notificationservice.service.iface.NotificationService;
 import jakarta.mail.Message;
 import lombok.extern.slf4j.Slf4j;
@@ -13,48 +12,45 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Locale;
 
 import static com.furniture.notificationservice.util.StringUtil.format;
 
 @Slf4j
 @Service
 public class NotificationServiceImpl implements NotificationService {
-    private final MailTemplateManager mailTemplateManager;
     private final Mailer mailer;
 
+    // Sender address field
     @Value("${spring.mail.username}")
     private String from;
 
-    public NotificationServiceImpl(MailTemplateManager mailTemplateManager, Mailer mailer) {
-        this.mailTemplateManager = mailTemplateManager;
+    public NotificationServiceImpl(
+            Mailer mailer) {
         this.mailer = mailer;
     }
 
+    // Sending a message via email.
     @Override
     public void sendMessage(NotificationRequest notificationRequest) {
         log.debug("Notification request = {}", notificationRequest);
 
-        final EmailSubject subject = notificationRequest.subject();
-        final String templateString = mailTemplateManager.getTemplateString(subject);
-        log.debug("Email template = {}", templateString);
-
-        final List<?> args = notificationRequest.mailArguments();
-        final String subjectHeader = subject.getSubjectText();
-        final String formattedMessage = String.format(Locale.getDefault(), templateString, args.toArray());
-        final List<NameAndEmail> addressesTo = notificationRequest.addressesTo();
+        // Extracting information from a response from an external service
+        final String subject = notificationRequest.subject();
+        final String text = notificationRequest.text();
+        final List<String> addressesTo = notificationRequest.addressesTo();
 
         if (addressesTo.isEmpty()) {
             throw new IllegalArgumentException("Must be at least 1 addressee");
         }
 
+        // Converting a list of addresses into a list of Recipient objects.
         final List<Recipient> recipientsTo = getRecipients(notificationRequest.addressesTo());
 
         final var emailBuilder = EmailBuilder.startingBlank()
                 .from(from)
                 .to(recipientsTo)
-                .withSubject(subjectHeader)
-                .withHTMLText(formattedMessage);
+                .withSubject(subject)
+                .withHTMLText(text);
 
         final Email email = emailBuilder.buildEmail();
 
@@ -75,8 +71,8 @@ public class NotificationServiceImpl implements NotificationService {
                 if (attempts == 10) {
                     final String errorMessage = format(
                             "Mail sending error. Subject = {}, message = {}, addresses = {}, error = {}",
-                            subjectHeader,
-                            formattedMessage,
+                            subject,
+                            text,
                             recipientsTo,
                             exceptionMessage
                     );
@@ -86,9 +82,10 @@ public class NotificationServiceImpl implements NotificationService {
         }
     }
 
-    private List<Recipient> getRecipients(List<NameAndEmail> addressees) {
+
+    private List<Recipient> getRecipients(List<String> addressees) {
         return addressees.stream()
-                .map(addressee -> new Recipient(addressee.name(), addressee.email(), Message.RecipientType.TO))
+                .map(addressee -> new Recipient(null, addressee, Message.RecipientType.TO))
                 .toList();
     }
 }

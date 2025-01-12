@@ -53,7 +53,6 @@ notification-service/
 ├── application.yml      # Spring Boot configuration
 ├── Dockerfile          # Multi-stage build definition
 ├── docker-compose.yml  # Docker service configuration
-├── jsons/              # examples of jsons
 └── pom.xml            # Maven dependencies and build config
 ```
 

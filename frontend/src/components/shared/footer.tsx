@@ -4,19 +4,11 @@ import LinkedinIcon from "@/assets/linkedin.svg";
 import InstagramIcon from "@/assets/instagram.svg";
 import PinterestIcon from "@/assets/painterest.svg";
 import WhatsAppIcon from "@/assets/whatsApp.svg";
-import useInView from "@/hooks/useVisible";
-import { cn } from "@/utils/twMerge";
+import AnimatedSection from "./animatedSection";
 
 const Footer = () => {
-  const [isVisible, ref] = useInView();
   return (
-    <footer
-      ref={ref}
-      className={cn("mt-[100px] duration-500 transition-opacity ease-in", {
-        "opacity-0": true,
-        "opacity-100": isVisible,
-      })}
-    >
+    <AnimatedSection as="footer" className="mt-[100px]">
       <div className="flex justify-between">
         <div className="flex flex-col">
           <span className="text-[24px]">cozycorners@gmail.com</span>
@@ -99,7 +91,7 @@ const Footer = () => {
         Cozy Corners
       </h6>
       <span className="p ml-6 block pt-4 text-[12px]">2024 ©</span>
-    </footer>
+    </AnimatedSection>
   );
 };
 

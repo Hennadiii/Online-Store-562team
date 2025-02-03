@@ -1,27 +1,55 @@
-"use client";
+import AnimatedSection from "@/components/shared/animatedSection";
 import Footer from "@/components/shared/footer";
 import Header from "@/components/shared/header";
+import Pagination from "@/components/shared/pagination";
+import TeamItem from "@/components/shared/teamItem";
+import TeamList from "@/components/shared/teamList";
 import { Button } from "@/components/ui/button";
-import useInView from "@/hooks/useVisible";
-import { cn } from "@/utils/twMerge";
 import Image from "next/image";
 
-const AboutUsPage = () => {
-  const [isVisible1, ref1] = useInView();
-  const [isVisible2, ref2] = useInView();
-  const [isVisible3, ref3] = useInView();
+const teamMembers = [
+  {
+    image: "/ivan.png",
+    name: "Попович Іван",
+    role: "Front-end developer",
+    time: "1 рік",
+    description: "React, Next.js, Typescript, Redux, Tailwind CSS",
+  },
+  {
+    image: "/olena.png",
+    name: "Олена Синько",
+    role: "UX-UI Designer",
+    time: "8 місяців",
+    description:
+      "Створюю зручні інтерфейси та постійно вдосконалюю свої навички",
+  },
+  {
+    image: "/katerina.png",
+    name: "Тарасюк Катерина",
+    role: "UX-UI Designer",
+    time: "8 місяців",
+    description:
+      "Розробляю корисні рішення для бізнесу та користувачів, поєднуючи креативність та практичність",
+  },
+  {
+    image: "/valeria.png",
+    name: "Валерія Подопригор",
+    role: "Project Manager",
+    time: "6 місяців",
+  },
+  {
+    image: "/dmitro.png",
+    name: "Дмитро Удодік",
+    role: "Java Backend Developer",
+  },
+];
 
+const AboutUsPage = () => {
   return (
-    <section className="bg-first mx-auto h-full max-w-[1440px] overflow-x-hidden px-80px pb-[32px]">
+    <section className="bg-first mx-auto h-full max-w-[1440px] overflow-hidden px-80px pb-[32px]">
       <Header />
 
-      <section
-        ref={ref1}
-        className={cn("transition-opacity duration-500 ease-in", {
-          "opacity-0": true,
-          "opacity-100": isVisible1,
-        })}
-      >
+      <AnimatedSection>
         <nav className="mx-auto mt-[64px] flex items-center justify-center">
           <ul className="flex items-center gap-x-3">
             {["Головна сторінка", "/", "Про Нас"].map((item) => (
@@ -47,17 +75,8 @@ const AboutUsPage = () => {
             гармонією
           </span>
         </h1>
-      </section>
-      <section
-        ref={ref2}
-        className={cn(
-          "mt-[90px] px-[162px] duration-500 ease-in transition-opacity",
-          {
-            "opacity-0": true,
-            "opacity-100": isVisible2,
-          }
-        )}
-      >
+      </AnimatedSection>
+      <AnimatedSection className="mt-[90px] px-[162px]">
         {/* графік роботи */}
         <div className="flex gap-x-[97px]">
           <div className="flex flex-col">
@@ -110,17 +129,15 @@ const AboutUsPage = () => {
           наші консультанти завжди готові підказати, допомогти з вибором і
           навіть запропонувати персоналізовані рішення для вашого інтер’єру.
         </p>
-      </section>
-      <section
-        ref={ref3}
-        className={cn(
-          "mt-[106px] flex justify-between gap-x-9 duration-500 ease-in transition-opacity",
-          {
-            "opacity-0": true,
-            "opacity-100": isVisible3,
-          }
-        )}
-      >
+      </AnimatedSection>
+
+      <AnimatedSection className="mt-[145px]">
+        <h2 className="text-h2 uppercase text-center">Наша команда</h2>
+
+        <TeamList members={teamMembers} />
+      </AnimatedSection>
+
+      <AnimatedSection className="mt-[175px] flex justify-between gap-x-9">
         <div className="max-w-[624px]">
           <p className="text-justify text-[50px] font-medium uppercase leading-[119%]">
             Створіть <span className="font-second text-accent">дім</span> своєї
@@ -132,13 +149,7 @@ const AboutUsPage = () => {
             дизайнер допоможе створити стильний та комфортний інтер’єр.
           </p>
 
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              alert("Thanks for submit our form, we will contact you soon...");
-            }}
-            className="mt-[110px]"
-          >
+          <form className="mt-[110px]">
             <input
               type="email"
               required
@@ -168,7 +179,7 @@ const AboutUsPage = () => {
             alt="contact us"
           />
         </div>
-      </section>
+      </AnimatedSection>
 
       <Footer />
     </section>

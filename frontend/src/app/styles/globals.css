@@ -1,4 +1,4 @@
-@import "./fonts/TT-Norms-Pro-Serif/ttNormsProSerif.css";
+@import "../fonts/TT-Norms-Pro-Serif/ttNormsProSerif.css";
 @import "slick-carousel/slick/slick.css";
 @import "slick-carousel/slick/slick-theme.css";
 @tailwind base;

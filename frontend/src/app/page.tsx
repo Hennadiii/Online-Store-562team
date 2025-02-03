@@ -1,15 +1,15 @@
-"use client";
 import Footer from "@/components/shared/footer";
 import Header from "@/components/shared/header";
 import BedArrow from "@/assets/bed-arrow.svg";
-import Slider from "react-slick";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import { useState, useRef } from "react";
-import ArrowRight from "@/assets/arrow-right.svg";
-import ArrowLeft from "@/assets/arrow-left.svg";
-import useInView from "@/hooks/useVisible";
-import { cn } from "@/utils/twMerge";
+import AnimatedSection from "@/components/shared/animatedSection";
+import CustomSlider from "@/components/shared/customSlider";
+
+export const metadata = {
+  title: "Cozy Corners | Home",
+  description: "Офіційни Основна сторінка нашого сайту.",
+};
 
 const tabs = [
   "Дивани",
@@ -38,42 +38,27 @@ const data = [
 ];
 
 const HomePage: React.FC = () => {
-  const [index, setIndex] = useState<number>(0);
-  const sliderRef = useRef<Slider>(null);
-  const next = () => sliderRef?.current?.slickNext();
-  const previous = () => sliderRef?.current?.slickPrev();
-  const [isVisible1, ref1] = useInView();
-  const [isVisible2, ref2] = useInView();
-  const [isVisible3, ref3] = useInView();
-  const [isVisible4, ref4] = useInView();
-  const [isVisible5, ref5] = useInView();
-
-  const beforeChange = (prev: number, next: number) => {
-    setIndex(Math.floor(next));
-  };
-  const settings = {
-    infinite: false,
-    centerMode: false,
-    speed: 500,
-    slidesToShow: 4.25,
-    className: "",
-    slidesToScroll: 1,
-    arrows: false,
-    beforeChange: beforeChange,
-  };
+  const renderedItems = data.map((product, idx) => (
+    <div key={idx} className="h-full w-full">
+      <div className="bg-[#f1f1f1] h-[316px] w-[282px] flex items-center justify-center group cursor-pointer">
+        <Image
+          className="group-hover:scale-105 duration-500"
+          src="/divan.png"
+          alt="product"
+          width={262}
+          height={170}
+        />
+      </div>
+      <span className="text-[20px] mt-2 block leading-[120%]">{product}</span>
+    </div>
+  ));
 
   return (
-    <section className="bg-first mx-auto h-full max-w-[1440px] overflow-x-hidden px-80px pb-[32px]">
+    <section className="bg-first mx-auto h-full max-w-[1440px] overflow-hidden px-80px pb-[32px]">
       <Header />
 
       {/* content top */}
-      <section
-        className={cn("duration-500 ease-in transition-opacity", {
-          "opacity-0": true,
-          "opacity-100": isVisible1,
-        })}
-        ref={ref1}
-      >
+      <AnimatedSection>
         <div className="relative h-fit">
           <h1 className="mt-1 text-[200px] font-bold">Cozy</h1>
           <h1 className="text-right text-[200px] font-bold leading-[20%]">
@@ -95,65 +80,17 @@ const HomePage: React.FC = () => {
             <BedArrow className="text-[#948d80] h-[17px] w-[118px] transition-all group-hover:scale-110 group-hover:text-white" />
           </div>
         </div>
-      </section>
+      </AnimatedSection>
 
       {/* catalog */}
-      <section
-        ref={ref2}
-        className={cn("mt-[95px] duration-500 ease-in transition-opacity", {
-          "opacity-0": true,
-          "opacity-100": isVisible2,
-        })}
-      >
+      <AnimatedSection className="mt-[95px]">
         <h1 className="mb-[15px] text-h2">КАТАЛОГ</h1>
-        <div className="h-[350px] w-full relative">
-          <ArrowLeft
-            onClick={previous}
-            className={`absolute right-[165px] top-[-80px] h-6 w-6 transition-transform hover:scale-110 ${
-              index === 0 ? "text-grey" : "cursor-pointer"
-            } `}
-          />
 
-          <ArrowRight
-            onClick={next}
-            className={`absolute right-2 top-[-80px] h-6 w-6 transition-transform hover:scale-110 ${
-              index >= data.length - 5 ? "text-grey" : "cursor-pointer"
-            } `}
-          />
-          <Slider
-            ref={(slider) => {
-              sliderRef.current = slider;
-            }}
-            {...settings}
-          >
-            {data.map((item, index) => (
-              <div className="h-full w-full" key={index}>
-                <div className="bg-[#f1f1f1] h-[316px] w-[282px] flex items-center justify-center group cursor-pointer">
-                  <Image
-                    className="group-hover:scale-105 duration-500"
-                    src="/divan.png"
-                    alt="product"
-                    width={262}
-                    height={170}
-                  />
-                </div>
-                <span className="text-[20px] mt-2 block leading-[120%]">
-                  {item}
-                </span>
-              </div>
-            ))}
-          </Slider>
-        </div>
-      </section>
+        <CustomSlider slidesToShow={4.25}>{renderedItems}</CustomSlider>
+      </AnimatedSection>
 
       {/* Popular */}
-      <section
-        ref={ref3}
-        className={cn("mt-[90px] transition-opacity duration-500 ease-in", {
-          "opacity-0": true,
-          "opacity-100": isVisible3,
-        })}
-      >
+      <AnimatedSection className="mt-[90px]">
         <div className="relative">
           <h2 className="text-h2 uppercase">Популярне</h2>
           <ul className="mt-[18px] flex items-center gap-x-[4.5px]">
@@ -316,19 +253,10 @@ const HomePage: React.FC = () => {
             </div>
           </div>
         </div>
-      </section>
+      </AnimatedSection>
 
       {/* Contact us */}
-      <section
-        ref={ref4}
-        className={cn(
-          "mt-[90px] flex justify-between gap-x-9 duration-500 transition-opacity ease-in",
-          {
-            "opacity-0": true,
-            "opacity-100": isVisible4,
-          }
-        )}
-      >
+      <AnimatedSection className="mt-[90px] flex justify-between gap-x-9">
         <div className="max-w-[624px]">
           <p className="text-justify text-[50px] font-medium uppercase leading-[119%]">
             Створіть <span className="font-second text-accent">дім</span> своєї
@@ -340,13 +268,7 @@ const HomePage: React.FC = () => {
             дизайнер допоможе створити стильний та комфортний інтер’єр.
           </p>
 
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              alert("Thanks for submit our form, we will contact you soon...");
-            }}
-            className="mt-[105px]"
-          >
+          <form className="mt-[105px]">
             <input
               type="email"
               required
@@ -375,16 +297,10 @@ const HomePage: React.FC = () => {
             alt="contact us"
           />
         </div>
-      </section>
+      </AnimatedSection>
 
       {/* About Us */}
-      <section
-        ref={ref5}
-        className={cn("mt-[22px] duration-500 transition-opacity ease-in", {
-          "opacity-0": true,
-          "opacity-100": isVisible5,
-        })}
-      >
+      <AnimatedSection className="mt-[22px]">
         <h3 className="text-h2">ПРО НАС</h3>
 
         <div className="mt-5 flex gap-x-9">
@@ -411,7 +327,7 @@ const HomePage: React.FC = () => {
             <Button className="mt-8 w-full border-black">Більше про нас</Button>
           </div>
         </div>
-      </section>
+      </AnimatedSection>
 
       <Footer />
     </section>

@@ -7,7 +7,8 @@ export interface Imodal {
   center?: boolean;
 }
 
-export interface IsetSection {
-  setSection: Dispatch<SetStateAction<number>>;
-  setShowModal: Dispatch<SetStateAction<boolean>>;
+export interface Iauthorization {
+  setSection?: Dispatch<SetStateAction<number>>;
+  setShowModal?: Dispatch<SetStateAction<boolean>>;
+  isModal?: boolean;
 }

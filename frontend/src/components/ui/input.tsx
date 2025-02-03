@@ -4,11 +4,12 @@ import { FieldError, UseFormRegister } from "react-hook-form";
 import { IloginFormInputs, IregisterFormInputs } from "../../@types/forms";
 
 const selectorVariants = cva(
-  "h-[40px] border-b-[1px] px-2 focus:outline-none",
+  "h-[43px] bg-transparent border-b px-2 focus:outline-none transition-colors duration-300 ease-in-out",
   {
     variants: {
       variant: {
-        default: "w-full",
+        default: "w-full border-black text-black",
+        error: "w-full border-red text-red",
       },
     },
     defaultVariants: {
@@ -20,8 +21,6 @@ const selectorVariants = cva(
 interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement>,
     VariantProps<typeof selectorVariants> {
-  // register: any;
-  // name: any;
   register:
     | UseFormRegister<IloginFormInputs | IregisterFormInputs>
     | UseFormRegister<IregisterFormInputs>;
@@ -40,14 +39,16 @@ const Input: React.FC<InputProps> = ({
   return (
     <div className="relative mb-1">
       <input
-        className={cn(selectorVariants({ variant, className }))}
+        className={cn(
+          selectorVariants({ variant: error ? "error" : "default", className })
+        )}
         {...props}
         {...register(name)}
       />
       <p
-        className={`text-red ${
-          error ? "opacity-100" : "opacity-0"
-        } absolute bottom-[-25px] text-[12px] transition-opacity delay-150 duration-300 ease-in-out`}
+        className={`${
+          error ? "opacity-100 text-red" : "opacity-0"
+        } absolute bottom-[-25px] text-[12px] transition-opacity duration-300 ease-in-out`}
       >
         {error?.message}
       </p>

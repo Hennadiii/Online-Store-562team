@@ -3,21 +3,41 @@ import Image from "next/image";
 interface props {
   image: string;
   title: string;
+  price?: string;
+  containerHeight?: string;
+  containerWidth?: string;
+  imageHeight?: number;
+  imageWidth?: number;
+  bgColorHeight?: string;
 }
 
-const CatalogItem: React.FC<props> = ({ image, title }) => {
+const CatalogItem: React.FC<props> = ({
+  image,
+  title,
+  price,
+  containerHeight = "h-[467px]",
+  containerWidth = "w-[624px]",
+  imageHeight = 267,
+  imageWidth = 268,
+  bgColorHeight = "h-[403px]",
+}) => {
   return (
-    <div className="h-[435px]">
-      <div className="bg-[#f1f1f1] w-[624px] h-[403px] flex items-center justify-center cursor-pointer group">
+    <div className={`${containerHeight} ${containerWidth}`}>
+      <div
+        className={`bg-[#f1f1f1] ${bgColorHeight} flex items-center justify-center cursor-pointer group`}
+      >
         <Image
           className="group-hover:scale-105 duration-300"
           src={image}
-          width={268}
-          height={267}
+          width={imageWidth}
+          height={imageHeight}
           alt="product"
         />
       </div>
-      <span className="block text-[20px] text-center mt-2">{title}</span>
+      <span className="block text-[20px] mt-1">{title}</span>
+      <span className="block text-[20px] mt-1">
+        {price} {price && "₴"}
+      </span>
     </div>
   );
 };

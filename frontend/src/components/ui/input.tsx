@@ -15,7 +15,7 @@ const selectorVariants = cva(
     defaultVariants: {
       variant: "default",
     },
-  }
+  },
 );
 
 interface InputProps
@@ -40,7 +40,10 @@ const Input: React.FC<InputProps> = ({
     <div className="relative mb-1">
       <input
         className={cn(
-          selectorVariants({ variant: error ? "error" : "default", className })
+          selectorVariants({
+            variant: variant ?? (error ? "error" : "default"),
+          }),
+          className,
         )}
         {...props}
         {...register(name)}

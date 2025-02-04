@@ -1,26 +1,20 @@
 "use client";
 import { useState } from "react";
 import ReactPaginate from "react-paginate";
-import TeamItem from "@/components/shared/teamItem";
-
-interface TeamListProps {
-  members: {
-    image: string;
-    name: string;
-    role: string;
-    time?: string;
-    description?: string;
-  }[];
-}
+import TeamItem from "@/components/about-us/teamItem";
+import { teamMembers } from "@/data/team";
 
 const ITEMS_PER_PAGE = 3;
 
-const TeamList: React.FC<TeamListProps> = ({ members }) => {
+const TeamList: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(0);
 
   // Фильтруем участников для текущей страницы
   const startIndex = currentPage * ITEMS_PER_PAGE;
-  const selectedItems = members.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  const selectedItems = teamMembers.slice(
+    startIndex,
+    startIndex + ITEMS_PER_PAGE,
+  );
 
   return (
     <div>
@@ -43,7 +37,7 @@ const TeamList: React.FC<TeamListProps> = ({ members }) => {
           onPageChange={(e) => setCurrentPage(e.selected)}
           forcePage={currentPage}
           pageRangeDisplayed={2}
-          pageCount={Math.ceil(members.length / ITEMS_PER_PAGE)}
+          pageCount={Math.ceil(teamMembers.length / ITEMS_PER_PAGE)}
         />
       </div>
     </div>

@@ -8,7 +8,6 @@ import { IregisterFormInputs } from "../../@types/forms";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Image from "next/image";
 import { useState } from "react";
-import { cn } from "@/utils/twMerge";
 
 const registerForm = yup.object().shape({
   first_name: yup
@@ -34,7 +33,6 @@ const registerForm = yup.object().shape({
 const RegisterForm: React.FC<Iauthorization> = ({
   setSection,
   setShowModal,
-  isModal = true,
 }) => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showConfirmPassword, setShowConfirmPassword] =

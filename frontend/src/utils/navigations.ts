@@ -2,6 +2,7 @@ class NavigationsLinks {
   home = "/";
   aboutUs = "/about-us";
   catalog = "/catalog";
+  contacts = "/contacts";
   checkout = "/checkout";
   deliveryAndPayment = "/delivery-and-payment";
   privacyPolicy = "/privacy-policy";

@@ -1,7 +1,4 @@
-import Breadcrumbs from "@/components/shared/breadcrumbs";
-import Footer from "@/components/shared/footer";
-import Header from "@/components/shared/header";
-import Image from "next/image";
+import AnimatedSection from "@/components/shared/animatedSection";
 
 export const metadata = {
   title: "Умови Повернення",
@@ -10,11 +7,7 @@ export const metadata = {
 
 const ReturnPolicyPage = () => {
   return (
-    <section className="bg-first mx-auto h-full max-w-[1440px] overflow-x-hidden px-80px pb-[32px]">
-      <Header />
-
-      <Breadcrumbs items={["Головна сторінка", "/", "Умови повернення"]} />
-
+    <AnimatedSection>
       <h1 className="text-h3 leading-[120%] text-justify mt-[60px] flex justify-center">
         Умови повернення
       </h1>
@@ -119,8 +112,7 @@ const ReturnPolicyPage = () => {
       </p>
 
       <p className="mt-4">Ми завжди готові допомогти! </p>
-      <Footer />
-    </section>
+    </AnimatedSection>
   );
 };
 

@@ -2,9 +2,9 @@
 import { disableScroll, enableScroll } from "@/utils/scrollbar";
 import { useState } from "react";
 import Link from "next/link";
-import LoginForm from "../forms/loginForm";
-import RegisterForm from "../forms/registrationForm";
-import CartModal from "./cartModal";
+import LoginForm from "../authForms/loginForm";
+import RegisterForm from "../authForms/registrationForm";
+import CartModal from "../checkout/cartModal";
 import ModalWrapper from "./modalWrapper";
 import SearchIcon from "../../assets/search.svg";
 import UserIcon from "../../assets/user.svg";
@@ -13,6 +13,7 @@ import CartIcon from "../../assets/cart.svg";
 import Image from "next/image";
 import useInView from "@/hooks/useVisible";
 import { cn } from "@/utils/twMerge";
+import { navTo } from "@/utils/navigations";
 
 const Header: React.FC = () => {
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -54,7 +55,7 @@ const Header: React.FC = () => {
         {
           "opacity-0": true,
           "opacity-100": isVisible,
-        }
+        },
       )}
     >
       <Link href="/">
@@ -69,20 +70,28 @@ const Header: React.FC = () => {
 
       <nav>
         <ul className="flex items-center gap-x-6 ml-14">
-          <li className="group cursor-pointer p-2 transition duration-300">
-            <Link href="/catalog">Каталог</Link>
+          <li className="group cursor-pointer transition duration-300">
+            <Link className="p-2" href="/catalog">
+              Каталог
+            </Link>
             <span className="block h-0.5 max-w-0 bg-accent transition-all duration-500 group-hover:max-w-full"></span>
           </li>
-          <li className="group cursor-pointer p-2 transition duration-300">
-            <Link href="/about-us">Про нас</Link>
+          <li className="group cursor-pointer transition duration-300">
+            <Link className="p-2" href="/about-us">
+              Про нас
+            </Link>
             <span className="block h-0.5 max-w-0 bg-accent transition-all duration-500 group-hover:max-w-full"></span>
           </li>
-          <li className="group cursor-pointer p-2 transition duration-300">
-            <a>Доставка і оплата</a>
+          <li className="group cursor-pointer transition duration-300">
+            <Link className="p-2" href={navTo.deliveryAndPayment}>
+              Доставка і оплата
+            </Link>
             <span className="block h-0.5 max-w-0 bg-accent transition-all duration-500 group-hover:max-w-full"></span>
           </li>
-          <li className="group cursor-pointer p-2 transition duration-300">
-            <a>Контакти</a>
+          <li className="group cursor-pointer transition duration-300">
+            <Link className="p-2" href={navTo.contacts}>
+              Контакти
+            </Link>
             <span className="block h-0.5 max-w-0 bg-accent transition-all duration-500 group-hover:max-w-full"></span>
           </li>
         </ul>

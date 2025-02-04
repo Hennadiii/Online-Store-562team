@@ -1,6 +1,4 @@
-import Breadcrumbs from "@/components/shared/breadcrumbs";
-import Footer from "@/components/shared/footer";
-import Header from "@/components/shared/header";
+import AnimatedSection from "@/components/shared/animatedSection";
 import Image from "next/image";
 
 export const metadata = {
@@ -10,11 +8,7 @@ export const metadata = {
 
 const DeliveryAndPaymentPage = () => {
   return (
-    <section className="bg-first mx-auto h-full max-w-[1440px] overflow-x-hidden px-80px pb-[32px]">
-      <Header />
-
-      <Breadcrumbs items={["Головна сторінка", "/", "Доставка і оплата"]} />
-
+    <AnimatedSection>
       <h1 className="text-h3 leading-[120%] text-justify mt-[60px] flex justify-center">
         Доставка і оплата
       </h1>
@@ -23,12 +17,12 @@ const DeliveryAndPaymentPage = () => {
 
       <p className="leading-[120%] mt-4">
         Ми пропонуємо два зручних способи отримання ваших замовлень: <br />{" "}
-        Кур'єрська доставка
+        Кур&apos;єрська доставка
       </p>
 
       <ul className="marker:text-accent relative list-outside list-disc pl-6 flex flex-col leading-[120%]">
-        <li>Наш кур'єр доставить ваше замовлення прямо до дверей.</li>
-        <li>Кур'єрська доставка в межах міста Львова</li>
+        <li>Наш кур&apos;єр доставить ваше замовлення прямо до дверей.</li>
+        <li>Кур&apos;єрська доставка в межах міста Львова</li>
         <li>Вартість доставки: від 90 грн</li>
         <li>Терміни доставки: [1-3 робочих дні].</li>
         <li className="list-none absolute top-[75px] left-0">Самовивіз</li>
@@ -44,7 +38,9 @@ const DeliveryAndPaymentPage = () => {
 
       <ul className="marker:text-accent mt-12 list-outside list-disc pl-7 flex flex-col gap-y-4 leading-[120%]">
         <li>до пунктів видачі посилок;</li>
-        <li>кур'єром, який доставить ваше замовлення за вказаною адресою.</li>
+        <li>
+          кур&apos;єром, який доставить ваше замовлення за вказаною адресою.
+        </li>
       </ul>
 
       <p className="leading-[120%] mt-4">
@@ -59,7 +55,9 @@ const DeliveryAndPaymentPage = () => {
 
       <ul className="marker:text-accent mt-12 list-outside list-disc pl-7 flex flex-col gap-y-4 leading-[120%]">
         <li>до пунктів видачі посилок;</li>
-        <li>кур'єром, який доставить ваше замовлення за вказаною адресою.</li>
+        <li>
+          кур&apos;єром, який доставить ваше замовлення за вказаною адресою.
+        </li>
       </ul>
 
       <div className="mt-14 h-12 w-[70px] rounded-[6px] border border-[#d9d9d9] flex justify-between items-center p-2">
@@ -96,8 +94,7 @@ const DeliveryAndPaymentPage = () => {
         <span className="text-accent font-semibold">+380( 011) 621 16 12</span>{" "}
         або напишіть на нашу електронну <br /> пошту.
       </p>
-      <Footer />
-    </section>
+    </AnimatedSection>
   );
 };
 

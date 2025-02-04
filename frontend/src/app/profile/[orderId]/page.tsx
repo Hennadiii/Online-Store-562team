@@ -1,32 +1,10 @@
-import ProfileOrderItem from "@/components/profile/orderItem";
 import ProfileSidebar from "@/components/profile/sidebar";
-import CatalogItem from "@/components/shared/catalogItem";
-import Footer from "@/components/shared/footer";
-import Header from "@/components/shared/header";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 
 const OrderDeatilPage = () => {
   return (
-    <section className="bg-first mx-auto h-full max-w-[1440px] overflow-x-hidden px-80px pb-[32px]">
-      <Header />
-
-      <nav className="mx-auto mt-[64px] flex items-center justify-center">
-        <ul className="flex items-center gap-x-3">
-          {[
-            "Дані облікового запису",
-            "/",
-            "Мої замовлення",
-            "/",
-            "№1203322123",
-          ].map((item, index) => (
-            <li key={index}>
-              <a>{item}</a>
-            </li>
-          ))}
-        </ul>
-      </nav>
-
+    <section>
       <div className="flex gap-x-[240px] mt-9">
         <ProfileSidebar />
 
@@ -159,8 +137,6 @@ const OrderDeatilPage = () => {
           <Button className="w-full border-black mt-9">Купити Повторно</Button>
         </section>
       </div>
-
-      <Footer />
     </section>
   );
 };

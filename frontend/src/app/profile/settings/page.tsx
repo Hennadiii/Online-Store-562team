@@ -1,26 +1,10 @@
-import ProfileOrderItem from "@/components/profile/orderItem";
 import ProfileSidebar from "@/components/profile/sidebar";
-import CatalogItem from "@/components/shared/catalogItem";
 import Footer from "@/components/shared/footer";
-import Header from "@/components/shared/header";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 
 const SettingsPage = () => {
   return (
-    <section className="bg-first mx-auto h-full max-w-[1440px] overflow-x-hidden px-80px pb-[32px]">
-      <Header />
-
-      <nav className="mx-auto mt-[64px] flex items-center justify-center">
-        <ul className="flex items-center gap-x-3">
-          {["Дані облікового запису", "/", "Мої замовлення"].map((item) => (
-            <li key={item}>
-              <a>{item}</a>
-            </li>
-          ))}
-        </ul>
-      </nav>
-
+    <section>
       <div className="flex gap-x-[240px] mt-9">
         <ProfileSidebar />
 
@@ -41,7 +25,7 @@ const SettingsPage = () => {
             </div>
             <div className="flex flex-col gap-y-2 h-[62px]">
               <label className="text-[12px] leading-[120%] text-accent">
-                Прізвище
+                Імʼя
               </label>
               <input
                 className="h-[41px] w-full p-2 border-b border-black"
@@ -50,7 +34,7 @@ const SettingsPage = () => {
             </div>
             <div className="flex flex-col gap-y-2 h-[62px]">
               <label className="text-[12px] leading-[120%] text-accent">
-                Прізвище
+                Телефон
               </label>
               <input
                 className="h-[41px] w-full p-2 border-b border-black"
@@ -59,7 +43,7 @@ const SettingsPage = () => {
             </div>
             <div className="flex flex-col gap-y-2 h-[62px]">
               <label className="text-[12px] leading-[120%] text-accent">
-                Прізвище
+                Email
               </label>
               <input
                 className="h-[41px] w-full p-2 border-b border-black"
@@ -73,7 +57,7 @@ const SettingsPage = () => {
 
             <div className="flex flex-col gap-y-2 h-[62px]">
               <label className="text-[12px] leading-[120%] text-accent">
-                Прізвище
+                Старий пароль
               </label>
               <input
                 className="h-[41px] w-full p-2 border-b border-black"
@@ -83,7 +67,7 @@ const SettingsPage = () => {
             </div>
             <div className="flex flex-col gap-y-2 h-[62px]">
               <label className="text-[12px] leading-[120%] text-accent">
-                Прізвище
+                Новий пароль
               </label>
               <input
                 className="h-[41px] w-full p-2 border-b border-black"
@@ -93,7 +77,7 @@ const SettingsPage = () => {
             </div>
             <div className="flex flex-col gap-y-2 h-[62px]">
               <label className="text-[12px] leading-[120%] text-accent">
-                Прізвище
+                Підтвердіть новий пароль
               </label>
               <input
                 className="h-[41px] w-full p-2 border-b border-black"

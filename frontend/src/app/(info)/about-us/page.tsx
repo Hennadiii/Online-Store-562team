@@ -1,64 +1,12 @@
 import AnimatedSection from "@/components/shared/animatedSection";
-import Footer from "@/components/shared/footer";
-import Header from "@/components/shared/header";
-import Pagination from "@/components/shared/pagination";
-import TeamItem from "@/components/shared/teamItem";
-import TeamList from "@/components/shared/teamList";
+import TeamList from "@/components/about-us/teamList";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 
-const teamMembers = [
-  {
-    image: "/ivan.png",
-    name: "Попович Іван",
-    role: "Front-end developer",
-    time: "1 рік",
-    description: "React, Next.js, Typescript, Redux, Tailwind CSS",
-  },
-  {
-    image: "/olena.png",
-    name: "Олена Синько",
-    role: "UX-UI Designer",
-    time: "8 місяців",
-    description:
-      "Створюю зручні інтерфейси та постійно вдосконалюю свої навички",
-  },
-  {
-    image: "/katerina.png",
-    name: "Тарасюк Катерина",
-    role: "UX-UI Designer",
-    time: "8 місяців",
-    description:
-      "Розробляю корисні рішення для бізнесу та користувачів, поєднуючи креативність та практичність",
-  },
-  {
-    image: "/valeria.png",
-    name: "Валерія Подопригор",
-    role: "Project Manager",
-    time: "6 місяців",
-  },
-  {
-    image: "/dmitro.png",
-    name: "Дмитро Удодік",
-    role: "Java Backend Developer",
-  },
-];
-
 const AboutUsPage = () => {
   return (
-    <section className="bg-first mx-auto h-full max-w-[1440px] overflow-hidden px-80px pb-[32px]">
-      <Header />
-
+    <section>
       <AnimatedSection>
-        <nav className="mx-auto mt-[64px] flex items-center justify-center">
-          <ul className="flex items-center gap-x-3">
-            {["Головна сторінка", "/", "Про Нас"].map((item) => (
-              <li key={item}>
-                <a>{item}</a>
-              </li>
-            ))}
-          </ul>
-        </nav>
         <h1 className="mt-8 flex w-full justify-between text-justify text-[96px]">
           Меблі,{" "}
           <span className="mb-2 font-second text-[106px] leading-[132%] text-accent">
@@ -134,7 +82,7 @@ const AboutUsPage = () => {
       <AnimatedSection className="mt-[145px]">
         <h2 className="text-h2 uppercase text-center">Наша команда</h2>
 
-        <TeamList members={teamMembers} />
+        <TeamList />
       </AnimatedSection>
 
       <AnimatedSection className="mt-[175px] flex justify-between gap-x-9">
@@ -180,8 +128,6 @@ const AboutUsPage = () => {
           />
         </div>
       </AnimatedSection>
-
-      <Footer />
     </section>
   );
 };

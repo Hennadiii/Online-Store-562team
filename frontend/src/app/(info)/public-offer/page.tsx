@@ -1,7 +1,4 @@
-import Breadcrumbs from "@/components/shared/breadcrumbs";
-import Footer from "@/components/shared/footer";
-import Header from "@/components/shared/header";
-import Image from "next/image";
+import AnimatedSection from "@/components/shared/animatedSection";
 
 export const metadata = {
   title: "Договір публічної оферти",
@@ -10,13 +7,7 @@ export const metadata = {
 
 const PublicOfferPage = () => {
   return (
-    <section className="bg-first mx-auto h-full max-w-[1440px] overflow-x-hidden px-80px pb-[32px]">
-      <Header />
-
-      <Breadcrumbs
-        items={["Головна сторінка", "/", "Договір публічної офрети"]}
-      />
-
+    <AnimatedSection>
       <h1 className="text-h3 leading-[120%] text-justify mt-[60px] flex justify-center">
         Договір публічної оферти
       </h1>
@@ -57,10 +48,10 @@ const PublicOfferPage = () => {
 
         <p className="font-semibold mt-[52px] pl-2">2. ПРЕДМЕТ ДОГОВОРУ</p>
         <p className="leading-[120%] mt-3 mb-3">
-          2.1. Продавець зобов'язується передати у власність Покупця товари,
-          обрані ним у каталозі на веб-
+          2.1. Продавець зобов&apos;язується передати у власність Покупця
+          товари, обрані ним у каталозі на веб-
           <br />
-          сайті, а Покупець зобов'язується прийняти та оплатити їх.
+          сайті, а Покупець зобов&apos;язується прийняти та оплатити їх.
         </p>
         <p>
           2.2. Цей Договір поширюється на всі товари, представлені на сайті на
@@ -94,9 +85,9 @@ const PublicOfferPage = () => {
           5.1. Продавець здійснює доставку товару за адресою, вказаною Покупцем.
         </p>
         <p className="leading-[120%]">
-          5.2. Покупець зобов'язується перевірити товар під час отримання. У
-          разі виявлення дефектів або <br /> невідповідності повідомити Продавця
-          протягом 24 годин.
+          5.2. Покупець зобов&apos;язується перевірити товар під час отримання.
+          У разі виявлення дефектів або <br /> невідповідності повідомити
+          Продавця протягом 24 годин.
         </p>
 
         <p className="font-semibold mt-[54px] pl-1">6. ПОВЕРНЕННЯ ТОВАРУ</p>
@@ -138,7 +129,7 @@ const PublicOfferPage = () => {
         <p className="font-semibold mt-[52px] pl-1">9. ІНШІ УМОВИ</p>
         <p className="my-3 leading-[120%]">
           9.1. Цей Договір є дійсним з моменту оформлення замовлення і діє до
-          виконання сторонами своїх <br /> зобов'язань.
+          виконання сторонами своїх <br /> зобов&apos;язань.
         </p>
         <p className="leading-[120%]">
           9.2. Усі спірні питання вирішуються шляхом переговорів, а за їх
@@ -155,9 +146,7 @@ const PublicOfferPage = () => {
           <p>Електронна пошта: cozycorners@gmail.com</p>
         </div>
       </div>
-
-      <Footer />
-    </section>
+    </AnimatedSection>
   );
 };
 

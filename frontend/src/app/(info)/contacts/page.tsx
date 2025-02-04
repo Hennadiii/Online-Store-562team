@@ -1,8 +1,5 @@
-import Breadcrumbs from "@/components/shared/breadcrumbs";
-import Footer from "@/components/shared/footer";
-import Header from "@/components/shared/header";
+import AnimatedSection from "@/components/shared/animatedSection";
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
 
 export const metadata = {
   title: "Контакти",
@@ -11,11 +8,7 @@ export const metadata = {
 
 const ContactsPage = () => {
   return (
-    <section className="bg-first mx-auto h-full max-w-[1440px] overflow-x-hidden px-80px pb-[32px]">
-      <Header />
-
-      <Breadcrumbs items={["Головна сторінка", "/", "Контакти"]} />
-
+    <AnimatedSection>
       <h1 className="text-h3 leading-[120%] text-justify mt-[60px] flex justify-center">
         Контакти
       </h1>
@@ -65,9 +58,7 @@ const ContactsPage = () => {
           <Button className="mt-4 border-black">відправити</Button>
         </form>
       </div>
-
-      <Footer />
-    </section>
+    </AnimatedSection>
   );
 };
 

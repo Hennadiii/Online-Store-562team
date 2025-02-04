@@ -1,5 +1,5 @@
 "use client";
-import LoginForm from "@/components/forms/loginForm";
+import LoginForm from "@/components/authForms/loginForm";
 import Header from "@/components/shared/header";
 import { Button } from "@/components/ui/button";
 import SearchIcon from "@/assets/search.svg";

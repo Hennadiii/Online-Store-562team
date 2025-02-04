@@ -74,7 +74,7 @@ const ProfileSidebar = () => {
                   {
                     "max-h-0": !isExpanded,
                     "max-h-screen": isExpanded,
-                  }
+                  },
                 )}
               >
                 {menuItem.subItems.map((subItem) => (

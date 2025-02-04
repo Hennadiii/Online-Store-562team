@@ -16,7 +16,7 @@ const buttonsVariants = cva(
     defaultVariants: {
       variant: "default",
     },
-  }
+  },
 );
 
 interface ButtonProps

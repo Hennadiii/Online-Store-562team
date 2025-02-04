@@ -1,5 +1,5 @@
 "use client";
-import { IsetSection } from "../../@types/modal";
+import { Iauthorization } from "@/@types/modal";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Button } from "../ui/button";
 import * as yup from "yup";
@@ -11,7 +11,7 @@ const restorePasswordSchema = yup.object().shape({
   email: yup.string().required("email is required").email("invalid email"),
 });
 
-const RestorePasswordForm: React.FC<IsetSection> = ({
+const RestorePasswordForm: React.FC<Iauthorization> = ({
   setSection,
   setShowModal,
 }) => {
@@ -29,7 +29,11 @@ const RestorePasswordForm: React.FC<IsetSection> = ({
       className="relative flex h-[527px] w-[470px] flex-col gap-y-6 bg-white px-[44px] pb-[52px] pt-16"
     >
       <div
-        onClick={() => setShowModal(false)}
+        onClick={() => {
+          if (setShowModal) {
+            setShowModal(false);
+          }
+        }}
         className="absolute right-4 top-4 cursor-pointer rounded-[50%] p-2 transition-colors duration-500 hover:bg-grey"
       >
         <Image
@@ -53,7 +57,11 @@ const RestorePasswordForm: React.FC<IsetSection> = ({
       /> */}
 
       <a
-        onClick={() => setSection(3)}
+        onClick={() => {
+          if (setSection) {
+            setSection(3);
+          }
+        }}
         className="block w-fit cursor-pointer text-[12px] underline"
       >
         Забули пароль?
@@ -77,7 +85,11 @@ const RestorePasswordForm: React.FC<IsetSection> = ({
       <div className="flex items-center justify-between gap-x-5 text-[12px]">
         <span>Ще не маєте аккаунта??</span>
         <a
-          onClick={() => setSection(2)}
+          onClick={() => {
+            if (setSection) {
+              setSection(2);
+            }
+          }}
           className="cursor-pointer p-[10px] text-[12px] font-bold underline"
         >
           Зареєструватись

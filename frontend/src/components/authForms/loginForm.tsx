@@ -45,7 +45,7 @@ const LoginForm: React.FC<Iauthorization> = ({
         {
           "bg-white": true,
           "bg-transparent": !isModal,
-        }
+        },
       )}
     >
       {isModal ? (

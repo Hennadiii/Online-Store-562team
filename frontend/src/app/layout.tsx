@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import "@/styles/globals.css";
+import ScrollToTop from "@/components/shared/scrollTop";
 
 const MontserratSans = Montserrat({
   subsets: ["latin"],
@@ -21,6 +22,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${MontserratSans.className} antialiased`}>
         {children}
+        <ScrollToTop />
       </body>
     </html>
   );

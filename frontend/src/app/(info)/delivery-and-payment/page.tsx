@@ -2,7 +2,7 @@ import AnimatedSection from "@/components/shared/animatedSection";
 import Image from "next/image";
 
 export const metadata = {
-  title: "Доставка і Оплата",
+  title: "Cozy Corners | Доставка і Оплата",
   description: "Офіційна Доставка і оплата нашого сайту.",
 };
 

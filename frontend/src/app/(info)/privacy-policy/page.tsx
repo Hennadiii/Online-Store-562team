@@ -1,7 +1,7 @@
 import AnimatedSection from "@/components/shared/animatedSection";
 
 export const metadata = {
-  title: "Політика Конфіденційності",
+  title: "Cozy Corners | Політика Конфіденційності",
   description: "Офіційна політика конфіденційності нашого сайту.",
 };
 

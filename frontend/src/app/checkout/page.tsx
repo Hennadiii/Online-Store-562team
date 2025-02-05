@@ -1,4 +1,3 @@
-"use client";
 import Breadcrumbs from "@/components/shared/breadcrumbs";
 import CheckoutItem from "@/components/checkout/checkoutItem";
 import Header from "@/components/shared/header";
@@ -7,6 +6,11 @@ import Image from "next/image";
 import ContactInfoForm from "@/components/checkout/contactInfoForm";
 import DeliveryInfoForm from "@/components/checkout/deliveryInfoForm";
 import AnimatedSection from "@/components/shared/animatedSection";
+
+export const metadata = {
+  title: "Cozy Corners | Оформлення замовлення",
+  description: "Офіційна сторінка Оформлення замовлення нашого сайту.",
+};
 
 const CheckoutPage = () => {
   return (

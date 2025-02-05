@@ -3,6 +3,11 @@ import TeamList from "@/components/about-us/teamList";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 
+export const metadata = {
+  title: "Cozy Corners | Про нас",
+  description: "Офіційний сторінка Про нас нашого сайту.",
+};
+
 const AboutUsPage = () => {
   return (
     <section>

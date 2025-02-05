@@ -11,7 +11,6 @@ import UserIcon from "../../assets/user.svg";
 import FavoriteIcon from "../../assets/favorite.svg";
 import CartIcon from "../../assets/cart.svg";
 import Image from "next/image";
-import useInView from "@/hooks/useVisible";
 import { cn } from "@/utils/twMerge";
 import { navTo } from "@/utils/navigations";
 
@@ -20,7 +19,6 @@ const Header: React.FC = () => {
   const [showSearch, setShowsSearch] = useState<boolean>(false);
   const [showCart, setShowCart] = useState<boolean>(false);
   const [section, setSection] = useState<number>(1);
-  const [isVisible, ref] = useInView();
 
   const showSection = () => {
     switch (section) {
@@ -48,17 +46,8 @@ const Header: React.FC = () => {
   };
 
   return (
-    <header
-      ref={ref}
-      className={cn(
-        "mt-8 flex h-fit items-center justify-between duration-500 transition-opacity  ease-in",
-        {
-          "opacity-0": true,
-          "opacity-100": isVisible,
-        },
-      )}
-    >
-      <Link href="/">
+    <header className="mt-8 flex h-fit items-center justify-between duration-700 transition-opacity animate-fade-in">
+      <Link href={navTo.home}>
         <Image
           className="cursor-pointer"
           width={111}
@@ -71,13 +60,13 @@ const Header: React.FC = () => {
       <nav>
         <ul className="flex items-center gap-x-6 ml-14">
           <li className="group cursor-pointer transition duration-300">
-            <Link className="p-2" href="/catalog">
+            <Link className="p-2" href={navTo.catalog}>
               Каталог
             </Link>
             <span className="block h-0.5 max-w-0 bg-accent transition-all duration-500 group-hover:max-w-full"></span>
           </li>
           <li className="group cursor-pointer transition duration-300">
-            <Link className="p-2" href="/about-us">
+            <Link className="p-2" href={navTo.aboutUs}>
               Про нас
             </Link>
             <span className="block h-0.5 max-w-0 bg-accent transition-all duration-500 group-hover:max-w-full"></span>
@@ -145,9 +134,13 @@ const Header: React.FC = () => {
         <div className="float-right mr-[254px] mt-[40px] flex w-[344px] justify-start bg-white p-5">
           <input
             placeholder="Введіть свій запит"
-            className={`border-b-[1px] outline-white transition-all focus:outline-none ${
-              showSearch ? "w-[280px] px-4" : "w-0"
-            } `}
+            className={cn(
+              "border-b-[1px] outline-white transition-all focus:outline-none",
+              {
+                "w-0": !showSearch,
+                "w-[280px] px-4": showSearch,
+              }
+            )}
           />
         </div>
       </ModalWrapper>

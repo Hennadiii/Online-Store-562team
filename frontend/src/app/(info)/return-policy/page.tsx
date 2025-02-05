@@ -1,7 +1,7 @@
 import AnimatedSection from "@/components/shared/animatedSection";
 
 export const metadata = {
-  title: "Умови Повернення",
+  title: "Cozy Corners | Умови Повернення",
   description: "Офіційни Умови Повернення нашого сайту.",
 };
 

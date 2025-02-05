@@ -5,6 +5,11 @@ import Footer from "@/components/shared/footer";
 import Header from "@/components/shared/header";
 import Pagination from "@/components/shared/pagination";
 
+export const metadata = {
+  title: "Cozy Corners | Каталог",
+  description: "Офіційна сторінка каталога нашого сайту.",
+};
+
 const CatalogPage: React.FC = () => {
   return (
     <section className="px-80px mx-auto h-full overflow-hidden max-w-[1440px] bg-first pb-[32px]">

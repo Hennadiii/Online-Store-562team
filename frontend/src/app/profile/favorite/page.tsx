@@ -2,6 +2,11 @@ import FavoriteItem from "@/components/profile/favoriteItem";
 import ProfileSidebar from "@/components/profile/sidebar";
 import AnimatedSection from "@/components/shared/animatedSection";
 
+export const metadata = {
+  title: "Cozy Corners | Обране",
+  description: "Офіційна сторінка обране нашого сайту.",
+};
+
 const MyOrders = () => {
   return (
     <AnimatedSection>

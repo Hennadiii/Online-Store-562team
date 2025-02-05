@@ -2,7 +2,7 @@ import AnimatedSection from "@/components/shared/animatedSection";
 import { Button } from "@/components/ui/button";
 
 export const metadata = {
-  title: "Контакти",
+  title: "Cozy Corners | Контакти",
   description: "Офіційни Контакти нашого сайту.",
 };
 

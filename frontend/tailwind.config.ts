@@ -38,6 +38,15 @@ export default {
         h5: "24px",
         h6: "16px",
       },
+      keyframes: {
+        "fade-in": {
+          "0%": { opacity: "0" },
+          "100%": { opacity: "1" },
+        },
+      },
+      animation: {
+        "fade-in": "fade-in 0.7s ease-out",
+      },
     },
   },
   plugins: [],

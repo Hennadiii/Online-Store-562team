@@ -1,7 +1,7 @@
 import AnimatedSection from "@/components/shared/animatedSection";
 
 export const metadata = {
-  title: "Договір публічної оферти",
+  title: "Cozy Corners | Договір публічної оферти",
   description: "Офіційний Договір публічної оферти нашого сайту.",
 };
 

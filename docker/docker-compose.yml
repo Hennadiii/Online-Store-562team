@@ -1,0 +1,11 @@
+version: "3.8"
+
+services:
+  frontend:
+    build:
+      context: ..
+      dockerfile: docker/DockerFile
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production

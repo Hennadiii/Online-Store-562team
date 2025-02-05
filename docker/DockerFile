@@ -1,0 +1,35 @@
+# Используем официальный образ Node.js
+FROM node:18 AS builder
+
+# Устанавливаем рабочую директорию внутри контейнера
+WORKDIR /app
+
+# Копируем package.json и package-lock.json
+COPY ../frontend/package.json ../frontend/package-lock.json ./
+
+# Устанавливаем зависимости
+RUN npm install --legacy-peer-deps
+
+# Копируем исходный код
+COPY ../frontend ./
+
+# Собираем приложение
+RUN npm run build
+
+# ---- Продуктивный образ ----
+FROM node:18 AS runner
+
+# Устанавливаем рабочую директорию внутри контейнера
+WORKDIR /app
+
+# Копируем собранные файлы из builder
+COPY --from=builder /app/package.json /app/package-lock.json ./
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/public ./public
+
+# Открываем порт
+EXPOSE 3000
+
+# Запуск приложения в продакшен-режиме
+CMD ["npm", "run", "start"]

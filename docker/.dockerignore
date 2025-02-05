@@ -1,0 +1,23 @@
+# Исключаем зависимости, они устанавливаются внутри контейнера
+node_modules
+
+# Исключаем кеш Next.js
+.next
+
+# Исключаем локальные файлы окружения (переменные среды)
+.env
+.env.local
+.env.development
+.env.production
+
+# Исключаем файлы Git
+.git
+.gitignore
+
+# Исключаем системные файлы (Windows/Mac)
+.DS_Store
+Thumbs.db
+
+# Исключаем логи и кеши
+npm-debug.log
+yarn-error.log

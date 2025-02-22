@@ -4,6 +4,7 @@ import com.furniture_store.order_management_service.dto.DisplayOrderDto;
 import com.furniture_store.order_management_service.dto.PostOrderDto;
 import com.furniture_store.order_management_service.service.OrderManager;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,7 +19,7 @@ public class OrderController {
     }
 
     @PostMapping("/orders")
-    public void createOrder(@RequestBody PostOrderDto order) {
+    public void createOrder(@RequestBody @Validated PostOrderDto order) {
         orderManager.addOrder(order);
     }
 
@@ -33,7 +34,7 @@ public class OrderController {
     }
 
     @PutMapping("/orders/{id}")
-    public void updateOrder(@PathVariable long id, @RequestBody PostOrderDto order) {
+    public void updateOrder(@PathVariable long id, @RequestBody @Validated PostOrderDto order) {
         order.setId(id);
         orderManager.updateOrder(order);
     }

@@ -6,6 +6,7 @@ import com.furniture_store.order_management_service.dto.DisplayOrderItemDto;
 import com.furniture_store.order_management_service.dto.PostOrderDto;
 import com.furniture_store.order_management_service.entity.Delivery;
 import com.furniture_store.order_management_service.entity.Order;
+import com.furniture_store.order_management_service.entity.OrderStatus;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -38,6 +39,7 @@ public class OrderDtoMapper {
         order.setCustomerName(orderDto.getCustomerName());
         DeliveryDto delivery = orderDto.getDelivery();
         order.setDelivery(new Delivery(delivery.getId(), delivery.getAddress(), delivery.getDeliveryMode()));
+        order.setStatus(OrderStatus.UNPAID);
         return order;
     }
 

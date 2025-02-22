@@ -20,9 +20,13 @@ public class OrderItemMapper {
         DisplayOrderItemDto dto = new DisplayOrderItemDto();
         dto.setId(orderItem.getId());
         dto.setQuantity(orderItem.getQuantity());
-        dto.setProductId(orderItem.getProduct().getId());
-        dto.setPricePerUnit(orderItem.getProduct().getPrice());
-        dto.setAmount(orderItem.getProduct().getPrice()*orderItem.getQuantity());
+
+        //розкоментувати коли буде реалізовано комунікацію з product-catalog-service
+
+        //dto.setProductId(orderItem.getProduct().getId());
+        //dto.setPricePerUnit(orderItem.getProduct().getPrice());
+        //dto.setAmount(orderItem.getProduct().getPrice()*orderItem.getQuantity());
+
         return dto;
     }
 }

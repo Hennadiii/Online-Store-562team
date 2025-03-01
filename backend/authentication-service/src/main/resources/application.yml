@@ -1,5 +1,6 @@
 server:
   port: 6620 # Порт, на якому працює сервіс
+
 spring:
   application:
     name: authentication-service # Назва сервісу
@@ -7,21 +8,22 @@ spring:
     jdbc:
       dialect: postgresql
   datasource:
-    url: jdbc:postgresql://localhost:5432/auth_service_db # URL бази даних
+    url: jdbc:postgresql://localhost:5432/auth_service_db # Підключення до контейнера PostgreSQL
     username: postgres
     password: Qwe2rty1@sdd
     driver-class-name: org.postgresql.Driver # JDBC драйвер
   jpa:
     hibernate:
       dialect: org.hibernate.dialect.PostgreSQLDialect
-      ddl-auto: update # Автоматичне оновлення схеми (можна змінити на validate або none для продакшну)
+      ddl-auto: update # Автоматичне оновлення схеми (змінити на `validate` або `none` для продакшну)
     show-sql: true # Відображати SQL-запити у логах
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true # Форматувати SQL у логах
+
 jwt:
-  secret: your_jwt_secret_key # Секретний ключ для підпису токенів
+  secret: your-very-secure-and-long-secret-key-in-base64 # Секретний ключ для підпису токенів
   accessToken:
     expirationMs: 600 # Час життя Access Token (у секундах)
   refreshToken:

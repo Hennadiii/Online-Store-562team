@@ -9,12 +9,18 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Entity
-@Table(name = "users")
-public class User {
+@Table(name = "person")
+public class Person {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
+
+    @Column(nullable = false)
+    private String name;
+
+    @Column(nullable = false)
+    private String phone;
 
     @Column(nullable = false, unique = true)
     private String email;
@@ -23,10 +29,10 @@ public class User {
     private String passwordHash;
 
     @Column(nullable = false)
-    private boolean isEmailVerified = false;
+    private Role role;
 
     @Column(nullable = false)
-    private String role;
+    private boolean isEmailVerified = false;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();

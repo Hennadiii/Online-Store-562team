@@ -17,13 +17,4 @@ public class TokenResponse {
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
     }
-
-    // Optional: toString method for debugging
-    @Override
-    public String toString() {
-        return "TokenResponse{" +
-                "accessToken='" + accessToken + '\'' +
-                ", refreshToken='" + refreshToken + '\'' +
-                '}';
-    }
 }

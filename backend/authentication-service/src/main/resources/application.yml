@@ -1,6 +1,10 @@
 server:
   port: 6620 # Порт, на якому працює сервіс
 
+api:
+  gateway:
+    url: http://localhost:777
+
 spring:
   application:
     name: authentication-service # Назва сервісу
@@ -23,11 +27,11 @@ spring:
         format_sql: true # Форматувати SQL у логах
 
 jwt:
-  secret: your-very-secure-and-long-secret-key-in-base64 # Секретний ключ для підпису токенів
+  secret: w5N8JtKQ0FlZThJOVXI3am1pRzVXZnI1bFJzSkhBRHc=  # Секретний ключ для підпису токенів
   accessToken:
-    expirationMs: 600 # Час життя Access Token (у секундах)
+    expirationMs: 600000000 # Час життя Access Token (у секундах)
   refreshToken:
-    expirationMs: 3600 # Час життя Refresh Token (у секундах)
+    expirationMs: 3600000000 # Час життя Refresh Token (у секундах)
   issuer: auth-service # Ім'я/домен видавця токена
 
 management:

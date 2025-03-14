@@ -10,6 +10,7 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.Key;
 import java.time.Instant;
@@ -45,7 +46,6 @@ public class TokenService {
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + accessTokenExpirationMs))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
-                .claim("role", person.getRole())
                 .compact();
     }
 
@@ -63,6 +63,7 @@ public class TokenService {
 
         Token token = new Token();
         token.setRefreshToken(newRefreshToken);
+        token.setPerson(person);
         token.setExpiresAt(Instant.now().plusMillis(refreshTokenExpirationMs));
         tokenRepository.save(token);
 
@@ -72,6 +73,7 @@ public class TokenService {
     /**
      * Оновлює токени (access та refresh) на основі Refresh Token.
      */
+    @Transactional
     public TokenResponse updateTokens(String refreshToken) {
         Instant now = Instant.now();
         tokenRepository.deleteAllExpiredTokens(now);

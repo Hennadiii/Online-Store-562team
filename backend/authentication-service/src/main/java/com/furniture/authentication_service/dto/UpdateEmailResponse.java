@@ -9,8 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class EmailRequest {
-    private String recipient;  // Email отримувача
-    private String subject;    // Тема листа
-    private String body;       // Текст листа
+public class UpdateEmailResponse {
+    private String newEmail;
+    private String verificationEmailToken;
 }

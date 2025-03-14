@@ -1,28 +1,30 @@
 package com.furniture.authentication_service.service;
 
-import com.furniture.authentication_service.dto.EmailRequest;
+import com.furniture.authentication_service.dto.NotificationRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+
+import java.util.List;
 
 @Service
 public class NotificationServiceClient {
 
     private final WebClient webClient;
 
-    @Value("${api.gateway.url}")
-    private String apiGatewayUrl;
+//    @Value("${api.gateway.url}")
+//    private String apiGatewayUrl;
 
     public NotificationServiceClient(WebClient.Builder webClientBuilder) {
-        this.webClient = webClientBuilder.build();
+        this.webClient = webClientBuilder.baseUrl("http://localhost:777").build();
     }
 
     public void sendVerificationEmail(String email, String verificationCode) {
-        EmailRequest request = new EmailRequest(email, "Verify your account",
+        NotificationRequest request = new NotificationRequest(List.of(email), "Verify your account",
                 "Click the link to verify: https://yourapp.com/verify?code=" + verificationCode);
 
         webClient.post()
-                .uri(apiGatewayUrl + "/notifications/email")
+                .uri("/notification/send")
                 .bodyValue(request)
                 .retrieve()
                 .toBodilessEntity()
@@ -30,11 +32,11 @@ public class NotificationServiceClient {
     }
 
     public void sendPasswordResetEmail(String email, String resetLink) {
-        EmailRequest request = new EmailRequest(email, "Password Reset Request",
+        NotificationRequest request = new NotificationRequest(List.of(email), "Password Reset Request",
                 "Click the link to reset your password: " + resetLink);
 
         webClient.post()
-                .uri(apiGatewayUrl + "/notifications/email")
+                .uri("/notifications/email")
                 .bodyValue(request)
                 .retrieve()
                 .toBodilessEntity()

@@ -1,0 +1,31 @@
+RegisterRequest request:
+    {
+       "name": "Dima",
+       "phone": "1234567890",
+       "email": "udodikdmitro7@gmail.com",
+       "password": "dfjglsijgb23455$^%$^JK12345"
+    }
+
+LoginRequest request:
+    {
+       "email": "udodikdmitro7@gmail.com",
+       "password": "dfjglsijgb23455$^%$^JK"
+    }
+
+ResetPasswordRequest request:
+    {
+        "refreshToken": "",
+        "email": "udodikdmitro7@gmail.com"
+    }
+
+UpdateEmailRequest request:
+    {
+      "newEmail": "udodikira24@gmail.com"
+    }
+
+UpdateEmailResponse response:
+    {
+        "newEmail": "udodikira24@gmail.com",
+        "refreshToken": ""
+    }
+

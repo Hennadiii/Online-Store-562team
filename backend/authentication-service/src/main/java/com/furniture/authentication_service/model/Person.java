@@ -29,7 +29,7 @@ public class Person {
     private String passwordHash;
 
     @Column(nullable = false)
-    private Role role;
+    private boolean isBlocked;
 
     @Column(nullable = false)
     private boolean isEmailVerified = false;

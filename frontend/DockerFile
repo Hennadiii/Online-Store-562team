@@ -28,7 +28,7 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
 
-# Открываем порт
+# Открываем порт (Render будет автоматически направлять трафик на этот порт)
 EXPOSE 3001
 
 # Запуск приложения в продакшен-режиме

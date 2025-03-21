@@ -4,7 +4,7 @@ services:
   frontend:
     build:
       context: ..
-      dockerfile: docker/DockerFile
+      dockerfile: frontend/DockerFile
     ports:
       - "3001:3001"
     environment:

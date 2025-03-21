@@ -5,13 +5,13 @@ FROM node:18 AS builder
 WORKDIR /app
 
 # Копируем package.json и package-lock.json
-COPY COPY package.json package-lock.json ./
+COPY ../frontend/package.json ../frontend/package-lock.json ./
 
 # Устанавливаем зависимости
 RUN npm install --legacy-peer-deps
 
 # Копируем исходный код
-COPY . ./
+COPY ../frontend ./
 
 # Собираем приложение
 RUN npm run build

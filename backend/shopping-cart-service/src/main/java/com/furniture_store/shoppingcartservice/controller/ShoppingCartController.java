@@ -29,16 +29,10 @@ public class ShoppingCartController {
             @ApiResponse(responseCode = "500", description = "Unexpected server error.")
     })
     @PostMapping
-    public ResponseEntity<?> createCart(@RequestParam(required = false) Long userId) {
-        try {
-            ShoppingCart shoppingCart = shoppingCartService.createCart(userId);
-            ShoppingCartDtoResponse response = shoppingCartMapperResponse.toDto(shoppingCart);
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
-        } catch (CartNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user ID: " + e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred.");
-        }
+    public ResponseEntity<ShoppingCartDtoResponse> createCart(@RequestParam(required = false) Long userId) {
+        ShoppingCart shoppingCart = shoppingCartService.createCart(userId);
+        ShoppingCartDtoResponse response = shoppingCartMapperResponse.toDto(shoppingCart);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @Operation(summary = "Get shopping cart by ID", description = "Retrieve a shopping cart using its ID.")
@@ -48,16 +42,10 @@ public class ShoppingCartController {
             @ApiResponse(responseCode = "500", description = "Unexpected server error.")
     })
     @GetMapping("/{cartId}")
-    public ResponseEntity<?> getCart(@PathVariable Long cartId) {
-        try {
+    public ResponseEntity<ShoppingCartDtoResponse> getCart(@PathVariable Long cartId) {
             ShoppingCart cart = shoppingCartService.getCartById(cartId);
             ShoppingCartDtoResponse response = shoppingCartMapperResponse.toDto(cart);
             return ResponseEntity.status(HttpStatus.OK).body(response);
-        } catch (CartNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cart with ID " + cartId + " not found.");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred.");
-        }
     }
 
     @Operation(summary = "Add item to cart", description = "Add a product item to the shopping cart.")
@@ -67,16 +55,10 @@ public class ShoppingCartController {
             @ApiResponse(responseCode = "500", description = "Unexpected server error.")
     })
     @PostMapping("/{cartId}/items")
-    public ResponseEntity<?> addItemToCart(@PathVariable Long cartId, @RequestBody CartItemDtoRequest request) {
-        try {
-            ShoppingCart cart = shoppingCartService.addItemToCart(cartId, request.getProductId(), request.getQuantity(), request.getPrice());
-            ShoppingCartDtoResponse response = shoppingCartMapperResponse.toDto(cart);
-            return ResponseEntity.ok(response);
-        } catch (CartNotFoundException | IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cart or product not found.");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred.");
-        }
+    public ResponseEntity<ShoppingCartDtoResponse> addItemToCart(@PathVariable Long cartId, @RequestBody CartItemDtoRequest request) {
+        ShoppingCart cart = shoppingCartService.addItemToCart(cartId, request.getProductId(), request.getQuantity(), request.getPrice());
+        ShoppingCartDtoResponse response = shoppingCartMapperResponse.toDto(cart);
+        return ResponseEntity.ok(response);
     }
 
     @Operation(summary = "Update item quantity", description = "Update the quantity of a specific product in the cart.")
@@ -86,16 +68,10 @@ public class ShoppingCartController {
             @ApiResponse(responseCode = "500", description = "Unexpected server error.")
     })
     @PutMapping("/{cartId}/items/{productId}")
-    public ResponseEntity<?> updateItemQuantity(@PathVariable Long cartId, @PathVariable Long productId, @RequestBody CartItemDtoRequest request) {
-        try {
-            ShoppingCart cart = shoppingCartService.updateItemQuantity(cartId, productId, request.getQuantity());
-            ShoppingCartDtoResponse response = shoppingCartMapperResponse.toDto(cart);
-            return ResponseEntity.ok(response);
-        } catch (CartNotFoundException | IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cart or product not found.");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred.");
-        }
+    public ResponseEntity<ShoppingCartDtoResponse> updateItemQuantity(@PathVariable Long cartId, @PathVariable Long productId, @RequestBody CartItemDtoRequest request) {
+        ShoppingCart cart = shoppingCartService.updateItemQuantity(cartId, productId, request.getQuantity());
+        ShoppingCartDtoResponse response = shoppingCartMapperResponse.toDto(cart);
+        return ResponseEntity.ok(response);
     }
 
     @Operation(summary = "Remove item from cart", description = "Remove a product item from the shopping cart.")
@@ -105,16 +81,10 @@ public class ShoppingCartController {
             @ApiResponse(responseCode = "500", description = "Unexpected server error.")
     })
     @DeleteMapping("/{cartId}/items/{productId}")
-    public ResponseEntity<?> removeItemFromCart(@PathVariable Long cartId, @PathVariable Long productId) {
-        try {
-            ShoppingCart cart = shoppingCartService.removeItemFromCart(cartId, productId);
-            ShoppingCartDtoResponse response = shoppingCartMapperResponse.toDto(cart);
-            return ResponseEntity.ok(response);
-        } catch (CartNotFoundException | IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cart or product not found.");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred.");
-        }
+    public ResponseEntity<ShoppingCartDtoResponse> removeItemFromCart(@PathVariable Long cartId, @PathVariable Long productId) {
+        ShoppingCart cart = shoppingCartService.removeItemFromCart(cartId, productId);
+        ShoppingCartDtoResponse response = shoppingCartMapperResponse.toDto(cart);
+        return ResponseEntity.ok(response);
     }
 
     @Operation(summary = "Clear shopping cart", description = "Delete all items from the shopping cart.")
@@ -124,14 +94,8 @@ public class ShoppingCartController {
             @ApiResponse(responseCode = "500", description = "Unexpected server error.")
     })
     @DeleteMapping("/{cartId}")
-    public ResponseEntity<?> clearCart(@PathVariable Long cartId) {
-        try {
-            shoppingCartService.clearCart(cartId);
-            return ResponseEntity.status(HttpStatus.OK).body("Cart with ID " + cartId + " has been deleted");
-        } catch (CartNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cart not found.");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred.");
-        }
+    public ResponseEntity<String> clearCart(@PathVariable Long cartId) {
+        shoppingCartService.clearCart(cartId);
+        return ResponseEntity.status(HttpStatus.OK).body("Cart with ID " + cartId + " has been deleted");
     }
 }

@@ -1,19 +1,10 @@
-FROM maven AS build
-
-WORKDIR /product-catalog-service
-
-COPY pom.xml .
-COPY src ./src
-
+# Этап сборки
+FROM maven:3.8.6-eclipse-temurin-17 AS build
+WORKDIR /app
+COPY . .
 RUN mvn clean package -DskipTests
 
-FROM eclipse-temurin:17-jdk-jammy
-
-WORKDIR /product-catalog-service
-
-COPY --from=build /product-catalog-service/target/product_catalog-0.0.1-SNAPSHOT.jar /product-catalog.jar
-
-EXPOSE 562
-
-ENTRYPOINT ["java", "-jar", "/product-catalog.jar"]
-
+# Этап запуска
+FROM eclipse-temurin:17-jre-alpine
+COPY --from=build /app/target/*.jar app.jar
+ENTRYPOINT ["java", "-jar", "app.jar"]

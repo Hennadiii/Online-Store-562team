@@ -6,7 +6,7 @@ import org.mapstruct.Mapper;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper(config = MapperConfig.class)
 public interface ShoppingCartMapperRequest extends Mappable<ShoppingCart, ShoppingCartDtoRequest>{
     @Override
     ShoppingCart toEntity(ShoppingCartDtoRequest dto);

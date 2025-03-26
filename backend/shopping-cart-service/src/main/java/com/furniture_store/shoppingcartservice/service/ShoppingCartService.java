@@ -1,5 +1,6 @@
 package com.furniture_store.shoppingcartservice.service;
 
+import com.furniture_store.shoppingcartservice.dto.CartItemDtoRequest;
 import com.furniture_store.shoppingcartservice.entity.ShoppingCart;
 
 
@@ -8,7 +9,7 @@ public interface ShoppingCartService {
 
     void clearCart(Long cartId);
 
-    ShoppingCart addItemToCart(Long cartId, Long productId, int quantity, double price);
+    ShoppingCart addItemToCart(Long cartId, CartItemDtoRequest cartItem);
 
     ShoppingCart updateItemQuantity(Long cartId, Long productId, int newQuantity);
 

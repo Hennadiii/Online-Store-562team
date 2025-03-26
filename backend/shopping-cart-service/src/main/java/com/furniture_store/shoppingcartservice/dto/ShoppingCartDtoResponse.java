@@ -1,6 +1,5 @@
 package com.furniture_store.shoppingcartservice.dto;
 
-import com.furniture_store.shoppingcartservice.entity.CartItem;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,6 +14,6 @@ public class ShoppingCartDtoResponse {
     private Long cartId;
     private Long userId;
     private LocalDateTime createdDate;
-    private List<CartItem> items;
+    private List<CartItemDtoResponse> items;
     private double totalPrice;
 }

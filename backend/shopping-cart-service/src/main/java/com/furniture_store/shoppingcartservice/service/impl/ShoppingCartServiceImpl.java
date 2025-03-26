@@ -1,11 +1,13 @@
 package com.furniture_store.shoppingcartservice.service.impl;
 
+import com.furniture_store.shoppingcartservice.dto.CartItemDtoRequest;
 import com.furniture_store.shoppingcartservice.entity.CartItem;
 import com.furniture_store.shoppingcartservice.entity.ShoppingCart;
 import com.furniture_store.shoppingcartservice.repository.CartItemRepository;
 import com.furniture_store.shoppingcartservice.repository.ShoppingCartRepository;
 import com.furniture_store.shoppingcartservice.service.ShoppingCartService;
 import com.furniture_store.shoppingcartservice.exception.CartNotFoundException;
+import com.furniture_store.shoppingcartservice.service.mapper.CartItemMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +23,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 
     private final ShoppingCartRepository shoppingCartRepository;
     private final CartItemRepository cartItemRepository;
+    private final CartItemMapper cartItemMapper;
 
     @Override
     public ShoppingCart createCart(Long userId) {
@@ -39,22 +42,18 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     }
 
     @Override
-    public ShoppingCart addItemToCart(Long cartId, Long productId, int quantity, double price) {
+    public ShoppingCart addItemToCart(Long cartId, CartItemDtoRequest cartItem) {
         ShoppingCart cart = getCartById(cartId);
 
-        Optional<CartItem> existingItem = cartItemRepository.findByShoppingCart_IdAndProductId(cartId, productId);
+        Optional<CartItem> existingItem = cartItemRepository.findByShoppingCart_IdAndProductId(cartId, cartItem.getProductId());
         if (existingItem.isPresent()) {
             CartItem item = existingItem.get();
-            item.setQuantity(item.getQuantity() + quantity);
+            item.setQuantity(item.getQuantity() + cartItem.getQuantity());
             cart.setTotalPrice(cart.getItems().stream().mapToDouble(i -> i.getPrice() * i.getQuantity()).sum());
             shoppingCartRepository.save(cart);
             return cart;
         }
-
-        CartItem newItem = new CartItem();
-        newItem.setProductId(productId);
-        newItem.setQuantity(quantity);
-        newItem.setPrice(price);
+        CartItem newItem = cartItemMapper.toEntity(cartItem);
         newItem.setShoppingCart(cart);
 
         cart.getItems().add(newItem);
@@ -64,7 +63,6 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 
         return cart;
     }
-
 
     @Override
     public ShoppingCart updateItemQuantity(Long cartId, Long productId, int quantity) {

@@ -1,115 +1,72 @@
 package com.furniture_store.product_catalog.controller;
 
+import com.furniture_store.product_catalog.dto.Filter;
 import com.furniture_store.product_catalog.dto.PaginatedResponse;
 import com.furniture_store.product_catalog.dto.ProductDto;
-import com.furniture_store.product_catalog.dto.Filter;
-import com.furniture_store.product_catalog.service.ProductManager;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
+@Tag(name = "API товарів", description = "CRUD операції для керування товарами")
+public interface ProductController {
 
-/**
- * Контролер для керування операціями з продуктами.
- */
-@RestController
-public class ProductController {
-
-    private final ProductManager productManager;
-
-    public ProductController(ProductManager productManager) {
-        this.productManager = productManager;
-    }
-
-    /**
-     * Отримує список продуктів з можливістю фільтрації, сортування та пагінації.
-     *
-     * @param filter фільтр для відбору продуктів за категорією, ціною тощо
-     * @param sort параметр для сортування (за замовчуванням "addedAt")
-     * @param order порядок сортування (за замовчуванням "desc")
-     * @param page номер сторінки результатів
-     * @param pageSize розмір сторінки
-     * @return об'єкт {@link PaginatedResponse} зі списком продуктів {@link ProductDto}
-     */
+    @Operation(summary = "Отримати всі товари",
+            description = "Повертає список усіх доступних товарів. Підтримує фільтрацію за ціною, категорією і виробником")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Список успішно отримано")
+    })
     @GetMapping("/products")
-    public PaginatedResponse<ProductDto> getProducts(
+    PaginatedResponse<ProductDto> getProducts(
             Filter filter, @RequestParam(defaultValue = "addedAt") String sort,
-            @RequestParam(defaultValue = "desc") String order, @RequestParam Integer page, @RequestParam Integer pageSize) {
+            @RequestParam(defaultValue = "desc") String order, @RequestParam Integer page, @RequestParam Integer pageSize);
 
-        return productManager.getProductList(filter, sort, order, page, pageSize);
-    }
-
-    /**
-     * Виконує пошук продуктів за ключовим словом з можливістю фільтрації, сортування та пагінації.
-     *
-     * @param keyword ключове слово для пошуку
-     * @param filter фільтр для відбору продуктів за категорією, ціною тощо
-     * @param sort параметр для сортування (за замовчуванням "addedAt")
-     * @param order порядок сортування (за замовчуванням "desc")
-     * @param page номер сторінки результатів
-     * @param pageSize розмір сторінки
-     * @return об'єкт {@link PaginatedResponse} зі списком продуктів {@link ProductDto}
-     */
+    @Operation(summary = "Пошук товарів",
+            description = "Виконує пошук товару за ключовим словом. Повертає сторінку знайдених товарів." +
+                    " Підтримує фільтрацію за ціною, категорією і виробником"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Товари знайдено або повернуто порожній список")
+    })
     @GetMapping("/products/search")
-    public PaginatedResponse<ProductDto> searchProducts(
+    PaginatedResponse<ProductDto> searchProducts(
             @RequestParam("q") String keyword, Filter filter, @RequestParam(defaultValue = "addedAt") String sort,
-            @RequestParam(defaultValue = "desc") String order, @RequestParam Integer page, @RequestParam Integer pageSize) {
-        return productManager.searchProduct(keyword, filter, sort, order, page, pageSize);
-    }
+            @RequestParam(defaultValue = "desc") String order, @RequestParam Integer page, @RequestParam Integer pageSize);
 
-    /**
-     * Додає новий продукт.
-     *
-     * @param product об'єкт {@link ProductDto}, що містить інформацію про продукт
-     * @return відповідь {@link ResponseEntity} з кодом 201 Created та URI нового продукту в заголовку Location
-     */
+    @Operation(summary = "Створити новий товар", description = "Додає новий товар до каталогу")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Товар успішно створено"),
+            @ApiResponse(responseCode = "400", description = "Некоректні вхідні дані")
+    })
     @PostMapping("/products")
-    public ResponseEntity<Void> addProduct(@RequestBody @Validated ProductDto product) {
-        Long id = productManager.addProduct(product);
-        URI uri = ServletUriComponentsBuilder
-                .fromCurrentRequestUri()
-                .path("/{productId}")
-                .buildAndExpand(id)
-                .toUri();
-        return ResponseEntity.created(uri).build();
-    }
+    ResponseEntity<Void> addProduct(@RequestBody @Validated ProductDto product);
 
-    /**
-     * Отримує інформацію про продукт за його ідентифікатором.
-     *
-     * @param id ідентифікатор продукту
-     * @return об'єкт {@link ProductDto}, що містить детальну інформацію про продукт
-     */
+    @Operation(summary = "Отримати товар за ID", description = "Повертає один товар за вказаним ідентифікатором")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Товар знайдено"),
+            @ApiResponse(responseCode = "404", description = "Товар не знайдено",
+                    content = @Content(schema = @Schema(implementation = Void.class))
+            )
+    })
     @GetMapping("/products/{id}")
-    public ProductDto getProduct(@PathVariable Long id) {
-        return productManager.getProduct(id);
-    }
-    /**
-     * Видаляє продукт за його ідентифікатором.
-     * Цей метод видаляє продукт із бази даних за переданим ідентифікатором, якщо він існує.
-     *
-     * @param id Ідентифікатор продукту, який потрібно видалити
-     */
+    ProductDto getProduct(@PathVariable Long id);
+
+    @Operation(summary = "Видалити товар", description = "Видаляє товар за вказаним ID з каталогу")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Товар успішно видалено")
+    })
     @DeleteMapping("/products/{id}")
-    public void deleteProduct(@PathVariable Long id) {
-        productManager.deleteProduct(id);
-    }
+    void deleteProduct(@PathVariable Long id);
 
-    /**
-     * Оновлює дані існуючого продукту за його ідентифікатором.
-     * Якщо продукт із заданим ідентифікатором існує, його дані оновлюються відповідно до переданих значень.
-     * Якщо продукт не існує, створюється новий запис.
-     *
-     * @param id Ідентифікатор продукту, який потрібно оновити
-     * @param product об'єкт DTO продукту з оновленими даними
-     */
+    @Operation(summary = "Оновити існуючий товар", description = "Модифікує товар за вказаним ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Товар успішно оновлено")
+    })
     @PutMapping("/products/{id}")
-    public void updateProduct(@PathVariable Long id, @RequestBody @Validated ProductDto product) {
-        product.setId(id);
-        productManager.updateProduct(product);
-    }
-
+    void updateProduct(@PathVariable Long id, @RequestBody @Validated ProductDto product);
 }
-

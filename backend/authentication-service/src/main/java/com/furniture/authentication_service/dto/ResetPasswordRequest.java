@@ -13,8 +13,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ResetPasswordRequest {
-    @NotBlank(message = "Reset token cannot be empty")
-    private String refreshToken;
 
     @NotBlank(message = "Password cannot be empty")
     @Size(min = 8, max = 50, message = "Password must be between 8 and 50 characters")

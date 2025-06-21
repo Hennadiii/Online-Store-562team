@@ -20,7 +20,8 @@ ResetPasswordRequest request:
 
 UpdateEmailRequest request:
     {
-      "newEmail": "udodikira24@gmail.com"
+      "newEmail": "udodikira24@gmail.com",
+      "refreshToken": ""
     }
 
 UpdateEmailResponse response:
@@ -29,3 +30,12 @@ UpdateEmailResponse response:
         "refreshToken": ""
     }
 
+TokenRequest request:
+    {
+        "token": ""
+    }
+
+ForgotPasswordRequest request:
+    {
+        "email": ""
+    }

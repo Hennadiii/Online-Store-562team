@@ -43,7 +43,7 @@ public class TokenService {
     public String generateAccessToken(Person person) {
         return Jwts.builder()
                 .setSubject(person.getId())
-                .setIssuedAt(new Date())
+                .claim("role", person.getRole().name())
                 .setExpiration(new Date(System.currentTimeMillis() + accessTokenExpirationMs))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
@@ -56,7 +56,7 @@ public class TokenService {
     public String generateRefreshToken(Person person) {
         String newRefreshToken = Jwts.builder()
                 .setSubject(person.getId())
-                .setIssuedAt(new Date())
+                .claim("role", person.getRole().name())
                 .setExpiration(new Date(System.currentTimeMillis() + refreshTokenExpirationMs))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
@@ -86,7 +86,7 @@ public class TokenService {
             throw new CustomException("Refresh token has expired");
         }
 
-        Person person = personRepository.findById(getUserIdFromRefreshToken(refreshToken))
+        Person person = personRepository.findById(getUserIdFromToken(refreshToken))
                 .orElseThrow(() -> new CustomException("Invalid credentials"));
 
         String newAccessToken = generateAccessToken(person);
@@ -101,24 +101,13 @@ public class TokenService {
     /**
      * Перевіряє Access Token на валідність.
      */
-    public boolean validateAccessToken(String token) {
+    public boolean validateToken(String token) {
         try {
             Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
             return true;
         } catch (JwtException e) {
             return false;
         }
-    }
-
-    /**
-     * Отримує ID користувача з Access Token.
-     */
-    public String getUserIdFromToken(String token) {
-        Claims claims = Jwts.parser()
-                .setSigningKey(jwtSecret)
-                .parseClaimsJws(token)
-                .getBody();
-        return claims.getSubject();
     }
 
     /**
@@ -129,7 +118,20 @@ public class TokenService {
                 .ifPresent(tokenRepository::delete);
     }
 
-    private Key getSigningKey() {
+    /**
+     * Витягує Role користувача з Refresh Token.
+     */
+    public String getUserRoleFromToken(String token) {
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+
+        return claims.get("role", String.class);
+    }
+
+    public Key getSigningKey() {
         byte[] keyBytes = Base64.getDecoder().decode(jwtSecret);
         return Keys.hmacShaKeyFor(keyBytes);
     }
@@ -137,13 +139,13 @@ public class TokenService {
     /**
      * Витягує ID користувача з Refresh Token.
      */
-    private String getUserIdFromRefreshToken(String refreshToken) {
+    private String getUserIdFromToken(String token) {
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
                 .build()
-                .parseClaimsJws(refreshToken)
+                .parseClaimsJws(token)
                 .getBody();
 
-        return claims.getSubject(); // Повертає userId
+        return claims.getSubject();
     }
 }

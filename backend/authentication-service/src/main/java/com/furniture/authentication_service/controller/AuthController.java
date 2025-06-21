@@ -1,138 +1,121 @@
 package com.furniture.authentication_service.controller;
 
 import com.furniture.authentication_service.dto.*;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import com.furniture.authentication_service.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.Authentication;
 
 import java.util.List;
 
-@Tag(name = "API сервісу аутентифікації", description = "Операції для аутентифікації користувача і оновлення даних входу")
-public interface AuthController {
+@RestController
+@Transactional
+@RequestMapping("/authentication")
+public class AuthController {
 
-    @Operation(summary = "Реєстрація",
-            description = "Створює акаунт з указаними даними")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Реєстрація пройшла успішно"),
-            @ApiResponse(responseCode = "401", description = "Неправильні дані")
-    })
-    @PostMapping("/register")
-    ResponseEntity<String> register(@RequestBody RegisterRequest request);
+    private final AuthService authService;
 
-    @Operation(summary = "Реєстрація",
-            description = "Створює акаунт з указаними даними")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Верифікація пройшла успішно"),
-            @ApiResponse(responseCode = "401", description = "Токен відсутній"),
-            @ApiResponse(responseCode = "500", description = "Невірний токен")
-    })
-    @GetMapping("/verify")
-    ResponseEntity<String> verifyUser(@RequestBody RefreshTokenRequest request);
+    public AuthController(AuthService authService) {
+        this.authService = authService;
+    }
 
-    @Operation(summary = "Логін",
-            description = "Авторизує користувача та повертає токени доступу")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Успішний вхід"),
-            @ApiResponse(responseCode = "401", description = "Невірні облікові дані")
-    })
-    @PostMapping("/login")
-    ResponseEntity<TokenResponse> login(@RequestBody LoginRequest request);
+    @PostMapping("/auth/register")
+    public ResponseEntity<String> register(@RequestBody RegisterRequest request) {
+        authService.register(request);
+        return ResponseEntity.ok("User registered successfully");
+    }
 
-    @Operation(summary = "Оновлення токенів",
-            description = "Оновлює токени доступу за допомогою refresh токену")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Токени успішно оновлені"),
-            @ApiResponse(responseCode = "401", description = "Відсутній refresh токен"),
-            @ApiResponse(responseCode = "500", description = "Невірний refresh токен")
-    })
-    @PostMapping("/update-tokens")
-    ResponseEntity<TokenResponse> updateTokens(@RequestBody RefreshTokenRequest request);
+    @PostMapping("/auth/admin-register")
+    public ResponseEntity<String> adminRegister(@RequestBody RegisterRequest request) {
+        authService.adminRegister(request);
+        return ResponseEntity.ok("Admin registered successfully");
+    }
 
-    @Operation(summary = "Вихід з системи",
-            description = "Видаляє refresh токен користувача")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Успішний вихід"),
-            @ApiResponse(responseCode = "401", description = "Токен відсутній")
-    })
-    @PostMapping("/logout")
-    ResponseEntity<String> logout(@RequestBody RefreshTokenRequest request);
+    @PostMapping("/auth/resend-verification")
+    public ResponseEntity<String> resendVerificationLink(@RequestBody LoginRequest request) {
+        authService.resendVerificationLink(request);
+        return ResponseEntity.ok("Verification link sent");
+    }
 
-    @Operation(summary = "Забули пароль",
-            description = "Надсилає листа з інструкцією для скидання пароля")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Лист відправлено"),
-            @ApiResponse(responseCode = "500", description = "Користувача не знайдено")
-    })
-    @PostMapping("/forgot-password")
-    ResponseEntity<String> forgotPassword(@RequestBody ForgotPasswordRequest request);
+    @GetMapping("/user/verify")
+    public ResponseEntity<String> verifyUser(Authentication auth) {
+        String response = authService.verifyUser(authHeader);
+        return ResponseEntity.ok(response);
+    }
 
-    @Operation(summary = "Скидання пароля",
-            description = "Скидає пароль і видає нові токени")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Пароль успішно скинуто"),
-            @ApiResponse(responseCode = "401", description = "Невірний токен або запит"),
-            @ApiResponse(responseCode = "500", description = "Токен не знайдено")
-    })
-    @PostMapping("/reset-password")
-    ResponseEntity<TokenResponse> resetPassword(@RequestBody ResetPasswordRequest request);
+    @PostMapping("/auth/login")
+    public ResponseEntity<TokenResponse> login(@RequestBody LoginRequest request) {
+        return ResponseEntity.ok(authService.login(request));
+    }
 
-    @Operation(summary = "Отримати користувача за ID",
-            description = "Повертає інформацію про користувача за вказаним ID")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Користувача знайдено"),
-            @ApiResponse(responseCode = "500", description = "Користувача не знайдено")
-    })
-    @GetMapping("/user/{id}")
-    ResponseEntity<PersonResponse> getUserById(@PathVariable String id);
+    @PostMapping("/user/update-tokens")
+    public ResponseEntity<TokenResponse> updateTokens(@RequestHeader("Authorization") String authHeader) {
+        return ResponseEntity.ok(authService.newTokens(authHeader));
+    }
 
-    @Operation(summary = "Отримати всіх користувачів",
-            description = "Повертає список всіх користувачів")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Список користувачів отримано")
-    })
-    @GetMapping("/allUsers")
-    ResponseEntity<List<PersonResponse>> getAllUsers();
+    @PostMapping("/user/logout")
+    public ResponseEntity<String> logout(@RequestHeader("Authorization") String authHeader) {
+        authService.logout(authHeader);
+        return ResponseEntity.ok("Logged out successfully.");
+    }
 
-    @Operation(summary = "Оновлення email",
-            description = "Оновлює email користувача та надсилає лист для підтвердження")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Email оновлено, підтвердження надіслано"),
-            @ApiResponse(responseCode = "401", description = "Некоректний запит"),
-            @ApiResponse(responseCode = "500", description = "Користувача не знайдено")
-    })
-    @PatchMapping("/updateEmail/{email}")
-    ResponseEntity<String> updateEmail(
+    @PostMapping("/auth/forgot-password")
+    public ResponseEntity<String> forgotPassword(@RequestBody ForgotPasswordRequest request) {
+        authService.processForgotPassword(request.getEmail());
+        return ResponseEntity.ok("Password reset link sent to email.");
+    }
+
+    @PostMapping("/user/reset-password")
+    public ResponseEntity<TokenResponse> resetPassword(
+            @RequestHeader("Authorization") String authHeader,
+            @RequestBody ResetPasswordRequest request) {
+        authService.resetPassword(authHeader, request.getNewPassword());
+        return ResponseEntity.ok(authService.newTokens(authHeader));
+    }
+
+    @GetMapping("/admin/user/{id}")
+    public ResponseEntity<PersonResponse> getUserById(@PathVariable String id) {
+        PersonResponse personResponse = authService.getUserById(id);
+        return ResponseEntity.ok(personResponse);
+    }
+
+    @GetMapping("/admin/allUsers")
+    public ResponseEntity<List<PersonResponse>> getAllUsers() {
+        List<PersonResponse> users = authService.getAllUsers();
+        return ResponseEntity.ok(users);
+    }
+
+
+    @PatchMapping("/user/updateEmail/{email}")
+    public ResponseEntity<String> updateEmail(
             @PathVariable String email,
-            @RequestBody @Valid UpdateEmailRequest request);
+            @RequestHeader("Authorization") String authHeader,
+            @RequestBody @Valid UpdateEmailRequest request) {
 
-    @Operation(summary = "Підтвердження email",
-            description = "Підтверджує зміну email користувача")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Email підтверджено"),
-            @ApiResponse(responseCode = "500", description = "Невірний токен підтвердження")
-    })
-    @GetMapping("/verify-email")
-    ResponseEntity<String> verifyEmail(@RequestBody UpdateEmailResponse updateEmailResponse);
+        authService.updateEmail(email, request.getNewEmail(), authHeader);
+        return ResponseEntity.ok("Verification code successfully sent to new email");
+    }
 
-    @Operation(summary = "Блокування користувача",
-            description = "Блокує користувача за ID")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Користувача заблоковано"),
-            @ApiResponse(responseCode = "500", description = "Користувача не знайдено")
-    })
-    @PatchMapping("/block/{id}")
-    ResponseEntity<String> blockUser(@PathVariable String id);
+    @GetMapping("/user/verify-email")
+    public ResponseEntity<String> verifyEmail(
+            @RequestHeader("Authorization") String authHeader,
+            @RequestBody UpdateEmailResponse updateEmailResponse) {
 
-    @Operation(summary = "Видалення користувача",
-            description = "Видаляє користувача за ID")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Користувача видалено"),
-            @ApiResponse(responseCode = "404", description = "Користувача не знайдено")
-    })
-    @DeleteMapping("/delete/{id}")
-    ResponseEntity<String> deleteUserById(@PathVariable String id);
+        authService.verifyNewEmail(updateEmailResponse.getVerificationEmailToken(), updateEmailResponse.getNewEmail());
+        return ResponseEntity.ok("Your email has been successfully updated");
+    }
+
+    @PatchMapping("/admin/block/{id}")
+    public ResponseEntity<String> blockUser(@PathVariable String id) {
+        authService.blockUserById(id);
+        return ResponseEntity.ok("User with ID " + id + " has been blocked.");
+    }
+
+    @DeleteMapping("/admin/delete/{id}")
+    public ResponseEntity<String> deleteUserById(@PathVariable String id) {
+        authService.deleteUserById(id);
+        return ResponseEntity.ok("User with ID " + id + " has been deleted.");
+    }
 }

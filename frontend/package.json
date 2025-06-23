@@ -20,6 +20,7 @@
     "react-paginate": "^8.2.0",
     "react-slick": "^0.30.3",
     "react-slider": "^2.0.6",
+    "recharts": "^3.0.0",
     "slick-carousel": "^1.8.1",
     "tailwind-merge": "^2.6.0",
     "yup": "^1.6.1"

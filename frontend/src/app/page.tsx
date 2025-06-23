@@ -304,7 +304,13 @@ const HomePage: React.FC = () => {
         <h3 className="text-h2">ПРО НАС</h3>
 
         <div className="mt-5 flex gap-x-9">
-          <Image src="/about-us.png" width={620} height={620} alt="about-us" />
+          <Image
+            className="w-full"
+            src="/about-us.png"
+            width={620}
+            height={620}
+            alt="about-us"
+          />
 
           <div>
             <div className="text-[80px] font-medium uppercase leading-[120%]">

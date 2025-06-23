@@ -11,6 +11,11 @@ class NavigationsLinks {
   profileAddress = "/profile/address";
   profileOrders = "/profile/orders";
   profileSettings = "/profile/settings";
+  adminProducts = "/admin/products";
+  adminOrders = "/admin/orders";
+  adminSettings = "/admin/settings";
+  adminClients = "/admin/clients";
+  adminStatistics = "/admin/statistics";
 }
 
 export const navTo = new NavigationsLinks();

@@ -74,40 +74,18 @@ public class TokenService {
      * Оновлює токени (access та refresh) на основі Refresh Token.
      */
     @Transactional
-    public TokenResponse updateTokens(String refreshToken) {
+    public TokenResponse updateTokens(String authHeader) {
         Instant now = Instant.now();
         tokenRepository.deleteAllExpiredTokens(now);
 
-
-        Token token = tokenRepository.findByRefreshToken(refreshToken)
-                .orElseThrow(() -> new CustomException("Invalid refresh token"));
-
-        if (token.getExpiresAt().isBefore(Instant.now())) {
-            throw new CustomException("Refresh token has expired");
-        }
-
+        String refreshToken = authHeader.substring(7);
         Person person = personRepository.findById(getUserIdFromToken(refreshToken))
                 .orElseThrow(() -> new CustomException("Invalid credentials"));
 
         String newAccessToken = generateAccessToken(person);
         String newRefreshToken = generateRefreshToken(person);
 
-        // Видалити старий токен
-        tokenRepository.delete(token);
-
         return new TokenResponse(newAccessToken, newRefreshToken);
-    }
-
-    /**
-     * Перевіряє Access Token на валідність.
-     */
-    public boolean validateToken(String token) {
-        try {
-            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
-            return true;
-        } catch (JwtException e) {
-            return false;
-        }
     }
 
     /**
@@ -119,27 +97,9 @@ public class TokenService {
     }
 
     /**
-     * Витягує Role користувача з Refresh Token.
+     * Витягує ID користувача з Token.
      */
-    public String getUserRoleFromToken(String token) {
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(getSigningKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-
-        return claims.get("role", String.class);
-    }
-
-    public Key getSigningKey() {
-        byte[] keyBytes = Base64.getDecoder().decode(jwtSecret);
-        return Keys.hmacShaKeyFor(keyBytes);
-    }
-
-    /**
-     * Витягує ID користувача з Refresh Token.
-     */
-    private String getUserIdFromToken(String token) {
+    public String getUserIdFromToken(String token) {
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
                 .build()
@@ -147,5 +107,10 @@ public class TokenService {
                 .getBody();
 
         return claims.getSubject();
+    }
+
+    private Key getSigningKey() {
+        byte[] keyBytes = Base64.getDecoder().decode(jwtSecret);
+        return Keys.hmacShaKeyFor(keyBytes);
     }
 }

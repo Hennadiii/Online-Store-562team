@@ -29,13 +29,13 @@ spring:
 jwt:
   secret: w5N8JtKQ0FlZThJOVXI3am1pRzVXZnI1bFJzSkhBRHc=  # Секретний ключ для підпису токенів
   accessToken:
-    expirationMs: 600000000 # Час життя Access Token (у секундах)
+    expirationMs: 3600000 # Час життя Access Token (у мілісекундах)
   refreshToken:
-    expirationMs: 3600000000 # Час життя Refresh Token (у секундах)
-  issuer: auth-service # Ім'я/домен видавця токена
+    expirationMs: 36000000 # Час життя Refresh Token (у мілісекундах)
+  issuer: auth-service
 
 management:
   endpoints:
     web:
       exposure:
-        include: "*" # Відкрити всі Spring Actuator endpoints
+        include: "*"

@@ -3,17 +3,14 @@ package com.furniture.authentication_service.service;
 import com.furniture.authentication_service.dto.*;
 import com.furniture.authentication_service.exception.CustomException;
 import com.furniture.authentication_service.model.Role;
-import com.furniture.authentication_service.model.Token;
 import com.furniture.authentication_service.model.Person;
 import com.furniture.authentication_service.repository.TokenRepository;
 import com.furniture.authentication_service.repository.PersonRepository;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.Instant;
 import java.util.List;
 
 @Service
@@ -25,7 +22,7 @@ public class AuthService {
     private final NotificationServiceClient notificationServiceClient;
     private final TokenRepository tokenRepository;
     private static final String USER_NOT_FOUND = "User not found";
-    private static final String APP_LINK = "https://yourapp.com/verify?code=";
+    private static final String RESET_PASSWORD_LINK = "https://online-Store-562.com/reset-password?token=";
 
     public AuthService(PersonRepository personRepository, TokenService tokenService, PasswordEncoder passwordEncoder, NotificationServiceClient notificationServiceClient, TokenRepository tokenRepository) {
         this.personRepository = personRepository;
@@ -37,7 +34,7 @@ public class AuthService {
 
     public void register(RegisterRequest request) {
         if (personRepository.existsByEmail(request.getEmail())) {
-            throw new CustomException("Email already registered");
+            throw new CustomException("Цей акаунт вже використовується");
         }
         request.cleanFieldsFromExtraSpaces();
 
@@ -58,7 +55,7 @@ public class AuthService {
 
         // Check for a registered administrator
         if (personRepository.existsByEmail(request.getEmail()) || !personList.isEmpty()) {
-            throw new CustomException("Email already registered");
+            throw new CustomException("Цей акаунт вже використовується");
         }
         register(request);
 
@@ -75,41 +72,30 @@ public class AuthService {
     }
 
     public String verifyUser(String authHeader) {
-        String verificationToken = authHeader.substring(7);
+        Person person = getPersonFromHeader(authHeader);
 
-        Token verificationRefreshToken = tokenRepository.findByRefreshToken(verificationToken)
-                .orElseThrow(() -> new CustomException("Invalid verification token"));
-
-        if (verificationRefreshToken.getExpiresAt().isBefore(Instant.now())) {
-            throw new CustomException("Verification token has expired");
-        }
-
-        Person person = verificationRefreshToken.getPerson();
         if (person.isEmailVerified()) {
             return "Person is already verified.";
         }
-
         person.setEmailVerified(true);
         personRepository.save(person);
-
-        tokenRepository.delete(verificationRefreshToken);
-
         return "Person verified successfully";
     }
 
     public TokenResponse login(LoginRequest request) {
         Person person = getPersonByEmail(request.getEmail());
+
         //перевірити логін та пароль і тоді перревіряти валідність користувача
         if (!person.isEmailVerified()) {
-            throw new CustomException("Email is not verified. Please check your email.");
+            throw new CustomException("Акаунт не верифікований. Будь ласка, перевірте Ваш email");
         }
 
         if (!passwordEncoder.matches(request.getPassword(), person.getPasswordHash())) {
-            throw new CustomException("Invalid credentials");
+            throw new CustomException("Невірний пароль");
         }
 
         if (person.isBlocked()) {
-            throw new CustomException("The user's been blocked");
+            throw new CustomException("Ваш акаунт заблоковано");
         }
 
         String accessToken = tokenService.generateAccessToken(person);
@@ -131,25 +117,19 @@ public class AuthService {
 
         String refreshToken = tokenService.generateRefreshToken(person);
 
-        String resetLink = "https://yourapp.com/reset-password?token=" + refreshToken;
+        String resetLink = RESET_PASSWORD_LINK + refreshToken;
         notificationServiceClient.sendPasswordResetEmail(email, resetLink);
     }
 
-    public void resetPassword(String token, String newPassword) {
-        Token resetToken = tokenRepository.findByRefreshToken(token)
-                .orElseThrow(() -> new CustomException("Invalid or expired reset token"));
-
-        if (resetToken.getExpiresAt().isBefore(Instant.now())) {
-            throw new CustomException("Reset token has expired");
-        }
-
-        Person person = resetToken.getPerson();
+    public void resetPassword(String authHeader, String newPassword) {
+        Person person = getPersonFromHeader(authHeader);
         person.setPasswordHash(passwordEncoder.encode(newPassword));
         personRepository.save(person);
     }
 
-    public void logout(String token) {
-        tokenService.invalidateToken(token);
+    public void logout(String authHeader) {
+        String refreshToken = authHeader.substring(7);
+        tokenService.invalidateToken(refreshToken);
     }
 
     public PersonResponse getUserById(String id) {
@@ -175,8 +155,12 @@ public class AuthService {
                 .toList();
     }
 
-    public void updateEmail(String email, String newEmail) {
+    public void updateEmail(String authHeader, String email, String newEmail) {
         Person person = getPersonByEmail(email);
+
+        if (!person.getId().equalsIgnoreCase(tokenService.getUserIdFromToken(authHeader.substring(7)))) {
+            throw new CustomException("User can change the own email only");
+        }
 
         if (personRepository.existsByEmail(newEmail)) {
             throw new CustomException("Email already in use");
@@ -184,19 +168,12 @@ public class AuthService {
 
         String verificationEmailToken = tokenService.generateRefreshToken(person);
 
-        // Sending a new email verification letter
+        // Відправляє на електронну пошту лист з посиланням дя верифікації
         notificationServiceClient.sendVerificationEmail(newEmail, verificationEmailToken);
     }
 
-    public void verifyNewEmail(String refreshToken, String newEmail) {
-        Token verifyEmailToken = tokenRepository.findByRefreshToken(refreshToken)
-                .orElseThrow(() -> new CustomException("Invalid or expired reset token"));
-
-        if (verifyEmailToken.getExpiresAt().isBefore(Instant.now())) {
-            throw new CustomException("Refresh token has expired");
-        }
-
-        Person person = verifyEmailToken.getPerson();
+    public void verifyNewEmail(String authHeader, String newEmail) {
+        Person person = getPersonFromHeader(authHeader);
         person.setEmail(newEmail);
         personRepository.save(person);
     }
@@ -230,16 +207,10 @@ public class AuthService {
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
     }
 
-    private void checkAdminAccess(TokenRequest request) {
-        String refreshToken = request.getToken();
-        String role = tokenService.getUserRoleFromToken(refreshToken);
-
-        if (!tokenService.validateToken(refreshToken)) {
-            throw new CustomException("Access token is deprecated");
-        }
-
-        if (!role.equalsIgnoreCase("ADMIN")) {
-            throw new CustomException("For admin only");
-        }
+    private Person getPersonFromHeader(String authHeader) {
+        String token = authHeader.substring(7);
+        return personRepository.findById(tokenService.getUserIdFromToken(token))
+                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
     }
+
 }

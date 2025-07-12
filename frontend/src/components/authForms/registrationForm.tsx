@@ -76,7 +76,7 @@ const RegisterForm: React.FC<Iauthorization> = ({
 
       <div className="flex items-center justify-between gap-x-5">
         <Input
-          register={register}
+          {...register('first_name')}
           type="text"
           placeholder="Ім'я"
           name="first_name"
@@ -85,7 +85,7 @@ const RegisterForm: React.FC<Iauthorization> = ({
         />
 
         <Input
-          register={register}
+          {...register('second_name')}
           type="text"
           placeholder="Прізвище"
           name="second_name"
@@ -95,7 +95,7 @@ const RegisterForm: React.FC<Iauthorization> = ({
       </div>
 
       <Input
-        register={register}
+        {...register('email')}
         type="text"
         placeholder="Email"
         name="email"
@@ -105,10 +105,10 @@ const RegisterForm: React.FC<Iauthorization> = ({
 
       <div className="relative">
         <Input
+          {...register('password')}
           type={showPassword ? "text" : "password"}
           placeholder="Пароль"
           name="password"
-          register={register}
           error={errors.password}
           required
           autoComplete="on"
@@ -125,10 +125,10 @@ const RegisterForm: React.FC<Iauthorization> = ({
 
       <div className="relative">
         <Input
+          {...register('passwordConfirm')}
           type={showConfirmPassword ? "text" : "password"}
           placeholder="Підтвердження паролю"
           name="passwordConfirm"
-          register={register}
           error={errors.passwordConfirm}
           required
           autoComplete="on"

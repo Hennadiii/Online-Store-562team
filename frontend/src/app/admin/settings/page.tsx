@@ -32,14 +32,12 @@ const settingsSchema = yup.object().shape({
 const AdminSettingsPage = () => {
   const {
     register,
-    handleSubmit,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(settingsSchema),
     mode: "onBlur",
   });
 
-  const onSubmit = (data) => console.log(data);
 
   return (
     <section className="rounded-[14px] shadow-2xl border h-screen flex px-[18px] py-[32px] gap-x-[65px] pb-10 mb-10">
@@ -55,7 +53,6 @@ const AdminSettingsPage = () => {
 
       <form
         className="w-full flex gap-x-[57px] justify-between"
-        onSubmit={handleSubmit(onSubmit)}
       >
         <div className="flex flex-col gap-y-[34px] w-full">
           <div className="h-[62px]">
@@ -64,7 +61,7 @@ const AdminSettingsPage = () => {
             </label>
             <Input
               className="mt-[5px]"
-              register={register}
+              {...register('name')}
               type="text"
               placeholder="Ім’я"
               name="name"
@@ -78,7 +75,7 @@ const AdminSettingsPage = () => {
             </label>
             <Input
               className="mt-[5px]"
-              register={register}
+              {...register('email')}
               type="text"
               placeholder="Email"
               name="email"
@@ -92,7 +89,7 @@ const AdminSettingsPage = () => {
             </label>
             <Input
               className="mt-[5px]"
-              register={register}
+              {...register('password')}
               type="password"
               placeholder="password"
               name="password"
@@ -105,8 +102,8 @@ const AdminSettingsPage = () => {
               Новий пароль
             </label>
             <Input
+              {...register('newPassword')}
               className="mt-[5px]"
-              register={register}
               type="text"
               placeholder="Новий пароль"
               name="newPassword"
@@ -120,7 +117,7 @@ const AdminSettingsPage = () => {
             </label>
             <Input
               className="mt-[5px]"
-              register={register}
+              {...register('confirmPassword')}
               type="text"
               placeholder="Підтвердіть новий пароль"
               name="confirmPassword"
@@ -141,7 +138,7 @@ const AdminSettingsPage = () => {
             </label>
             <Input
               className="mt-[5px]"
-              register={register}
+              {...register('lastName')}
               type="text"
               placeholder="Прізвище"
               name="lastName"
@@ -155,7 +152,7 @@ const AdminSettingsPage = () => {
             </label>
             <Input
               className="mt-[5px]"
-              register={register}
+              {...register('phone')}
               type="text"
               placeholder="Телефон"
               name="phone"

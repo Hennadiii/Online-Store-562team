@@ -16,7 +16,7 @@ const TeamItem: React.FC<props> = ({
   description,
 }) => {
   return (
-    <div className="max-h-[571px] h-full">
+    <div className="h-[571px] h-full">
       <Image
         className="w-[405px] h-[405px]"
         src={image}

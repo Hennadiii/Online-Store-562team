@@ -78,7 +78,7 @@ const LoginForm: React.FC<Iauthorization> = ({
         <label className="text-[12px] leading-[120%] text-accent">Email</label>
         <Input
           className="mt-[5px]"
-          register={register}
+          {...register("email")}
           type="text"
           placeholder="Email"
           name="email"
@@ -90,10 +90,10 @@ const LoginForm: React.FC<Iauthorization> = ({
       <div className="relative h-[66px]">
         <label className="text-[12px] leading-[120%] text-accent">Пароль</label>
         <Input
+          {...register("password")}
           type={showPassword ? "text" : "password"}
           placeholder="Пароль"
           name="password"
-          register={register}
           error={errors.password}
           required
           autoComplete="on"

@@ -21,6 +21,7 @@ const CatalogPage: React.FC = () => {
       <Breadcrumbs className="mt-4" />
 
       <AnimatedSection
+        threshold={0.01}
         as="div"
         className="mt-[65px] flex flex-wrap gap-x-[32px] gap-y-[30px]"
       >

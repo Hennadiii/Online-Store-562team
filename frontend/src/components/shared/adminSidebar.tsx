@@ -83,7 +83,7 @@ const AdminSidebar = () => {
             return (
               <Link key={label} href={href}>
                 <li
-                  ref={(el) => (itemRefs.current[idx] = el)}
+                  ref={(el) => {itemRefs.current[idx] = el} }
                   className={`
                     ${label === "Налаштування" && "mt-[57px]"}
                     ml-[26px] mr-[14px] py-[13px] rounded-[6px]

@@ -1,7 +1,7 @@
 import { VariantProps, cva } from "class-variance-authority";
 import { cn } from "../../utils/twMerge";
-import { FieldError, UseFormRegister } from "react-hook-form";
-import { IloginFormInputs, IregisterFormInputs } from "../../@types/forms";
+import { FieldError } from "react-hook-form";
+
 
 const selectorVariants = cva(
   "h-[43px] bg-transparent border-b px-2 focus:outline-none transition-colors duration-300 ease-in-out",
@@ -21,18 +21,13 @@ const selectorVariants = cva(
 interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement>,
     VariantProps<typeof selectorVariants> {
-  register:
-    | UseFormRegister<IloginFormInputs | IregisterFormInputs>
-    | UseFormRegister<IregisterFormInputs>;
-  name: "email" | "password" | "first_name" | "second_name" | "passwordConfirm";
+  name: string;
   error: FieldError | undefined;
 }
 
 const Input: React.FC<InputProps> = ({
   className,
   variant,
-  name,
-  register,
   error,
   ...props
 }) => {
@@ -46,7 +41,6 @@ const Input: React.FC<InputProps> = ({
           className,
         )}
         {...props}
-        {...register(name)}
       />
       <p
         className={`${

@@ -11,7 +11,7 @@ export const metadata = {
 const AboutUsPage = () => {
   return (
     <section>
-      <AnimatedSection>
+      <AnimatedSection threshold={0.03}>
         <h1 className="mt-8 flex w-full justify-between text-justify text-[96px]">
           Меблі,{" "}
           <span className="mb-2 font-second text-[106px] leading-[132%] text-accent">
@@ -29,7 +29,7 @@ const AboutUsPage = () => {
           </span>
         </h1>
       </AnimatedSection>
-      <AnimatedSection className="mt-[90px] px-[162px]">
+      <AnimatedSection className="mt-[90px] px-[162px]" threshold={0.01}>
         {/* графік роботи */}
         <div className="flex gap-x-[97px]">
           <div className="flex flex-col">
@@ -84,13 +84,13 @@ const AboutUsPage = () => {
         </p>
       </AnimatedSection>
 
-      <AnimatedSection className="mt-[145px]">
+      <AnimatedSection className="mt-[145px]" threshold={0.03}>
         <h2 className="text-h2 uppercase text-center">Наша команда</h2>
 
         <TeamList />
       </AnimatedSection>
 
-      <AnimatedSection className="mt-[175px] flex justify-between gap-x-9">
+      <AnimatedSection className="mt-[175px] flex justify-between gap-x-9" threshold={0.03}>
         <div className="max-w-[624px]">
           <p className="text-justify text-[50px] font-medium uppercase leading-[119%]">
             Створіть <span className="font-second text-accent">дім</span> своєї

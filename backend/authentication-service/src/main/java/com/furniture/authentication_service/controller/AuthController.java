@@ -180,26 +180,30 @@ public class AuthController {
     }
 
 
-    @Operation(summary = "Оновити email", description = "Змінює email користувача та надсилає підтвердження на нову адресу.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Код підтвердження надіслано"),
-            @ApiResponse(responseCode = "401", description = "Email вже використовується"),
-            @ApiResponse(responseCode = "403", description = """
-                    Помилки:
-                    - невірний, або відсутній токен
-                    - токен протерміновано
-                    - користувач може змінювати лише власний email
-                    """
-            ),
-            @ApiResponse(responseCode = "404", description = "Користувача не знайдено")
-    })
+    @Operation(
+            summary = "Оновити email",
+            description = "Змінює email користувача та надсилає підтвердження на нову адресу.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Код підтвердження надіслано"),
+                    @ApiResponse(responseCode = "401", description = "Email вже використовується",
+                            content = @Content(schema = @Schema())),
+                    @ApiResponse(responseCode = "403", description = """
+                        Помилки:
+                        - невірний, або відсутній токен
+                        - токен протерміновано
+                        - користувач може змінювати лише власний email
+                    """,
+                            content = @Content(schema = @Schema())
+                    ),
+                    @ApiResponse(responseCode = "404", description = "Користувача не знайдено",
+                            content = @Content(schema = @Schema())
+                    )})
     @PatchMapping("/user/updateEmail/{email}")
-    public ResponseEntity<String> updateEmail(
+    public void updateEmail(
             @PathVariable String email,
             @RequestHeader("Authorization") String authHeader,
             @RequestBody @Valid UpdateEmailRequest request) {
         authService.updateEmail(authHeader, email, request.getNewEmail());
-        return ResponseEntity.ok("Verification code successfully sent to new email");
     }
 
     @Operation(summary = "Підтвердження нового email", description = "Підтверджує зміну email користувача за допомогою токена.")

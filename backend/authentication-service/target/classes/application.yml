@@ -1,5 +1,5 @@
 server:
-  port: 6620 # Порт, на якому працює сервіс
+  port: ${APP_SERVER_PORT} # Порт, на якому працює сервіс
 
 api:
   gateway:
@@ -12,9 +12,9 @@ spring:
     jdbc:
       dialect: postgresql
   datasource:
-    url: jdbc:postgresql://localhost:5432/auth_service_db # Підключення до контейнера PostgreSQL
-    username: postgres
-    password: Qwe2rty1@sdd
+    url: ${SPRING_DATASOURCE_URL} # Підключення до контейнера PostgreSQL
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: org.postgresql.Driver # JDBC драйвер
   jpa:
     hibernate:
@@ -32,10 +32,10 @@ jwt:
     expirationMs: 3600000 # Час життя Access Token (у мілісекундах)
   refreshToken:
     expirationMs: 36000000 # Час життя Refresh Token (у мілісекундах)
-  issuer: auth-service # Ім'я/домен видавця токена
+  issuer: auth-service
 
 management:
   endpoints:
     web:
       exposure:
-        include: "*" # Відкрити всі Spring Actuator endpoints
+        include: "*"

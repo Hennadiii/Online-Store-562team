@@ -2,34 +2,37 @@ version: '3.8'
 
 services:
   db:
-    image: postgres # Використовуємо офіційний образ PostgreSQL
-    container_name: authentication-service-db
+    image: postgres
+    container_name: auth-service-db
     restart: always
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: Qwe2rty1@sdd
-      POSTGRES_DB: authentication_service_db
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   authentication-service:
     container_name: authentication-service
     build:
       context: .
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/authentication_service_db
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: Qwe2rty1@sdd
-      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
-      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
-      SPRING_JPA_PROPERTIES_HIBERNATE_DDL_AUTO: update
-      SPRING_JPA_HIBERNATE_NAMING_PHYSICAL_STRATEGY: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/auth_service_db
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      APP_SERVER_PORT: ${APP_SERVER_PORT}
     ports:
-      - "8080:8080"
+      - "${APP_SERVER_PORT}:${APP_SERVER_PORT}"
 
 volumes:
-  postgres_data:
+  pgdata:

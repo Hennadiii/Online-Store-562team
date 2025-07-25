@@ -4,6 +4,11 @@ import AnimatedSection from "@/components/shared/animatedSection";
 import CatalogItem from "@/components/shared/catalogItem";
 import { Button } from "@/components/ui/button";
 
+export const metadata = {
+  title: "Cozy Corners | Мої замовлення",
+  description: "Офіційна сторінка мої замовлення нашого сайту.",
+};
+
 const MyOrders = () => {
   return (
     <AnimatedSection>

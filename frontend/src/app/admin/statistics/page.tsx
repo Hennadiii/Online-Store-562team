@@ -1,4 +1,4 @@
-import SalesDetailsChart from "@/components/shared/adminSalesDetailsChart";
+import SalesDetailsChart from "@/components/admin/adminSalesDetailsChart";
 import Image from "next/image";
 
 type Product = {

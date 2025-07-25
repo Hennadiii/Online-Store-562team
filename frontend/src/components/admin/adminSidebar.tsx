@@ -78,7 +78,7 @@ const AdminSidebar = () => {
 
         <ul className="flex flex-col gap-y-[22px]">
           {navItems.map(({ href, Icon, label, alt }, idx) => {
-            const isActive = pathname === href;
+            const isActive = pathname.startsWith(href);
 
             return (
               <Link key={label} href={href}>

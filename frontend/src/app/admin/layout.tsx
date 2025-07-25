@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "@/styles/globals.css";
-import AdminSidebar from "@/components/shared/adminSidebar";
-import AdminTopbar from "@/components/shared/adminTopbar";
+import AdminSidebar from "@/components/admin/adminSidebar";
+import AdminTopbar from "@/components/admin/adminTopbar";
 
 export const metadata: Metadata = {
   title: "Admin Panel",

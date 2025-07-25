@@ -1,4 +1,6 @@
+"use client"
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 type Client = {
   id: number;
@@ -85,8 +87,11 @@ const clients: Client[] = [
 ];
 
 const ClientsPage = () => {
+
+  const router = useRouter()
+
   return (
-    <section className="px-3 pt-8 flex flex-col gap-y-[45px] mb-10">
+    <section className=" pt-8 flex flex-col gap-y-[45px] mb-10">
       <div>
         <div className="relative max-w-[318px] h-[28px] flex items-end">
           <input
@@ -97,12 +102,12 @@ const ClientsPage = () => {
         </div>
       </div>
 
-      <div className="p-6 rounded-[14px] border w-full bg-white shadow-2xl ">
-        <table className="w-full border-separate border-spacing-y-3 border-spacing-x-8">
+      <div className="py-6 px-4 rounded-[14px] border w-full bg-white shadow-2xl ">
+        <table className="w-full border-separate border-spacing-y-3">
           <thead>
             <tr className="text-[#B1B1B1] text-sm text-left">
-              <th>#</th>
-              <th>Імʼя</th>
+              <th className="pl-2">#</th>
+              <th className="pl-[41px] w-[130px]">Імʼя</th>
               <th className="text-center">Email</th>
               <th className="text-center">Телефон</th>
               <th className="text-center">Замовлення</th>
@@ -112,15 +117,16 @@ const ClientsPage = () => {
           <tbody>
             {clients.map((client) => (
               <tr
+                onClick={() => router.push(`clients/${client.id}`)}
                 key={client.id}
-                className="bg-white text-[#2E2E2E] text-[20px]"
+                className="bg-white text-[#2E2E2E] rounded-[50%] easy-in-out hover:text-white duration-200 transition-colors text-[20px] hover:bg-accent cursor-pointer"
               >
-                <td className="py-3">{client.id}</td>
-                <td>{client.name}</td>
+                <td className="py-3 pl-2 rounded-l-[14px]">{client.id}</td>
+                <td className="pl-[41px]">{client.name}</td>
                 <td className="text-center">{client.email}</td>
                 <td className="text-center">{client.phone}</td>
                 <td className="text-center">{client.orders}</td>
-                <td className="text-center">{client.lastOrderDate}</td>
+                <td className="text-center rounded-r-[14px]">{client.lastOrderDate}</td>
               </tr>
             ))}
           </tbody>

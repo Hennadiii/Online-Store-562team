@@ -1,5 +1,6 @@
 "use client";
 import { Imodal } from "@/@types/modal";
+import { enableScroll } from "@/utils/scrollbar";
 // import ForgotPassword from './forgotPassword';
 
 const ModalWrapper: React.FC<Imodal> = ({
@@ -10,7 +11,10 @@ const ModalWrapper: React.FC<Imodal> = ({
 }) => {
   return (
     <section
-      onClick={() => setShowModal(false)}
+      onClick={() => {
+        setShowModal(false)
+        enableScroll()
+      }}
       className={`fixed inset-0 overflow-hidden transition-all ${
         center ? "z-50 flex items-center justify-center" : "z-30"
       } ${showModal ? "visible bg-black/70" : "invisible"} `}

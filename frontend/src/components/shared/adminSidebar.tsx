@@ -46,7 +46,7 @@ const navItems = [
 ];
 
 const AdminSidebar = () => {
-  const [indicatorTop, setIndicatorTop] = useState(0);
+  const [indicatorTop, setIndicatorTop] = useState<number | null>(null);
   const itemRefs = useRef<(HTMLLIElement | null)[]>([]);
   const pathname = usePathname();
 
@@ -72,8 +72,8 @@ const AdminSidebar = () => {
       <nav className="mt-[69px] w-full relative">
         {/* Active Indicator */}
         <div
-          className="absolute left-0 w-[9px] h-[50px] bg-accent rounded-[4px] transition-all duration-300"
-          style={{ top: indicatorTop }}
+          className={`${indicatorTop === null ? '-left-5': 'left-0'}  absolute w-[9px] h-[50px] bg-accent rounded-[4px] transition-all duration-300`}
+          style={{ top: indicatorTop ?? '' }}
         />
 
         <ul className="flex flex-col gap-y-[22px]">
@@ -83,12 +83,14 @@ const AdminSidebar = () => {
             return (
               <Link key={label} href={href}>
                 <li
-                  ref={(el) => {itemRefs.current[idx] = el} }
+                  ref={(el) => {
+                    itemRefs.current[idx] = el;
+                  }}
                   className={`
                     ${label === "Налаштування" && "mt-[57px]"}
                     ml-[26px] mr-[14px] py-[13px] rounded-[6px]
                     ${isActive ? "bg-accent text-white" : "hover:bg-accent/50"}
-                    cursor-pointer transition-colors duration-200 relative
+                    cursor-pointer transition-colors duration-300 relative
                   `}
                 >
                   <div className="flex items-center gap-3 ml-[30px] relative z-10">

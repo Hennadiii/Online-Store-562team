@@ -21,8 +21,8 @@ const selectorVariants = cva(
 interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement>,
     VariantProps<typeof selectorVariants> {
-  name: string;
-  error: FieldError | undefined;
+  name?: string;
+  error?: FieldError | undefined;
 }
 
 const Input: React.FC<InputProps> = ({

@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="6c1744f1-ed7b-4272-9c52-568bb907e006" name="Changes" comment="OS5-12&#10;Add the json examples and the email types">
+      <change afterPath="$PROJECT_DIR$/../authentication-service/Dockerfile" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../authentication-service/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../authentication-service/docker-compose.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../authentication-service/pom.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../authentication-service/src/main/java/com/furniture/authentication_service/AuthApplication.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../authentication-service/src/main/java/com/furniture/authentication_service/config/AuthServiceConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../authentication-service/src/main/java/com/furniture/authentication_service/config/SecurityConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../authentication-service/src/main/java/com/furniture/authentication_service/controller/AuthController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../authentication-service/src/main/java/com/furniture/authentication_service/dto/LoginRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../authentication-service/src/main/java/com/furniture/authentication_service/dto/RefreshTokenRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../authentication-service/src/main/java/com/furniture/authentication_service/dto/RegisterRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../authentication-service/src/main/java/com/furniture/authentication_service/dto/TokenResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../authentication-service/src/main/java/com/furniture/authentication_service/exception/CustomException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../authentication-service/src/main/java/com/furniture/authentication_service/model/Token.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../authentication-service/src/main/java/com/furniture/authentication_service/model/User.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../authentication-service/src/main/java/com/furniture/authentication_service/repository/TokenRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../authentication-service/src/main/java/com/furniture/authentication_service/repository/UserRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../authentication-service/src/main/java/com/furniture/authentication_service/service/AuthService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../authentication-service/src/main/java/com/furniture/authentication_service/service/TokenService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../authentication-service/src/main/resources/application.yml" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Interface" />
+        <option value="Class" />
+        <option value="HTML File" />
+        <option value="package.json" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$/../.." value="develop-new" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 0
+}</component>
+  <component name="ProjectId" id="2oa5fcVz5JW0mWUHFAsNe0DTMhN" />
+  <component name="ProjectViewState">
+    <option name="autoscrollFromSource" value="true" />
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SONARLINT_PRECOMMIT_ANALYSIS&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/udmyt/IdeaProjects/Online-Store-562team/backend/notification-service/src/main/java/com/furniture/notificationservice/service/notification&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settings.ide.settings.notifications&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\udmyt\IdeaProjects\Online-Store-562team\backend\notification-service\src\main\java\com\furniture\notificationservice\service\notification" />
+      <recent name="C:\Users\udmyt\IdeaProjects\Online-Store-562team\backend\notification-service\src\main\java\com\furniture\notificationservice\service" />
+      <recent name="C:\Users\udmyt\IdeaProjects\Online-Store-562team\backend\notification-service\src\test\java\com\furniture\notificationservice\service\notification" />
+      <recent name="C:\Users\udmyt\IdeaProjects\Online-Store-562team\backend\notification-service\src\main\java\com\furniture\notificationservice\config" />
+    </key>
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="com.furniture.notificationservice.service.notification" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Spring Boot.NotificationServiceApplication">
+    <configuration name="MailTemplateManagerTest.getTemplateString_should_throw_notificationException_if_getTemplate_throws_exception" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="notification-service" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.furniture.notificationservice.service.notification.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.furniture.notificationservice.service.notification" />
+      <option name="MAIN_CLASS_NAME" value="com.furniture.notificationservice.service.notification.MailTemplateManagerTest" />
+      <option name="METHOD_NAME" value="getTemplateString_should_throw_notificationException_if_getTemplate_throws_exception" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="NotificationServiceTest.sendMessage_should_send_message" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="notification-service" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.furniture.notificationservice.service.notification.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.furniture.notificationservice.service.notification" />
+      <option name="MAIN_CLASS_NAME" value="com.furniture.notificationservice.service.notification.NotificationServiceTest" />
+      <option name="METHOD_NAME" value="sendMessage_should_send_message" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="NotificationServiceTest.sendMessage_should_throw_exception_when_mailer_throws_exception" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="notification-service" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.furniture.notificationservice.service.notification.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.furniture.notificationservice.service.notification" />
+      <option name="MAIN_CLASS_NAME" value="com.furniture.notificationservice.service.notification.NotificationServiceTest" />
+      <option name="METHOD_NAME" value="sendMessage_should_throw_exception_when_mailer_throws_exception" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="java in notification-service" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="notification-service" />
+      <option name="TEST_OBJECT" value="directory" />
+      <dir value="$PROJECT_DIR$/src/test/java" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="NotificationServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="notification-service" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.furniture.notificationservice.NotificationServiceApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="docker-compose.yml: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml">
+      <deployment type="docker-compose.yml">
+        <settings>
+          <option name="sourceFilePath" value="docker-compose.yml" />
+        </settings>
+      </deployment>
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JUnit.NotificationServiceTest.sendMessage_should_throw_exception_when_mailer_throws_exception" />
+        <item itemvalue="JUnit.NotificationServiceTest.sendMessage_should_send_message" />
+        <item itemvalue="JUnit.MailTemplateManagerTest.getTemplateString_should_throw_notificationException_if_getTemplate_throws_exception" />
+        <item itemvalue="JUnit.java in notification-service" />
+        <item itemvalue="JUnit.NotificationServiceTest.sendMessage_should_throw_exception_when_mailer_throws_exception" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="6c1744f1-ed7b-4272-9c52-568bb907e006" name="Changes" comment="" />
+      <created>1731094951121</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1731094951121</updated>
+      <workItem from="1731094952138" duration="9717000" />
+      <workItem from="1731265372207" duration="10108000" />
+      <workItem from="1731579198021" duration="266000" />
+      <workItem from="1731698313050" duration="1916000" />
+      <workItem from="1731951731072" duration="381000" />
+      <workItem from="1732475486266" duration="988000" />
+      <workItem from="1732560326995" duration="5589000" />
+      <workItem from="1732725094286" duration="1285000" />
+      <workItem from="1732809754351" duration="5094000" />
+      <workItem from="1732866886480" duration="6475000" />
+      <workItem from="1732991185138" duration="8795000" />
+      <workItem from="1733045298759" duration="3042000" />
+      <workItem from="1733120052567" duration="561000" />
+      <workItem from="1733136180675" duration="8969000" />
+      <workItem from="1733167533923" duration="331000" />
+      <workItem from="1733259655665" duration="2996000" />
+      <workItem from="1733328191212" duration="1763000" />
+      <workItem from="1733341725888" duration="2603000" />
+      <workItem from="1733392205344" duration="1536000" />
+      <workItem from="1733485236632" duration="239000" />
+      <workItem from="1733522295270" duration="688000" />
+      <workItem from="1734179569926" duration="41000" />
+    </task>
+    <task id="LOCAL-00001" summary="Initial commit&#10;OS5-12">
+      <option name="closed" value="true" />
+      <created>1731103419529</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1731103419529</updated>
+    </task>
+    <task id="LOCAL-00002" summary="OS5-12&#10;Add Simple Java Mail library &#10;Change mail sending to Simple Java Mail library&#10;Add copy recipients to emails&#10;Add names to recipients &#10;Add tests&#10;Add Java-docs">
+      <option name="closed" value="true" />
+      <created>1731272747577</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1731272747577</updated>
+    </task>
+    <task id="LOCAL-00003" summary="OS5-12">
+      <option name="closed" value="true" />
+      <created>1731274305362</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1731274305362</updated>
+    </task>
+    <task id="LOCAL-00004" summary="OS5-12">
+      <option name="closed" value="true" />
+      <created>1731276182477</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1731276182477</updated>
+    </task>
+    <task id="LOCAL-00005" summary="OS5-12&#10;Add the json examples and the email types">
+      <option name="closed" value="true" />
+      <created>1733261728828</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1733261728828</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Initial commit&#10;OS5-12" />
+    <MESSAGE value="OS5-12&#10;Add Simple Java Mail library &#10;Change mail sending to Simple Java Mail library&#10;Add copy recipients to emails&#10;Add names to recipients &#10;Add tests&#10;Add Java-docs" />
+    <MESSAGE value="OS5-12" />
+    <MESSAGE value="OS5-12&#10;Add the json examples and the email types" />
+    <option name="LAST_COMMIT_MESSAGE" value="OS5-12&#10;Add the json examples and the email types" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/notification_service$NotificationServiceApplication.ic" NAME="NotificationServiceApplication Coverage Results" MODIFIED="1731101367103" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
+  </component>
+</project>

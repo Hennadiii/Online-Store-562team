@@ -1,9 +1,14 @@
 server:
-  port: ${APP_SERVER_PORT} # Порт, на якому працює сервіс
+#  port: ${APP_SERVER_PORT} # Порт, на якому працює сервіс
+  port: 6620 # Порт, на якому працює сервіс
 
 api:
   gateway:
     url: http://localhost:777
+
+logging:
+  level:
+    com.furniture.authentication_service.filter: DEBUG
 
 spring:
   application:
@@ -12,9 +17,12 @@ spring:
     jdbc:
       dialect: postgresql
   datasource:
-    url: ${SPRING_DATASOURCE_URL} # Підключення до контейнера PostgreSQL
-    username: ${SPRING_DATASOURCE_USERNAME}
-    password: ${SPRING_DATASOURCE_PASSWORD}
+#    url: ${SPRING_DATASOURCE_URL} # Підключення до контейнера PostgreSQL
+    url: jdbc:postgresql://localhost:5432/auth_service_db # Підключення до контейнера PostgreSQL
+#    username: ${SPRING_DATASOURCE_USERNAME}
+    username: postgres
+ #   password: ${SPRING_DATASOURCE_PASSWORD}
+    password: Qwe2rty1@sdd
     driver-class-name: org.postgresql.Driver # JDBC драйвер
   jpa:
     hibernate:

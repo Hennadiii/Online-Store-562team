@@ -1,10 +1,9 @@
 server:
-#  port: ${APP_SERVER_PORT} # Порт, на якому працює сервіс
-  port: 6620 # Порт, на якому працює сервіс
+  port: ${APP_SERVER_PORT} # Порт, на якому працює сервіс
 
-api:
-  gateway:
-    url: http://localhost:777
+app:
+  link: ${VERIFICATION_APP_LINK}
+  notification-link: ${NOTIFICATION_LINK}
 
 logging:
   level:
@@ -17,25 +16,26 @@ spring:
     jdbc:
       dialect: postgresql
   datasource:
-#    url: ${SPRING_DATASOURCE_URL} # Підключення до контейнера PostgreSQL
-    url: jdbc:postgresql://localhost:5432/auth_service_db # Підключення до контейнера PostgreSQL
-#    username: ${SPRING_DATASOURCE_USERNAME}
-    username: postgres
- #   password: ${SPRING_DATASOURCE_PASSWORD}
-    password: Qwe2rty1@sdd
+    url: ${SPRING_DATASOURCE_URL} # Підключення до контейнера PostgreSQL
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: org.postgresql.Driver # JDBC драйвер
   jpa:
     hibernate:
       dialect: org.hibernate.dialect.PostgreSQLDialect
-      ddl-auto: update # Автоматичне оновлення схеми (змінити на `validate` або `none` для продакшну)
     show-sql: true # Відображати SQL-запити у логах
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true # Форматувати SQL у логах
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+    validate-on-migrate: true
 
 jwt:
-  secret: w5N8JtKQ0FlZThJOVXI3am1pRzVXZnI1bFJzSkhBRHc=  # Секретний ключ для підпису токенів
+  secret: ${SECRET}  # Секретний ключ для підпису токенів
   accessToken:
     expirationMs: 3600000 # Час життя Access Token (у мілісекундах)
   refreshToken:

@@ -1,6 +1,7 @@
 package com.furniture.authentication_service.service;
 
 import com.furniture.authentication_service.dto.NotificationRequest;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -11,16 +12,19 @@ public class NotificationServiceClient {
 
     private final WebClient webClient;
 
-    private static final String APP_LINK = "https://online-Store-562/verify?code=";
+    @Value("${app.link}")
+    private String appLink;
 
+    @Value("${app.notification-link}")
+    private String notificationLink;
 
     public NotificationServiceClient(WebClient.Builder webClientBuilder) {
-        this.webClient = webClientBuilder.baseUrl("http://localhost:777").build();
+        this.webClient = webClientBuilder.baseUrl(notificationLink).build();
     }
 
     public void sendVerificationEmail(String email, String verificationCode) {
         NotificationRequest request = new NotificationRequest(List.of(email), "Verify your account",
-                "Click the link to verify: " + APP_LINK + verificationCode);
+                "Click the link to verify: " + appLink + verificationCode);
 
         webClient.post()
                 .uri("/notification/send")

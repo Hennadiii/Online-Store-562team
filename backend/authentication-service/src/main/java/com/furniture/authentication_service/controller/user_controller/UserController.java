@@ -103,7 +103,7 @@ public interface UserController {
                     @ApiResponse(responseCode = "404", description = "Користувача не знайдено")
             })
     @GetMapping("/verify-email")
-    public ResponseEntity<String> verifyEmail(
+    ResponseEntity<String> verifyEmail(
             @RequestHeader("Authorization") String authHeader,
             @RequestBody String newEmail);
 }

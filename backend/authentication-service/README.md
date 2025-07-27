@@ -21,6 +21,7 @@ for email communication.
 
 ## 📁 Project Structure
 
+```text
 authentication-service/
 ├── controller/         # REST API endpoints (AuthController)
 ├── dto/                # DTOs for requests and responses
@@ -28,13 +29,15 @@ authentication-service/
 ├── filter/             # JWT Authentication Filter
 ├── model/              # JPA entities (Person, Role, Token)
 ├── repository/         # Spring Data JPA repositories
-├── security/          # Spring Security configuration
+├── security/           # Spring Security configuration
 ├── service/            # Business logic and integrations
 ├── resources/          # application.yml and static configs
 ├── Dockerfile
 ├── docker-compose.yaml
 ├── pom.xml
 └── README.md
+```
+
 
 ## 🚀 Getting Started
 
@@ -73,31 +76,35 @@ docker-compose up --build
 
 ### Main Endpoints
 
-| Method | Endpoint                                   | Description                   |
-|--------|--------------------------------------------|-------------------------------|
-| POST   | `/authentication/auth/register`            | Register a new user           |
-| POST   | `/authentication/auth/admin-register`      | Register an admin             |
-| POST   | `/authentication/auth/login`               | Authenticate user             |
-| POST   | `/authentication/user/update-tokens`       | Refresh access/refresh tokens |
-| POST   | `/authentication/user/logout`              | Logout and revoke token       |
-| POST   | `/authentication/auth/forgot-password`     | Send password reset email     |
-| POST   | `/authentication/user/reset-password`      | Reset password                |
-| PATCH  | `/authentication/user/updateEmail/{email}` | Update user email             |
-| GET    | `/authentication/user/verify`              | Verify account                |
-| GET    | `/authentication/user/verify-email`        | Confirm email change          |
-| GET    | `/authentication/admin/user/{id}`          | Get user by ID (admin)        |
-| GET    | `/authentication/admin/allUsers`           | Get all users (admin)         |
-| PATCH  | `/authentication/admin/block/{id}`         | Block a user (admin)          |
-| DELETE | `/authentication/admin/delete/{id}`        | Delete a user (admin)         |
+| Method | Endpoint      | Description                   |
+|--------|---------------|-------------------------------|
+| POST   | `/auth/register` | Register a new user           |
+| POST   | `/auth/admin-register` | Register an admin             |
+| POST   | `/auth/login` | Authenticate user             |
+| POST   | `/user/update-tokens` | Refresh access/refresh tokens |
+| POST   | `/user/logout` | Logout and revoke token       |
+| POST   | `/auth/forgot-password` | Send password reset email     |
+| POST   | `/user/reset-password` | Reset password                |
+| PATCH  | `/user/updateEmail/{email}` | Update user email             |
+| GET    | `/user/verify` | Verify account                |
+| GET    | `/user/verify-email` | Confirm email change          |
+| GET    | `/admin/user/{id}` | Get user by ID (admin)        |
+| GET    | `/admin/allUsers` | Get all users (admin)         |
+| PATCH  | `/admin/block/{id}` | Block a user (admin)          |
+| DELETE | `/admin/delete/{id}` | Delete a user (admin)         |
 
 ## ⚙️ Configuration
+
+Before running the application, you must configure the .env file with all required environment variables.
+
+Use the provided .env.example file as a template.
 
 ### `application.yml`
 
 - `jwt.secret`: Base64-encoded JWT secret key
 - `jwt.accessToken.expirationMs`: Lifetime of access token (ms)
 - `jwt.refreshToken.expirationMs`: Lifetime of refresh token (ms)
-- `server.port`: Set to `6620` for standalone mode
+- `server.port`: Set to your port for standalone mode
 
 ### Docker Environment Variables
 
@@ -133,4 +140,4 @@ This `authentication-service` is designed to work as part of a **microservice ar
 - Notification Service
 - User-facing frontend
 - Other services (e.g., Product, Order)
-```
+```~~

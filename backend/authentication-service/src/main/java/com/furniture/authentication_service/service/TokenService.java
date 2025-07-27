@@ -8,7 +8,9 @@ import com.furniture.authentication_service.repository.PersonRepository;
 import com.furniture.authentication_service.repository.TokenRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +19,7 @@ import java.time.Instant;
 import java.util.Base64;
 import java.util.Date;
 
+@Slf4j
 @Service
 public class TokenService {
 
@@ -75,9 +78,6 @@ public class TokenService {
      */
     @Transactional
     public TokenResponse updateTokens(String authHeader) {
-        Instant now = Instant.now();
-        tokenRepository.deleteAllExpiredTokens(now);
-
         String refreshToken = authHeader.substring(7);
         Person person = personRepository.findById(getUserIdFromToken(refreshToken))
                 .orElseThrow(() -> new CustomException("Invalid credentials"));
@@ -112,5 +112,13 @@ public class TokenService {
     private Key getSigningKey() {
         byte[] keyBytes = Base64.getDecoder().decode(jwtSecret);
         return Keys.hmacShaKeyFor(keyBytes);
+    }
+
+    @Scheduled(fixedRate = 36000000)
+    @Transactional
+    public void deleteExpiredTokens() {
+        Instant now = Instant.now();
+        tokenRepository.deleteAllExpiredTokens(now);
+        log.debug("Deleted expired tokens");
     }
 }

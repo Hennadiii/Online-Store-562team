@@ -1,5 +1,5 @@
-'use client';
-import CategoryItem from "@/components/admin/categoryItem";
+"use client";
+import CategoryItem from "@/components/admin/adminCategoryItem";
 import ModalWrapper from "@/components/shared/modalWrapper";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -52,17 +52,25 @@ const products = [
   },
 ];
 
-
 const categoryData = [
-  'Дивани', 'Ліжка', 'Лампи', 'Шафи',
-  'Світильники', 'Крісла', 'Тумби', 'Вази',
-  'Столи', 'Дзеркала', 'Комоди', 'Трюмо', 'Аксесуари'
-]
-
+  "Дивани",
+  "Ліжка",
+  "Лампи",
+  "Шафи",
+  "Світильники",
+  "Крісла",
+  "Тумби",
+  "Вази",
+  "Столи",
+  "Дзеркала",
+  "Комоди",
+  "Трюмо",
+  "Аксесуари",
+];
 
 const AdminProductsClientPage = () => {
   const [showModal, setShowModal] = useState<boolean>(false);
-  const [category, setCategory] = useState<string>('');
+  const [category, setCategory] = useState<string>("");
 
   return (
     <section className="flex flex-col gap-y-8 pb-10">
@@ -78,10 +86,13 @@ const AdminProductsClientPage = () => {
         </div>
 
         <div className="flex items-center gap-x-[34px] pr-[76px]">
-          <div onClick={() => {
-            disableScroll()
-            setShowModal(true)
-          }} className="w-[68px] h-10 shadow-md border p-[10px] bg-white rounded-[14px] flex items-center justify-center cursor-pointer">
+          <div
+            onClick={() => {
+              disableScroll();
+              setShowModal(true);
+            }}
+            className="w-[68px] h-10 shadow-md border p-[10px] bg-white rounded-[14px] flex items-center justify-center cursor-pointer"
+          >
             <Image width={24} height={24} alt="add" src="/plus.svg" />
           </div>
           <div className="flex items-center gap-x-3 cursor-pointer">
@@ -166,67 +177,106 @@ const AdminProductsClientPage = () => {
         </div>
       </div>
 
-      <ModalWrapper center={true}  showModal={showModal} setShowModal={setShowModal}>
+      <ModalWrapper
+        center={true}
+        showModal={showModal}
+        setShowModal={setShowModal}
+      >
         <div className="bg-white w-[917px] rounded-[14px] px-[25px] py-[55px] h-[calc(100dvh-100px)] overflow-y-auto">
-            <h1 className="text-[24px]">Додати товар</h1>
-            <form className="mt-[45px]">
-                <div className="flex gap-x-[50px]">
-                    <div className="flex flex-col gap-y-4 w-[353px] h-[218px]">
-                        <h2 className="text-[20px]">Завантажити фото</h2>
-                        <div className="flex flex-col justify-center items-center gap-y-[10px] w-[321px] h-[145px] border-[#d0d5dd] border-2 border-dashed">
-                            <Image width={32} height={32} src="/admin/cloud.svg" alt="upload" />
-                            <p className="text-center text-[12px]">Перегляньте та виберіть фото, які ви хочете завантажити з вашого комп’ютера</p>
-                            <div className="rounded-[4px] w-8 h-8 bg-[#047857] flex items-center justify-center">
-                                <div className="text-white text-[32px]">+</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="w-[45%]">
-                      <label className="text-accent text-[12px]">Назва товару*</label>
-                      <Input className="max-w-[382px]" placeholder="Введіть назву товару" />
-                    </div>
+          <h1 className="text-[24px]">Додати товар</h1>
+          <form className="mt-[45px]">
+            <div className="flex gap-x-[50px]">
+              <div className="flex flex-col gap-y-4 w-[353px] h-[218px]">
+                <h2 className="text-[20px]">Завантажити фото</h2>
+                <div className="flex flex-col justify-center items-center gap-y-[10px] w-[321px] h-[145px] border-[#d0d5dd] border-2 border-dashed">
+                  <Image
+                    width={32}
+                    height={32}
+                    src="/admin/cloud.svg"
+                    alt="upload"
+                  />
+                  <p className="text-center text-[12px]">
+                    Перегляньте та виберіть фото, які ви хочете завантажити з
+                    вашого комп’ютера
+                  </p>
+                  <div className="rounded-[4px] w-8 h-8 bg-[#047857] flex items-center justify-center">
+                    <div className="text-white text-[32px]">+</div>
+                  </div>
                 </div>
-                <div>
-                  <label className="text-accent text-[12px]">Вкажіть ціну*</label>
-                  <Input placeholder="Ціна" className="max-w-[382px]" />
-                </div>
-                <h3 className="text-[20px] mt-5">Виберіть категорію*</h3>
-                <div className="w-[445px] h-[191px] p-3 rounded-[4px] border-[#e7eaee] border flex flex-wrap gap-x-2.5 gap-y-[14px]">
-                  {categoryData.map(item => 
-                    <CategoryItem key={item} name={item} active={item === category} setActive={setCategory} />)
-                  }
-                </div>
+              </div>
+              <div className="w-[45%]">
+                <label className="text-accent text-[12px]">Назва товару*</label>
+                <Input
+                  className="max-w-[382px]"
+                  placeholder="Введіть назву товару"
+                />
+              </div>
+            </div>
+            <div>
+              <label className="text-accent text-[12px]">Вкажіть ціну*</label>
+              <Input placeholder="Ціна" className="max-w-[382px]" />
+            </div>
+            <h3 className="text-[20px] mt-5">Виберіть категорію*</h3>
+            <div className="w-[445px] h-[191px] p-3 rounded-[4px] border-[#e7eaee] border flex flex-wrap gap-x-2.5 gap-y-[14px]">
+              {categoryData.map((item) => (
+                <CategoryItem
+                  key={item}
+                  name={item}
+                  active={item === category}
+                  setActive={setCategory}
+                />
+              ))}
+            </div>
 
-                <div className="mt-[54px]">
-                  <h4 className="text-[20px] ">Детальний опис товару*</h4>
-                  <textarea placeholder="Опис" className="mt-2 text-[12px] w-[382px] h-[191px] p-3 rounded-[4px] border-[#e7eaee] border resize-none border shadow-md focus:outline-none"></textarea>
-                </div>
+            <div className="mt-[54px]">
+              <h4 className="text-[20px] ">Детальний опис товару*</h4>
+              <textarea
+                placeholder="Опис"
+                className="mt-2 text-[12px] w-[382px] h-[191px] p-3 rounded-[4px] border-[#e7eaee] resize-none border shadow-md focus:outline-none"
+              ></textarea>
+            </div>
 
-                <div className="mt-[14px]">
-                  <h5 className="text-[12px] text-accent">Вкажіть статус*</h5>
-                  <select className="w-[382px] focus:outline-none border-b-2 border-accent h-[41px] text-grey">
-                    <option>Статус</option>
-                  </select>
-                </div>
+            <div className="mt-[14px]">
+              <h5 className="text-[12px] text-accent">Вкажіть статус*</h5>
+              <select className="w-[382px] focus:outline-none border-b-2 border-accent h-[41px] text-grey">
+                <option>Статус</option>
+              </select>
+            </div>
 
-                <h5 className="text-[20px] mt-[54px]">Додаткові поля для меблів</h5>
-                <div className=" grid grid-cols-2">
-                  {['Матеріал', 'Обивка', 'Функціональність',
-                    'Колір', 'Висота', 'Ширина', 'Глибина',
-                  'Підлокітники'].map(item => {
-                    return (
-                      <div key={item} className="mt-[14px]">
-                        <label className="text-[12px] text-accent">Вкажіть {item}*</label>
-                        <Input
-                        placeholder={item === 'Функціональність' ? 'Наприклад (розкладний)' : item}
-                        className="w-[382px] focus:outline-none border-b-2 border-accent h-[41px] text-grey"/>
-                      </div>
-                    )
-                  })}
-                </div>
+            <h5 className="text-[20px] mt-[54px]">Додаткові поля для меблів</h5>
+            <div className=" grid grid-cols-2">
+              {[
+                "Матеріал",
+                "Обивка",
+                "Функціональність",
+                "Колір",
+                "Висота",
+                "Ширина",
+                "Глибина",
+                "Підлокітники",
+              ].map((item) => {
+                return (
+                  <div key={item} className="mt-[14px]">
+                    <label className="text-[12px] text-accent">
+                      Вкажіть {item}*
+                    </label>
+                    <Input
+                      placeholder={
+                        item === "Функціональність"
+                          ? "Наприклад (розкладний)"
+                          : item
+                      }
+                      className="w-[382px] focus:outline-none border-b-2 border-accent h-[41px] text-grey"
+                    />
+                  </div>
+                );
+              })}
+            </div>
 
-                <Button className="mt-[45px]" variant='black'>Зберегти</Button>
-            </form>
+            <Button className="mt-[45px]" variant="black">
+              Зберегти
+            </Button>
+          </form>
         </div>
       </ModalWrapper>
     </section>

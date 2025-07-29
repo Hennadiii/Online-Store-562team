@@ -1,4 +1,4 @@
-import AdminOrdersClientPage from "@/client/adminOrdersClient";
+import AdminOrdersClientPage from "@/app/admin/orders/adminOrdersClient";
 
 const AdminOrdersPage = () => {
   return <AdminOrdersClientPage />;

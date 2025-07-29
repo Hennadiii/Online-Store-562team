@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
@@ -87,8 +87,7 @@ const clients: Client[] = [
 ];
 
 const ClientsPage = () => {
-
-  const router = useRouter()
+  const router = useRouter();
 
   return (
     <section className=" pt-8 flex flex-col gap-y-[45px] mb-10">
@@ -126,7 +125,9 @@ const ClientsPage = () => {
                 <td className="text-center">{client.email}</td>
                 <td className="text-center">{client.phone}</td>
                 <td className="text-center">{client.orders}</td>
-                <td className="text-center rounded-r-[14px]">{client.lastOrderDate}</td>
+                <td className="text-center rounded-r-[14px]">
+                  {client.lastOrderDate}
+                </td>
               </tr>
             ))}
           </tbody>

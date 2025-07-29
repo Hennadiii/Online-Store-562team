@@ -1,9 +1,7 @@
-"use client";
 import { Input } from "@/components/ui/input";
 import { orders, statusColors } from "@/data/admin/orders";
 import Image from "next/image";
 import Link from "next/link";
-
 
 const ClientDetailPage = () => {
 

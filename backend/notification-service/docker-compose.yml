@@ -1,0 +1,10 @@
+services:
+  notification-service:
+    container_name: "notification-service"
+    build: .
+    ports:
+      - "777:777"
+    env_file:
+      - .env
+    volumes:
+      - ./logs:/notification-service/logs

@@ -46,13 +46,12 @@ public class NotificationServiceImpl implements NotificationService {
         // Converting a list of addresses into a list of Recipient objects.
         final List<Recipient> recipientsTo = getRecipients(notificationRequest.addressesTo());
 
-        final var emailBuilder = EmailBuilder.startingBlank()
+        final Email email = EmailBuilder.startingBlank()
                 .from(from)
                 .to(recipientsTo)
                 .withSubject(subject)
-                .withHTMLText(text);
-
-        final Email email = emailBuilder.buildEmail();
+                .withHTMLText(text)
+                .buildEmail();
 
         int attempts = 0;
         boolean success = false;

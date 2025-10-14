@@ -8,7 +8,7 @@ import java.util.List;
  * @param addressesTo   a list of recipients for the email. Each entry in the list contains
  *                      a string with an email address.
  * @param subject       the subject of the email, represented by a string that defines the email topic.
- * @param text      a string for formatting the email body.
+ * @param text          a string for formatting the email body.
  */
 public record NotificationRequest (
     List<String> addressesTo,

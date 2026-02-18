@@ -13,3 +13,28 @@ html,
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+/* Дуже важливо для мобільних — прибирає зайвий скрол */
+html, body {
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100vw;
+}
+
+/* Захист від overflow у будь-якому контейнері */
+* {
+  box-sizing: border-box;
+}
+
+/* БУРГЕР (только mobile) */
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.animate-slideIn {
+  animation: slideIn 0.3s ease forwards;
+}

@@ -3,62 +3,107 @@ import { Button } from "@/components/ui/button";
 
 export const metadata = {
   title: "Cozy Corners | Контакти",
-  description: "Офіційни Контакти нашого сайту.",
+  description: "Офіційні контакти нашого сайту.",
 };
 
 const ContactsPage = () => {
   return (
-    <AnimatedSection>
-      <h1 className="text-h3 leading-[120%] text-justify mt-[60px] flex justify-center">
-        Контакти
-      </h1>
+    <section className="mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8">
+      <AnimatedSection className="mt-[60px]">
 
-      <div className="mt-7 flex gap-x-[110px]">
-        <div className="max-w-[624px] w-full">
-          <p className="font-semibold">Ми завжди на звʼязку!</p>
-          <p className="mt-12 leading-[120%]">
-            Ми відповідаємо на всі ваші запити через телефон або електронну
-            пошту. Зателефонуйте за номерами, вказаними у нижній частині сайту,
-            або надішліть листа на нашу пошту. Ваше питання не залишиться без
-            уваги!
-          </p>
-          <p className="mt-3">
-            <span className="font-semibold">Наш телефон:</span>
-            <span className="underline text-accent ml-1 font-semibold">
-              +380( 011) 621 16 12
-            </span>
-          </p>
-          <p className="mt-3">
-            <span className="font-semibold ">Наша пошта:</span>{" "}
-            <span className="underline text-accent  font-semibold">
-              cozycorners@gmail.com
-            </span>
-          </p>
+        {/* ===== Заголовок ===== */}
+        <h1 className="uppercase text-center font-semibold leading-tight
+          text-[clamp(28px,5vw,48px)]">
+          Контакти
+        </h1>
+
+        {/* ===== Контент ===== */}
+        <div className="mt-14 flex flex-col lg:flex-row gap-12 lg:gap-[110px] items-start">
+
+          {/* ===== Левая часть ===== */}
+          <div className="w-full lg:max-w-[624px]">
+            <p className="font-semibold text-lg">
+              Ми завжди на звʼязку!
+            </p>
+
+            <p className="mt-6 leading-[140%] text-muted-foreground">
+              Ми відповідаємо на всі ваші запити через телефон або електронну
+              пошту. Зателефонуйте або надішліть листа — ваше питання не залишиться без уваги.
+            </p>
+
+            <p className="mt-8">
+              <span className="font-semibold">Наш телефон:</span>
+              <span className="underline text-accent ml-2 font-semibold hover:opacity-80 transition">
+                +38 (011) 621 16 12
+              </span>
+            </p>
+
+            <p className="mt-3">
+              <span className="font-semibold">Наша пошта:</span>
+              <span className="underline text-accent ml-2 font-semibold hover:opacity-80 transition">
+                cozycorners@gmail.com
+              </span>
+            </p>
+          </div>
+
+          {/* ===== Premium форма ===== */}
+          <form className="w-full lg:max-w-[547px] flex flex-col gap-8">
+
+            {/* Input block */}
+            <div className="group flex flex-col gap-2">
+              <label className="text-sm text-accent transition-all group-focus-within:text-black">
+                Імʼя
+              </label>
+              <input
+                className="w-full h-[48px] px-3 border-b border-black/40
+                focus:border-black focus:outline-none
+                transition-all duration-300
+                placeholder:text-black/40"
+                placeholder="Введіть ваше імʼя"
+              />
+            </div>
+
+            <div className="group flex flex-col gap-2">
+              <label className="text-sm text-accent transition-all group-focus-within:text-black">
+                Email
+              </label>
+              <input
+                type="email"
+                className="w-full h-[48px] px-3 border-b border-black/40
+                focus:border-black focus:outline-none
+                transition-all duration-300
+                placeholder:text-black/40"
+                placeholder="Введіть ваше email"
+              />
+            </div>
+
+            <div className="group flex flex-col gap-2">
+              <label className="text-sm text-accent transition-all group-focus-within:text-black">
+                Повідомлення
+              </label>
+              <textarea
+                className="w-full min-h-[120px] px-3 py-2 border-b border-black/40
+                focus:border-black focus:outline-none
+                transition-all duration-300
+                resize-none
+                placeholder:text-black/40"
+                placeholder="Текст повідомлення"
+              />
+            </div>
+
+            {/* Кнопка */}
+            <Button
+              className="mt-4 w-full lg:w-auto border-black
+              hover:bg-black hover:text-white
+              transition-all duration-300">
+              Відправити
+            </Button>
+
+          </form>
         </div>
-        <form className="max-w-[547px] w-full flex flex-col gap-y-6">
-          <div className="h-[62px] flex flex-col gap-y-[10px]">
-            <label className="text-[12px] text-accent">Імʼя</label>
-            <input
-              className="h-[41px] p-2 border-b border-black"
-              placeholder="Введіть ваше імʼя"
-            />
-          </div>
-          <div className="h-[62px] flex flex-col gap-y-[10px]">
-            <label className="text-[12px] text-accent">Email</label>
-            <input
-              className="h-[41px] p-2 border-b border-black"
-              placeholder="Введіть ваше email"
-            />
-          </div>
-          <textarea
-            className="h-[100px] border-black border-b resize-none p-2 mt-1"
-            placeholder="Текст повідомлення"
-          />
 
-          <Button className="mt-4 border-black">відправити</Button>
-        </form>
-      </div>
-    </AnimatedSection>
+      </AnimatedSection>
+    </section>
   );
 };
 

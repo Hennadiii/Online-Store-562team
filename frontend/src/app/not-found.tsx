@@ -5,7 +5,7 @@ const NotFoundPage404 = () => {
   return (
     <div className="mx-auto h-full max-w-[1440px] overflow-x-hidden px-80px">
       <div className="px-80px">
-        <Header />
+        
       </div>
       <div className="bg-404 mt-5 flex h-[798px] w-full flex-col bg-no-repeat text-center text-white">
         <h1 className="mt-[200px] text-[140px] font-bold leading-[120%]">

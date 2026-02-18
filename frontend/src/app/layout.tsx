@@ -1,11 +1,14 @@
 import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import "@/styles/globals.css";
+
+import Header from "@/components/shared/header";
+import Footer from "@/components/shared/footer";
 import ScrollToTop from "@/components/shared/scrollTop";
 
 const MontserratSans = Montserrat({
   subsets: ["latin"],
-  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+  weight: ["100","200","300","400","500","600","700","800","900"],
 });
 
 export const metadata: Metadata = {
@@ -15,13 +18,25 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="en">
-      <body className={`${MontserratSans.className} antialiased`}>
-        {children}
+    <html lang="uk">
+      <body
+        className={`${MontserratSans.className} antialiased min-h-screen flex flex-col bg-first`}
+      >
+        {/* Header */}
+        <Header />
+
+        {/* Main */}
+        <main className="flex-1 w-full">
+          {children}
+        </main>
+
+        {/* Footer */}
+        <Footer />
+
         <ScrollToTop />
       </body>
     </html>

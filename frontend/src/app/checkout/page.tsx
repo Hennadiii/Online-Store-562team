@@ -15,7 +15,7 @@ export const metadata = {
 const CheckoutPage = () => {
   return (
     <section className="bg-first mx-auto h-full max-w-[1440px] px-80px pb-[32px]">
-      <Header />
+     
       <AnimatedSection
         as="h1"
         className="mt-[64px] text-center text-[64px] uppercase leading-[120%]"

@@ -9,8 +9,8 @@ import Image from "next/image";
 
 const Divans = () => {
   return (
-    <section className="bg-first mx-auto h-[100%] max-w-[1440px] overflow-hidden px-80px pb-[32px]">
-      <Header />
+    <section className="bg-first mx-auto h-[100%] max-w-[1440px]  px-80px pb-[32px]">
+     
 
       <h1 className="mt-[64px] text-center text-[64px] uppercase leading-[120%]">
         ДИВАНИ
@@ -18,131 +18,85 @@ const Divans = () => {
 
       <Breadcrumbs className="mt-6" />
 
-      <AnimatedSection threshold={0.01} className="mt-11 flex gap-x-3">
+      <AnimatedSection threshold={0.01} className="mt-11 flex flex-col lg:flex-row gap-6">
         <Filters />
 
-        <div className="relative h-full w-full">
+        <div className="relative h-full w-full max-w-[1000px]">
+
           <div className="absolute -top-1 right-1 flex cursor-pointer gap-x-3">
             <span className="font-second text-[20px]">Сортувати</span>
             <Image width={20} height={20} src="arrow-down.svg" alt="arrow" />
           </div>
-          <div className="mt-9 grid grid-cols-2 gap-x-[26px] gap-y-[44px] overflow-hidden">
+          <div className="mt-9 grid grid-cols-1 md:grid-cols-2 gap-6">
+
             <CatalogItem
-              bgColorHeight="h-[536px]"
-              containerHeight="h-[600px]"
-              containerWidth="w-[457px]"
-              imageHeight={128}
-              imageWidth={457}
+             
               image="/divan2.png"
               title="Анамур"
               price="12 000"
             />
             <CatalogItem
-              bgColorHeight="h-[536px]"
-              containerHeight="h-[600px]"
-              containerWidth="w-[457px]"
-              imageHeight={128}
-              imageWidth={457}
+              
               image="/divan2.png"
               title="Анамур"
               price="12 000"
             />
             <CatalogItem
-              bgColorHeight="h-[536px]"
-              containerHeight="h-[600px]"
-              containerWidth="w-[457px]"
-              imageHeight={128}
-              imageWidth={457}
+              
               image="/divan2.png"
               title="Анамур"
               price="12 000"
             />
             <CatalogItem
-              bgColorHeight="h-[536px]"
-              containerHeight="h-[600px]"
-              containerWidth="w-[457px]"
-              imageHeight={128}
-              imageWidth={457}
+              
               image="/divan2.png"
               title="Анамур"
               price="12 000"
             />
             <CatalogItem
-              bgColorHeight="h-[536px]"
-              containerHeight="h-[600px]"
-              containerWidth="w-[457px]"
-              imageHeight={128}
-              imageWidth={457}
+              
               image="/divan2.png"
               title="Анамур"
               price="12 000"
             />
             <CatalogItem
-              bgColorHeight="h-[536px]"
-              containerHeight="h-[600px]"
-              containerWidth="w-[457px]"
-              imageHeight={128}
-              imageWidth={457}
+              
               image="/divan2.png"
               title="Анамур"
               price="12 000"
             />
             <CatalogItem
-              bgColorHeight="h-[536px]"
-              containerHeight="h-[600px]"
-              containerWidth="w-[457px]"
-              imageHeight={128}
-              imageWidth={457}
+              
               image="/divan2.png"
               title="Анамур"
               price="12 000"
             />
             <CatalogItem
-              bgColorHeight="h-[536px]"
-              containerHeight="h-[600px]"
-              containerWidth="w-[457px]"
-              imageHeight={128}
-              imageWidth={457}
+            
               image="/divan2.png"
               title="Анамур"
               price="12 000"
             />
             <CatalogItem
-              bgColorHeight="h-[536px]"
-              containerHeight="h-[600px]"
-              containerWidth="w-[457px]"
-              imageHeight={128}
-              imageWidth={457}
+             
               image="/divan2.png"
               title="Анамур"
               price="12 000"
             />
             <CatalogItem
-              bgColorHeight="h-[536px]"
-              containerHeight="h-[600px]"
-              containerWidth="w-[457px]"
-              imageHeight={128}
-              imageWidth={457}
+             
               image="/divan2.png"
               title="Анамур"
               price="12 000"
             />
             <CatalogItem
-              bgColorHeight="h-[536px]"
-              containerHeight="h-[600px]"
-              containerWidth="w-[457px]"
-              imageHeight={128}
-              imageWidth={457}
+             
               image="/divan2.png"
               title="Анамур"
               price="12 000"
             />
             <CatalogItem
-              bgColorHeight="h-[536px]"
-              containerHeight="h-[600px]"
-              containerWidth="w-[457px]"
-              imageHeight={128}
-              imageWidth={457}
+             
               image="/divan2.png"
               title="Анамур"
               price="12 000"
@@ -152,7 +106,7 @@ const Divans = () => {
         </div>
       </AnimatedSection>
 
-      <Footer />
+      
     </section>
   );
 };

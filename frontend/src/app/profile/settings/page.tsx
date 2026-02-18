@@ -90,7 +90,7 @@ const SettingsPage = () => {
           </form>
         </section>
       </div>
-      <Footer />
+      
     </section>
   );
 };

@@ -27,33 +27,31 @@ const policyLinks = [
 
 const Footer = () => {
   return (
-    <AnimatedSection as="footer" className="mt-[100px]">
-      <div className="flex justify-between">
-        {/* Контактная информация */}
-        <div className="flex flex-col">
-          <span className="text-[24px]">cozycorners@gmail.com</span>
-          <span className="mt-2 text-[24px]">+380(11) 621 16 12</span>
-          <p className="mt-4 max-w-[280px] text-[20px] leading-[120%]">
+    <AnimatedSection
+      as="footer"
+      className="w-full max-w-[1440px] mx-auto px-4 lg:px-20 py-10 lg:py-20 overflow-hidden"
+    >
+      {/* Контакты и соцсети */}
+      <div className="flex flex-col lg:flex-row justify-between gap-10 lg:gap-20">
+        <div className="flex flex-col gap-4 lg:gap-6">
+          <span className="text-[18px] lg:text-[24px]">cozycorners@gmail.com</span>
+          <span className="text-[18px] lg:text-[24px]">+38 (011) 621 16 12</span>
+          <p className="text-[14px] lg:text-[20px] max-w-[280px] leading-[120%]">
             Графік роботи call-центру: з 09:00 до 20:00 <br /> Без вихідних
           </p>
 
           {/* Соцсети */}
-          <nav className="mt-[60px]">
-            <ul className="flex items-center gap-x-2">
+          <nav className="mt-4 lg:mt-6">
+            <ul className="flex gap-2 lg:gap-4 flex-wrap">
               {socialLinks.map(({ href, src, alt }) => (
                 <li key={alt}>
-                  <a
-                    href={href}
-                    aria-label={alt}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
+                  <a href={href} aria-label={alt} target="_blank" rel="noopener noreferrer">
                     <Image
                       src={src}
                       alt={alt}
                       width={32}
                       height={32}
-                      className="h-8 w-8 cursor-pointer transition-all hover:scale-110"
+                      className="h-8 w-8 cursor-pointer transition-transform hover:scale-110"
                     />
                   </a>
                 </li>
@@ -63,15 +61,12 @@ const Footer = () => {
         </div>
 
         {/* Навигация */}
-        <div className="flex items-center gap-x-[64px] pt-1 text-center leading-[120%]">
+        <div className="flex flex-col sm:flex-row gap-8 lg:gap-x-20">
           <nav>
-            <ul className="flex flex-col gap-y-6">
+            <ul className="flex flex-col sm:flex-row gap-4 sm:gap-x-6">
               {menuLinks.map(({ href, label }) => (
-                <li
-                  key={href}
-                  className="cursor-pointer transition-colors hover:text-grey"
-                >
-                  <Link className="p-2" href={href}>
+                <li key={href}>
+                  <Link href={href} className="p-1 lg:p-2 cursor-pointer hover:text-grey">
                     {label}
                   </Link>
                 </li>
@@ -80,13 +75,10 @@ const Footer = () => {
           </nav>
 
           <nav>
-            <ul className="flex flex-col gap-y-6 mb-11">
+            <ul className="flex flex-col sm:flex-row gap-4 sm:gap-x-6">
               {policyLinks.map(({ href, label }) => (
-                <li
-                  key={href}
-                  className="cursor-pointer transition-colors hover:text-grey"
-                >
-                  <Link className="p-2" href={href}>
+                <li key={href}>
+                  <Link href={href} className="p-1 lg:p-2 cursor-pointer hover:text-grey">
                     {label}
                   </Link>
                 </li>
@@ -96,11 +88,16 @@ const Footer = () => {
         </div>
       </div>
 
-      {/* Логотип */}
-      <h6 className="mr-5 mt-[140px] text-center text-[180px] font-bold leading-[120%]">
+      {/* Логотип большой (только для десктопа) */}
+      <h6 className="hidden lg:block text-center text-[180px] font-bold leading-[120%] mt-10">
         Cozy Corners
       </h6>
-      <span className="ml-6 block pt-4 text-[12px]">2024 ©</span>
+
+      {/* Маленький копирайт */}
+      <span className="block text-center text-[12px] mt-4">
+  2024-{new Date().getFullYear()} ©
+</span>
+
     </AnimatedSection>
   );
 };

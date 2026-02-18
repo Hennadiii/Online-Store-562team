@@ -1,158 +1,103 @@
 "use client";
-import { disableScroll, enableScroll } from "@/utils/scrollbar";
+
 import { useState } from "react";
 import Link from "next/link";
-import LoginForm from "../authForms/loginForm";
-import RegisterForm from "../authForms/registrationForm";
-import CartModal from "../checkout/cartModal";
-import ModalWrapper from "./modalWrapper";
-import SearchIcon from "../../assets/search.svg";
-import UserIcon from "../../assets/user.svg";
-import FavoriteIcon from "../../assets/favorite.svg";
-import CartIcon from "../../assets/cart.svg";
 import Image from "next/image";
-import { cn } from "@/utils/twMerge";
 import { navTo } from "@/utils/navigations";
 
-const Header: React.FC = () => {
-  const [showModal, setShowModal] = useState<boolean>(false);
-  const [showSearch, setShowsSearch] = useState<boolean>(false);
-  const [showCart, setShowCart] = useState<boolean>(false);
-  const [section, setSection] = useState<number>(1);
+const menuLinks = [
+  { href: navTo.catalog, label: "Каталог" },
+  { href: navTo.aboutUs, label: "Про нас" },
+  { href: navTo.deliveryAndPayment, label: "Доставка і оплата" },
+  { href: navTo.contacts, label: "Контакти" },
+];
 
-  const showSection = () => {
-    switch (section) {
-      case 1:
-        return (
-          <LoginForm
-            setSection={setSection}
-            setShowModal={() => {
-              enableScroll();
-              setShowModal(false);
-            }}
-          />
-        );
-      case 2:
-        return (
-          <RegisterForm
-            setSection={setSection}
-            setShowModal={() => {
-              enableScroll();
-              setShowModal(false);
-            }}
-          />
-        );
-    }
-  };
+const Header = () => {
+  const [open, setOpen] = useState(false);
 
   return (
-    <header className="mt-8 flex h-fit items-center justify-between duration-700 transition-opacity animate-fade-in">
-      <Link href={navTo.home}>
-        <Image
-          className="cursor-pointer"
-          width={111}
-          height={76}
-          src="/logo.svg"
-          alt="logo"
-        />
-      </Link>
+    <header className="w-full border-b border-black/10 relative z-50">
+      <div className="max-w-[1440px] mx-auto px-4 lg:px-20 h-[70px] flex items-center justify-between">
 
-      <nav>
-        <ul className="flex items-center gap-x-6 ml-14">
-          <li className="group cursor-pointer transition duration-300">
-            <Link className="p-2" href={navTo.catalog}>
-              Каталог
-            </Link>
-            <span className="block h-0.5 max-w-0 bg-accent transition-all duration-500 group-hover:max-w-full"></span>
-          </li>
-          <li className="group cursor-pointer transition duration-300">
-            <Link className="p-2" href={navTo.aboutUs}>
-              Про нас
-            </Link>
-            <span className="block h-0.5 max-w-0 bg-accent transition-all duration-500 group-hover:max-w-full"></span>
-          </li>
-          <li className="group cursor-pointer transition duration-300">
-            <Link className="p-2" href={navTo.deliveryAndPayment}>
-              Доставка і оплата
-            </Link>
-            <span className="block h-0.5 max-w-0 bg-accent transition-all duration-500 group-hover:max-w-full"></span>
-          </li>
-          <li className="group cursor-pointer transition duration-300">
-            <Link className="p-2" href={navTo.contacts}>
-              Контакти
-            </Link>
-            <span className="block h-0.5 max-w-0 bg-accent transition-all duration-500 group-hover:max-w-full"></span>
-          </li>
-        </ul>
-      </nav>
+        {/* ЛЕВАЯ ЧАСТЬ */}
+        <div className="flex items-center gap-4">
 
-      <div className="relative flex items-center gap-x-6">
-        <SearchIcon
-          onClick={() => {
-            disableScroll();
-            setShowsSearch(true);
-          }}
-          className="z-40 cursor-pointer w-6 h-6 transition-all hover:scale-110 hover:text-accent"
-        />
-        <UserIcon
-          onClick={() => {
-            disableScroll();
-            setShowModal(true);
-          }}
-          className="cursor-pointer transition-all w-6 h-6 hover:scale-110 hover:text-accent"
-        />
-        <FavoriteIcon className="cursor-pointer w-6 h-6 transition-all hover:scale-110 hover:text-accent" />
-        <CartIcon
-          onClick={() => {
-            disableScroll();
-            setShowCart(true);
-          }}
-          className="cursor-pointer transition-all w-6 h-6 hover:scale-110 hover:text-accent"
-        />
+          {/* БУРГЕР (только mobile) */}
+          <button
+            onClick={() => setOpen(true)}
+            className="lg:hidden flex flex-col gap-1"
+          >
+            <span className="w-6 h-[2px] bg-black"></span>
+            <span className="w-6 h-[2px] bg-black"></span>
+            <span className="w-6 h-[2px] bg-black"></span>
+          </button>
+
+          {/* ЛОГО */}
+          <Link href="/">
+          <Image
+  src="/logo.svg"
+  alt="Cozy Corners"
+  width={111}
+  height={76}
+  className="cursor-pointer w-[90px] lg:w-[111px] h-auto"
+/>
+
+          </Link>
+        </div>
+
+        {/* ДЕСКТОП МЕНЮ */}
+        <nav className="hidden lg:flex gap-8">
+          {menuLinks.map(({ href, label }) => (
+            <Link key={href} href={href} className="hover:text-grey transition">
+              {label}
+            </Link>
+          ))}
+        </nav>
+
+        {/* ИКОНКИ (пример) */}
+        <div className="flex gap-4">
+          <Image src="/search.svg" alt="search" width={20} height={20} />
+          <Image src="/user.svg" alt="user" width={20} height={20} />
+          <Image src="/favorite.svg" alt="fav" width={20} height={20} />
+          <Image src="/cart.svg" alt="cart" width={20} height={20} />
+        </div>
       </div>
 
-      {/* sign-in & sign-up & forget-password pop up */}
-      <ModalWrapper
-        showModal={showModal}
-        setShowModal={() => {
-          enableScroll();
-          setShowModal(false);
-        }}
-        center={true}
-      >
-        {showSection()}
-      </ModalWrapper>
-
-      {/* search popup */}
-      <ModalWrapper
-        showModal={showSearch}
-        setShowModal={() => {
-          setShowsSearch(false);
-          enableScroll();
-        }}
-      >
-        <div className="float-right mr-[254px] mt-[40px] flex w-[344px] justify-start bg-white p-5">
-          <input
-            placeholder="Введіть свій запит"
-            className={cn(
-              "border-b-[1px] outline-white transition-all focus:outline-none",
-              {
-                "w-0": !showSearch,
-                "w-[280px] px-4": showSearch,
-              }
-            )}
+      {/* ===== MOBILE MENU ===== */}
+      {open && (
+        <>
+          {/* Затемнение */}
+          <div
+            onClick={() => setOpen(false)}
+            className="fixed inset-0 bg-black/40 backdrop-blur-sm"
           />
-        </div>
-      </ModalWrapper>
 
-      {/* cart popup */}
-      <CartModal
-        isOpen={showCart}
-        setIsOpen={() => {
-          enableScroll();
-          setShowCart(false);
-        }}
-      />
+          {/* Панель */}
+          <div className="fixed top-0 left-0 h-full w-[280px] bg-white shadow-xl p-6 flex flex-col gap-8 animate-slideIn">
+
+            {/* Кнопка закрытия */}
+            <button
+              onClick={() => setOpen(false)}
+              className="self-end text-xl"
+            >
+              ✕
+            </button>
+
+            <nav className="flex flex-col gap-6 text-lg">
+              {menuLinks.map(({ href, label }) => (
+                <Link
+                  key={href}
+                  href={href}
+                  onClick={() => setOpen(false)}
+                  className="border-b border-black/10 pb-2"
+                >
+                  {label}
+                </Link>
+              ))}
+            </nav>
+          </div>
+        </>
+      )}
     </header>
   );
 };

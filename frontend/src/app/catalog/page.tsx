@@ -12,8 +12,8 @@ export const metadata = {
 
 const CatalogPage: React.FC = () => {
   return (
-    <section className="px-80px mx-auto h-full overflow-hidden max-w-[1440px] bg-first pb-[32px]">
-      <Header />
+    <section className="mx-auto h-full overflow-hidden max-w-[1440px] bg-first pb-[32px] px-4 sm:px-6 lg:px-8">
+      
       <AnimatedSection as="h1" className="text-h2 mt-14 text-center uppercase">
         Каталог
       </AnimatedSection>
@@ -23,7 +23,8 @@ const CatalogPage: React.FC = () => {
       <AnimatedSection
         threshold={0.01}
         as="div"
-        className="mt-[65px] flex flex-wrap gap-x-[32px] gap-y-[30px]"
+        className="mt-[65px] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
+
       >
         <CatalogItem image="/krislo.png" title="Крісла" />
         <CatalogItem image="/krislo.png" title="Крісла" />
@@ -41,7 +42,7 @@ const CatalogPage: React.FC = () => {
 
       <Pagination />
 
-      <Footer />
+     
     </section>
   );
 };

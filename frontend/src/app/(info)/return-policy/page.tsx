@@ -107,7 +107,7 @@ const ReturnPolicyPage = () => {
 
       <p className="mt-4 leading-[120%]">
         З усіх питань звертайтеся до нас за телефоном:{" "}
-        <span className="text-accent font-semibold">+380( 011) 621 16 12</span>{" "}
+        <span className="text-accent font-semibold">+380 (011) 621 16 12</span>{" "}
         або напишіть на нашу електронну <br /> пошту.
       </p>
 

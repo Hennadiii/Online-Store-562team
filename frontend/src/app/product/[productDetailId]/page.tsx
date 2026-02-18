@@ -31,7 +31,7 @@ const ProductDetailPage = () => {
 
   return (
     <section className="mx-auto h-full max-w-[1440px] overflow-hidden px-80px">
-      <Header />
+      
       <AnimatedSection
         as="ul"
         className="mt-16 flex items-center justify-center gap-x-3"
@@ -238,7 +238,7 @@ const ProductDetailPage = () => {
         </div>
       </AnimatedSection>
 
-      <Footer />
+      
     </section>
   );
 };

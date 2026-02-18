@@ -9,7 +9,7 @@ const AuthorizationPage = () => {
   return (
     <section className="bg-first mx-auto h-full max-w-[1440px] overflow-x-hidden pb-[32px]">
       <div className="px-80px">
-        <Header />
+       
       </div>
 
       <div className="flex mt-[13px]">

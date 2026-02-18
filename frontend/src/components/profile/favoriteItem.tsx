@@ -16,7 +16,7 @@ const FavoriteItem: React.FC<props> = ({ image, title, price }) => {
   return (
     <div className="">
       <div
-        className={`bg-[#f1f1f1] h-[199px] w-[295px] flex items-center justify-center cursor-pointer group`}
+        className={`bg-[#f1f1f1] h-[199px] w-full max-w-[295px] flex items-center justify-center cursor-pointer group`}
       >
         <Image
           className="group-hover:scale-105 duration-300"

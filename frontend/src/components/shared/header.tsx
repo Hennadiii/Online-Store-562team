@@ -4,6 +4,17 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { navTo } from "@/utils/navigations";
+import FavoriteModal from "../modals/FavoriteModal";
+import { disableScroll, enableScroll } from "@/utils/scrollbar";
+import LoginForm from "../authForms/loginForm";
+import RegisterForm from "../authForms/registrationForm";
+import CartModal from "../checkout/cartModal";
+import ModalWrapper from "./modalWrapper";
+import SearchModal from "../modals/SearchModal";
+import SearchIcon from "../../assets/search.svg";
+import UserIcon from "../../assets/user.svg";
+import FavoriteIcon from "../../assets/favorite.svg";
+import CartIcon from "../../assets/cart.svg";
 
 const menuLinks = [
   { href: navTo.catalog, label: "Каталог" },
@@ -15,90 +26,198 @@ const menuLinks = [
 const Header = () => {
   const [open, setOpen] = useState(false);
 
-  return (
-    <header className="w-full border-b border-black/10 relative z-50">
-      <div className="max-w-[1440px] mx-auto px-4 lg:px-20 h-[70px] flex items-center justify-between">
-
-        {/* ЛЕВАЯ ЧАСТЬ */}
-        <div className="flex items-center gap-4">
-
-          {/* БУРГЕР (только mobile) */}
-          <button
-            onClick={() => setOpen(true)}
-            className="lg:hidden flex flex-col gap-1"
-          >
-            <span className="w-6 h-[2px] bg-black"></span>
-            <span className="w-6 h-[2px] bg-black"></span>
-            <span className="w-6 h-[2px] bg-black"></span>
-          </button>
-
-          {/* ЛОГО */}
-          <Link href="/">
-          <Image
-  src="/logo.svg"
-  alt="Cozy Corners"
-  width={111}
-  height={76}
-  className="cursor-pointer w-[90px] lg:w-[111px] h-auto"
-/>
-
-          </Link>
-        </div>
-
-        {/* ДЕСКТОП МЕНЮ */}
-        <nav className="hidden lg:flex gap-8">
-          {menuLinks.map(({ href, label }) => (
-            <Link key={href} href={href} className="hover:text-grey transition">
-              {label}
-            </Link>
-          ))}
-        </nav>
-
-        {/* ИКОНКИ (пример) */}
-        <div className="flex gap-4">
-          <Image src="/search.svg" alt="search" width={20} height={20} />
-          <Image src="/user.svg" alt="user" width={20} height={20} />
-          <Image src="/favorite.svg" alt="fav" width={20} height={20} />
-          <Image src="/cart.svg" alt="cart" width={20} height={20} />
-        </div>
-      </div>
-
-      {/* ===== MOBILE MENU ===== */}
-      {open && (
-        <>
-          {/* Затемнение */}
-          <div
-            onClick={() => setOpen(false)}
-            className="fixed inset-0 bg-black/40 backdrop-blur-sm"
+  const [showModal, setShowModal] = useState(false);
+  const [showSearch, setShowsSearch] = useState(false);
+  const [showCart, setShowCart] = useState(false);
+  const [section, setSection] = useState(1);
+  
+  const [showFavorite, setShowFavorite] = useState(false);
+  const showSection = () => {
+    switch (section) {
+      case 1:
+        return (
+          <LoginForm
+            setSection={setSection}
+            setShowModal={() => {
+              enableScroll();
+              setShowModal(false);
+            }}
           />
+        );
+      case 2:
+        return (
+          <RegisterForm
+            setSection={setSection}
+            setShowModal={() => {
+              enableScroll();
+              setShowModal(false);
+            }}
+          />
+        );
+    }
+  };
 
-          {/* Панель */}
-          <div className="fixed top-0 left-0 h-full w-[280px] bg-white shadow-xl p-6 flex flex-col gap-8 animate-slideIn">
+  return (
+    <>
+      <header className="w-full border-b border-black/10 relative z-50">
+        <div className="max-w-[1440px] mx-auto px-4 lg:px-20 h-[70px] flex items-center justify-between">
 
-            {/* Кнопка закрытия */}
+          {/* LEFT */}
+          <div className="flex items-center gap-4">
             <button
-              onClick={() => setOpen(false)}
-              className="self-end text-xl"
+              onClick={() => setOpen(true)}
+              className="lg:hidden flex flex-col gap-1"
             >
-              ✕
+              <span className="w-6 h-[2px] bg-black"></span>
+              <span className="w-6 h-[2px] bg-black"></span>
+              <span className="w-6 h-[2px] bg-black"></span>
             </button>
 
-            <nav className="flex flex-col gap-6 text-lg">
-              {menuLinks.map(({ href, label }) => (
-                <Link
-                  key={href}
-                  href={href}
-                  onClick={() => setOpen(false)}
-                  className="border-b border-black/10 pb-2"
-                >
-                  {label}
-                </Link>
-              ))}
-            </nav>
+            <Link href={navTo.home}>
+              <Image
+                src="/logo.svg"
+                alt="logo"
+                width={111}
+                height={76}
+                className="cursor-pointer w-[90px] lg:w-[111px] h-auto"
+              />
+            </Link>
           </div>
-        </>
-      )}
-    </header>
+
+          {/* DESKTOP NAV */}
+          <nav className="hidden lg:flex gap-8">
+            {menuLinks.map(({ href, label }) => (
+              <Link key={href} href={href}>
+                {label}
+              </Link>
+            ))}
+          </nav>
+
+          {/* ICONS */}
+          <div className="flex gap-6">
+            <SearchIcon
+              onClick={() => {
+                disableScroll();
+                setShowsSearch(true);
+              }}
+              className="cursor-pointer w-6 h-6 hover:scale-110 transition"
+            />
+
+            <UserIcon
+              onClick={() => {
+                disableScroll();
+                setShowModal(true);
+              }}
+              className="cursor-pointer w-6 h-6 hover:scale-110 transition"
+            />
+
+             <FavoriteIcon
+  onClick={() => {
+    disableScroll();
+    setShowFavorite(true);
+  }}
+  className="cursor-pointer w-6 h-6 hover:scale-110 transition"
+/>
+
+
+            <CartIcon
+              onClick={() => {
+                disableScroll();
+                setShowCart(true);
+              }}
+              className="cursor-pointer w-6 h-6 hover:scale-110 transition"
+            />
+          </div>
+        </div>
+
+        {/* MOBILE MENU */}
+        {open && (
+          <>
+            <div
+              onClick={() => setOpen(false)}
+              className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40"
+            />
+
+            <div className="fixed top-0 left-0 h-full w-[280px] bg-white shadow-xl p-6 flex flex-col gap-8 z-50 animate-slideIn">
+
+              <button
+                onClick={() => setOpen(false)}
+                className="self-end text-xl"
+              >
+                ✕
+              </button>
+
+              <nav className="flex flex-col gap-6 text-lg">
+                {menuLinks.map(({ href, label }) => (
+                  <Link
+                    key={href}
+                    href={href}
+                    onClick={() => setOpen(false)}
+                    className="border-b border-black/10 pb-2"
+                  >
+                    {label}
+                  </Link>
+                ))}
+              </nav>
+            </div>
+          </>
+        )}
+      </header>
+
+      {/* AUTH MODAL */}
+      <ModalWrapper
+        showModal={showModal}
+        setShowModal={() => {
+          enableScroll();
+          setShowModal(false);
+        }}
+        center
+      >
+        {showSection()}
+      </ModalWrapper>
+
+      {/* SEARCH MODAL */}
+      <ModalWrapper
+  showModal={showSearch}
+  setShowModal={() => setShowsSearch(false)}
+  center={true}
+>
+  <SearchModal
+    showModal={showSearch}
+    setShowModal={() => setShowsSearch(false)}
+  />
+</ModalWrapper>
+
+{/* FAVORITE MODAL */}
+<ModalWrapper
+  showModal={showFavorite}
+  setShowModal={() => {
+    enableScroll();
+    setShowFavorite(false);
+  }}
+  center
+>
+  <FavoriteModal
+    showModal={showFavorite}
+    setShowModal={() => {
+      enableScroll();
+      setShowFavorite(false);
+    }}
+  />
+</ModalWrapper>
+
+
+
+
+      {/* CART */}
+      <CartModal
+        isOpen={showCart}
+        setIsOpen={() => {
+          enableScroll();
+          setShowCart(false);
+        }}
+      />
+    </>
   );
 };
 

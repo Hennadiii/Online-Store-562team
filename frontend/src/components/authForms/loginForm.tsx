@@ -1,4 +1,5 @@
 "use client";
+
 import { Iauthorization } from "../../@types/modal";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Button } from "../ui/button";
@@ -10,13 +11,13 @@ import Image from "next/image";
 import { useState } from "react";
 import { cn } from "@/utils/twMerge";
 
-const Loginschema = yup.object().shape({
-  email: yup.string().required("email is required").email("invalid email"),
+const LoginSchema = yup.object().shape({
+  email: yup.string().required("Email is required").email("Invalid email"),
   password: yup
     .string()
-    .required("password is required")
-    .min(8, "password must be longer that 8 characters")
-    .max(24, "password must be shorter than 24 characters"),
+    .required("Password is required")
+    .min(8, "Password must be at least 8 characters")
+    .max(24, "Password must be at most 24 characters"),
 });
 
 const LoginForm: React.FC<Iauthorization> = ({
@@ -24,87 +25,59 @@ const LoginForm: React.FC<Iauthorization> = ({
   setShowModal,
   isModal = true,
 }) => {
-  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<IloginFormInputs>({
-    resolver: yupResolver(Loginschema),
+    resolver: yupResolver(LoginSchema),
     mode: "onBlur",
   });
 
-  const onSubmit: SubmitHandler<IloginFormInputs> = (data) => console.log(data);
+  const onSubmit: SubmitHandler<IloginFormInputs> = (data) => {
+    console.log(data);
+  };
 
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
       className={cn(
-        "relative flex h-[620px] w-[470px] flex-col  gap-y-7 px-[44px] pb-[52px] pt-[64px]",
-        {
-          "bg-white": true,
-          "bg-transparent": !isModal,
-        },
+        "relative flex flex-col gap-6 bg-white w-full max-w-[470px] h-auto rounded-lg p-6 sm:p-8",
+        { "shadow-lg": isModal }
       )}
     >
-      {isModal ? (
-        <>
-          <div
-            onClick={() => {
-              if (setShowModal) {
-                setShowModal(false);
-              }
-            }}
-            className="absolute right-4 top-4 cursor-pointer rounded-[50%] p-2 transition-colors duration-500 hover:bg-grey"
-          >
-            <Image
-              width={24}
-              height={24}
-              src="/close.svg"
-              className="h-6 w-6"
-              alt="closeIcon"
-            />
-          </div>
-          <span className="block text-center font-bold leading-[120%]">
-            Вхід
-          </span>
-        </>
-      ) : (
-        <h2 className="text-[24px] leading-[120%] mb-6 ml-1">Ви користувач?</h2>
+      {/* Кнопка закрытия */}
+      {isModal && (
+        <div
+          onClick={() => setShowModal && setShowModal(false)}
+          className="absolute right-4 top-4 cursor-pointer p-2 rounded-full hover:bg-grey transition-colors duration-300"
+        >
+          <Image width={24} height={24} src="/close.svg" alt="close" />
+        </div>
       )}
 
-      <div className="h-[66px]">
-        <label className="text-[12px] leading-[120%] text-accent">Email</label>
-        <Input
-          className="mt-[5px]"
-          {...register("email")}
-          type="text"
-          placeholder="Email"
-          name="email"
-          error={errors.email}
-          required
-        />
+      {/* Заголовок */}
+      <span className="block text-center font-bold text-lg">Вхід</span>
+
+      {/* Email */}
+      <div className="flex flex-col">
+        <label className="text-[12px] text-accent mb-1">Email</label>
+        <Input {...register("email")} placeholder="Email" error={errors.email} />
       </div>
 
-      <div className="relative h-[66px]">
-        <label className="text-[12px] leading-[120%] text-accent">Пароль</label>
+      {/* Пароль */}
+      <div className="relative flex flex-col">
+        <label className="text-[12px] text-accent mb-1">Пароль</label>
         <Input
           {...register("password")}
           type={showPassword ? "text" : "password"}
           placeholder="Пароль"
-          name="password"
           error={errors.password}
-          required
-          autoComplete="on"
-          className="mt-2"
         />
-        <p className="mt-8 text-[12px] text-grey leading-[120%]">
-          Пароль повинен містити щонайменше 8 символів. Містити 1 велику літеру
-          та 4 цифри
-        </p>
         <Image
-          className="absolute right-2 top-10 cursor-pointer"
+          className="absolute right-2 top-2 cursor-pointer"
           onClick={() => setShowPassword((prev) => !prev)}
           src={showPassword ? "/open-eye.svg" : "/closed-eye.svg"}
           width={24}
@@ -112,42 +85,35 @@ const LoginForm: React.FC<Iauthorization> = ({
           alt="eye"
         />
       </div>
+
       <a
-        onClick={() => {
-          if (setSection) {
-            setSection(3);
-          }
-        }}
-        className="block w-fit cursor-pointer mt-14 text-[12px] underline"
+        onClick={() => setSection && setSection(3)}
+        className="text-[12px] underline mt-2 cursor-pointer"
       >
         Забули пароль?
       </a>
-      <Button variant="black" className="w-full">
+
+      {/* Кнопка ВХІД */}
+      <Button type="submit" variant="black" className="w-full mt-4">
         ВХІД
       </Button>
+
+      {/* Соц. вход (Google) */}
       <Button
-        type="submit"
-        className="flex w-full gap-x-[30px] border-black pl-3 text-[20px]"
+        type="button"
+        className="flex w-full gap-x-3 border-black pl-3 mt-2"
       >
-        <Image
-          width={24}
-          height={24}
-          className="h-6 w-6"
-          src="/google.svg"
-          alt="google"
-        />{" "}
-        увійти через google
+        <Image width={24} height={24} src="/google.svg" alt="google" />
+        Увійти через Google
       </Button>
+
+      {/* Переключение на регистрацию */}
       {isModal && (
-        <div className="flex items-center justify-between gap-x-5 text-[12px]">
-          <span>Ще не маєте аккаунта??</span>
+        <div className="flex justify-between text-[12px] mt-4">
+          <span>Ще не маєте аккаунта?</span>
           <a
-            onClick={() => {
-              if (setSection) {
-                setSection(2);
-              }
-            }}
-            className="cursor-pointer p-[10px] text-[12px] font-bold underline"
+            onClick={() => setSection && setSection(2)}
+            className="cursor-pointer font-bold underline"
           >
             Зареєструватись
           </a>

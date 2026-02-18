@@ -52,7 +52,8 @@ const RegisterForm: React.FC<Iauthorization> = ({
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="relative flex w-[470px] flex-col gap-y-6 px-[44px] pb-[22px] pt-16 bg-white"
+      className="relative flex w-full max-w-[470px] flex-col gap-y-6 px-6 sm:px-10 pb-6 pt-16 bg-white mx-auto"
+
     >
       <div
         onClick={() => {

@@ -1,6 +1,6 @@
 import Breadcrumbs from "@/components/shared/breadcrumbs";
 import CheckoutItem from "@/components/checkout/checkoutItem";
-import Header from "@/components/shared/header";
+
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import ContactInfoForm from "@/components/checkout/contactInfoForm";

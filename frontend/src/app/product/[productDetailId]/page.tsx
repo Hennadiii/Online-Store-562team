@@ -3,8 +3,7 @@
 import AnimatedSection from "@/components/shared/animatedSection";
 import Breadcrumbs from "@/components/shared/breadcrumbs";
 import Characteristic from "@/components/shared/characteristicItem";
-import Footer from "@/components/shared/footer";
-import Header from "@/components/shared/header";
+
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { useRef } from "react";

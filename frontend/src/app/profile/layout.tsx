@@ -1,6 +1,5 @@
 import Breadcrumbs from "@/components/shared/breadcrumbs";
-import Footer from "@/components/shared/footer";
-import Header from "@/components/shared/header";
+
 
 export default function ProfileLayout({
   children,

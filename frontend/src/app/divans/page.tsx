@@ -2,8 +2,7 @@ import AnimatedSection from "@/components/shared/animatedSection";
 import Breadcrumbs from "@/components/shared/breadcrumbs";
 import CatalogItem from "@/components/shared/catalogItem";
 import Filters from "@/components/shared/filters";
-import Footer from "@/components/shared/footer";
-import Header from "@/components/shared/header";
+
 import Pagination from "@/components/shared/pagination";
 import Image from "next/image";
 

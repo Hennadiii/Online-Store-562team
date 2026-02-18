@@ -24,17 +24,17 @@ export default function RootLayout({
   return (
     <html lang="uk">
       <body
-        className={`${MontserratSans.className} antialiased min-h-screen flex flex-col bg-first`}
+        className={`${MontserratSans.className} antialiased min-h-screen flex flex-col`}
       >
-        {/* Header */}
+        {/* Header всегда сверху */}
         <Header />
 
-        {/* Main */}
-        <main className="flex-1 w-full">
+        {/* Контент растягивается */}
+        <main className="flex-1">
           {children}
         </main>
 
-        {/* Footer */}
+        {/* Footer всегда внизу */}
         <Footer />
 
         <ScrollToTop />

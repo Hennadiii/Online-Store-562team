@@ -1,4 +1,4 @@
-import Header from "@/components/shared/header";
+
 import Link from "next/link";
 
 const NotFoundPage404 = () => {

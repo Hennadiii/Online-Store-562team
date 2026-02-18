@@ -1,5 +1,5 @@
 import ProfileSidebar from "@/components/profile/sidebar";
-import Footer from "@/components/shared/footer";
+
 import { Button } from "@/components/ui/button";
 
 const SettingsPage = () => {

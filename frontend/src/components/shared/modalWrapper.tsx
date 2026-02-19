@@ -16,7 +16,7 @@ const ModalWrapper: React.FC<Imodal> = ({
         enableScroll();
       }}
       className={`fixed inset-0 overflow-auto transition-all ${
-        center ? "z-50 flex items-center justify-center" : "z-30"
+        center ? "z-50 flex items-start justify-center pt-10 sm:items-center sm:pt-0" : "z-30"
       } ${showModal ? "visible bg-black/70" : "invisible"}`}
     >
       <div

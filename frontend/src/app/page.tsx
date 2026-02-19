@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import AnimatedSection from "@/components/shared/animatedSection";
 import CustomSlider from "@/components/shared/customSlider";
+import Link from "next/link";
+
 
 export const metadata = {
   title: "Cozy Corners | Home",
@@ -46,7 +48,12 @@ const HomePage: React.FC = () => {
 
         <div className="relative mt-20 sm:mt-[90px] w-full h-[400px] sm:h-[481px] flex flex-col items-center justify-center gap-y-4 sm:gap-y-10 bg-home bg-cover bg-center pt-36 sm:pt-[235px] pb-10">
           <div className="flex flex-col sm:flex-row gap-4">
-            <Button className="w-[250px] sm:w-[297px]">Каталог</Button>
+  <Link href="/catalog">
+  <Button className="w-[250px] sm:w-[297px]">
+    Каталог
+  </Button>
+  </Link>
+
             <Button className="w-[250px] sm:w-[297px]" variant="second">Консультація</Button>
           </div>
 
@@ -115,7 +122,10 @@ const HomePage: React.FC = () => {
 
           <p className="mt-4 sm:mt-[22px] text-[14px] sm:text-[16px] leading-[120%]">
             Ваша інформація буде збережена в обліковому записі магазину. Продовжуючи, ви погоджуєтеся з
-            <a className="cursor-pointer underline ml-1">Політикою конфіденційності</a>.
+            <Link href="/privacy-policy" className="underline ml-1">
+  Політикою конфіденційності
+</Link>
+
           </p>
         </div>
 
@@ -155,7 +165,12 @@ const HomePage: React.FC = () => {
             <p className="mt-4 text-[16px] sm:text-[20px] leading-[120%]">
               У нашому асортименті — меблі від найкращих виробників, які задовольнять найвибагливіші смаки.
             </p>
-            <Button className="mt-6 w-full border-black">Більше про нас</Button>
+            <Link href="/about-us">
+  <Button className="mt-6 w-full border-black">
+    Більше про нас
+  </Button>
+</Link>
+
           </div>
         </div>
       </AnimatedSection>

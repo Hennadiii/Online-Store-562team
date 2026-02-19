@@ -59,7 +59,7 @@ const Header = () => {
 
   return (
     <>
-      <header className="w-full border-b border-black/10 relative z-50">
+      <header className="w-full relative z-50">
         <div className="max-w-[1440px] mx-auto px-4 lg:px-20 h-[70px] flex items-center justify-between">
 
           {/* LEFT */}

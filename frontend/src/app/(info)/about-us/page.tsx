@@ -2,6 +2,7 @@ import AnimatedSection from "@/components/shared/animatedSection";
 import TeamList from "@/components/about-us/teamList";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import Link from "next/link";
 
 export const metadata = {
   title: "Cozy Corners | Про нас",
@@ -138,9 +139,10 @@ const AboutUsPage = () => {
           <p className="mt-6 text-[14px] leading-[120%] text-center lg:text-left">
             Ваша інформація буде збережена в обліковому записі магазину.
             Продовжуючи, ви погоджуєтеся з{" "}
-            <a className="cursor-pointer underline">
-              Політикою конфіденційності.
-            </a>
+            <Link href="/privacy-policy" className="underline ml-1">
+  Політикою конфіденційності
+</Link>
+
           </p>
         </div>
 

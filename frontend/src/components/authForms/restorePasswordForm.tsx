@@ -1,99 +1,89 @@
 "use client";
+
 import { Iauthorization } from "@/@types/modal";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Button } from "../ui/button";
+import { Input } from "../ui/input";
 import * as yup from "yup";
 import { IrestorePasswordInputs } from "../../@types/forms";
 import { SubmitHandler, useForm } from "react-hook-form";
 import Image from "next/image";
 
 const restorePasswordSchema = yup.object().shape({
-  email: yup.string().required("email is required").email("invalid email"),
+  email: yup.string().required("Email обов'язковий").email("Невірний email"),
 });
 
 const RestorePasswordForm: React.FC<Iauthorization> = ({
   setSection,
   setShowModal,
 }) => {
-  const { handleSubmit } = useForm<IrestorePasswordInputs>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<IrestorePasswordInputs>({
     resolver: yupResolver(restorePasswordSchema),
     mode: "onBlur",
   });
 
   const onSubmit: SubmitHandler<IrestorePasswordInputs> = (data) =>
-    console.log(data);
+    console.log("Restore email:", data);
 
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="relative flex h-[527px] w-[470px] flex-col gap-y-6 bg-white px-[44px] pb-[52px] pt-16"
+      className="relative w-full max-w-[470px] bg-white 
+                 px-6 sm:px-[44px] 
+                 pt-14 sm:pt-16 
+                 pb-10 sm:pb-[52px] 
+                 flex flex-col gap-y-6"
     >
+      {/* Close button */}
       <div
-        onClick={() => {
-          if (setShowModal) {
-            setShowModal(false);
-          }
-        }}
-        className="absolute right-4 top-4 cursor-pointer rounded-[50%] p-2 transition-colors duration-500 hover:bg-grey"
+        onClick={() => setShowModal?.(false)}
+        className="absolute right-4 top-4 cursor-pointer rounded-full p-2 transition hover:bg-grey"
       >
         <Image
           width={24}
           height={24}
           src="/close.svg"
           className="h-6 w-6"
-          alt="closeIcon"
+          alt="close"
         />
       </div>
-      <span className="block text-center font-bold leading-[120%]">Вхід</span>
-      {/* 
-      <Input
-        register={register}
-        type="text"
-        className=""
-        placeholder="Email"
-        name="email"
-        error={errors.email}
-        required
-      /> */}
 
-      <a
-        onClick={() => {
-          if (setSection) {
-            setSection(3);
-          }
-        }}
-        className="block w-fit cursor-pointer text-[12px] underline"
-      >
-        Забули пароль?
-      </a>
+      {/* Title */}
+      <span className="text-center text-lg font-bold">
+        Відновлення пароля
+      </span>
+
+      {/* Description */}
+      <p className="text-center text-sm text-gray-500">
+        Введіть ваш email і ми надішлемо інструкції для відновлення пароля
+      </p>
+
+      {/* Email input */}
+      <Input
+        {...register("email")}
+        type="email"
+        placeholder="Email"
+        error={errors.email}
+      />
+
+      {/* Submit button */}
       <Button variant="black" className="w-full">
-        ВХІД
+        Надіслати
       </Button>
-      <Button
-        type="submit"
-        className="flex w-full gap-x-[30px] border-black pl-3 text-[20px]"
-      >
-        <Image
-          width={24}
-          height={24}
-          className="h-6 w-6"
-          src="/google.svg"
-          alt="google"
-        />{" "}
-        увійти через google
-      </Button>
-      <div className="flex items-center justify-between gap-x-5 text-[12px]">
-        <span>Ще не маєте аккаунта??</span>
-        <a
-          onClick={() => {
-            if (setSection) {
-              setSection(2);
-            }
-          }}
-          className="cursor-pointer p-[10px] text-[12px] font-bold underline"
+
+      {/* Back to login */}
+      <div className="text-center text-sm">
+        <span>Згадали пароль?</span>
+        <span
+          onClick={() => setSection?.(1)}
+          className="ml-2 cursor-pointer font-bold underline"
         >
-          Зареєструватись
-        </a>
+          Вхід
+        </span>
       </div>
     </form>
   );

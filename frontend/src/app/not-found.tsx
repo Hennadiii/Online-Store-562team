@@ -1,23 +1,28 @@
-
 import Link from "next/link";
 
-const NotFoundPage404 = () => {
+export default function NotFound() {
   return (
-    <div className="mx-auto h-full max-w-[1440px] overflow-x-hidden px-80px">
-      <div className="px-80px">
-        
-      </div>
-      <div className="bg-404 mt-5 flex h-[798px] w-full flex-col bg-no-repeat text-center text-white">
-        <h1 className="mt-[200px] text-[140px] font-bold leading-[120%]">
-          404
-        </h1>
-        <p className="text-h2">Ой, щось пішло не так</p>
-        <Link href="/" className="text-h4 text-lightGrey underline">
-          Повернутися на головну
-        </Link>
+    <div className="mx-auto w-full max-w-[1440px] overflow-x-hidden px-4 sm:px-6 lg:px-20">
+      <div className="bg-404 relative mt-5 flex min-h-screen w-full flex-col items-center justify-center bg-cover bg-center bg-no-repeat text-center text-white">
+
+        <div className="flex flex-col items-center animate-fadeIn">
+          <h1 className="text-[clamp(70px,15vw,140px)] font-bold leading-[110%]">
+            404
+          </h1>
+
+          <p className="mt-4 text-lg sm:text-xl lg:text-2xl opacity-90">
+            Page not found
+          </p>
+
+          <Link
+            href="/"
+            className="mt-8 inline-flex h-[56px] items-center justify-center rounded-md border border-white px-8 text-[16px] uppercase transition-all duration-300 hover:bg-white hover:text-black"
+          >
+            Go Home
+          </Link>
+        </div>
+
       </div>
     </div>
   );
-};
-
-export default NotFoundPage404;
+}

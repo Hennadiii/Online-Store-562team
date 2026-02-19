@@ -20,7 +20,7 @@ const buttonsVariants = cva(
 );
 
 interface ButtonProps
-  extends React.HtmlHTMLAttributes<HTMLButtonElement>,
+extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonsVariants> {
   disabled?: boolean;
   type?: "button" | "submit" | "reset"; // <- добавили button

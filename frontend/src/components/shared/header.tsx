@@ -15,6 +15,7 @@ import SearchIcon from "../../assets/search.svg";
 import UserIcon from "../../assets/user.svg";
 import FavoriteIcon from "../../assets/favorite.svg";
 import CartIcon from "../../assets/cart.svg";
+import RestorePasswordForm from "../authForms/restorePasswordForm";
 
 const menuLinks = [
   { href: navTo.catalog, label: "Каталог" },
@@ -54,6 +55,16 @@ const Header = () => {
             }}
           />
         );
+        case 3: // 
+      return (
+        <RestorePasswordForm
+          setSection={setSection}
+          setShowModal={() => {
+            enableScroll();
+            setShowModal(false);
+          }}
+        />
+      );
     }
   };
 

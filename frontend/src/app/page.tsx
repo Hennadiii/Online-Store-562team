@@ -4,6 +4,9 @@ import Image from "next/image";
 import AnimatedSection from "@/components/shared/animatedSection";
 import CustomSlider from "@/components/shared/customSlider";
 import Link from "next/link";
+import { products } from "@/data/products";
+import ProductCard from "@/components/shared/ProductCard";
+
 
 
 export const metadata = {
@@ -13,7 +16,7 @@ export const metadata = {
 
 const tabs = ["Дивани", "Ліжка", "Крісла", "Шафи", "Тумби", "Комоди"];
 
-const data = ["Дивани", "Ліжка", "Тумби", "Крісла", "Комоди", "Дивани2", "Дивани3", "Дивани4"];
+const data = ["Еко Хоум", "Ліжка", "Тумби", "Крісла", "Комоди", "Дивани2", "Дивани3", "Дивани4"];
 
 const HomePage: React.FC = () => {
   const renderedItems = data.map((product, idx) => (
@@ -68,7 +71,12 @@ const HomePage: React.FC = () => {
       {/* Catalog Slider */}
       <AnimatedSection className="mt-20 sm:mt-[95px]">
         <h2 className="mb-4 text-h2">КАТАЛОГ</h2>
-        <CustomSlider slidesToShow={4.25}>{renderedItems}</CustomSlider>
+        <CustomSlider slidesToShow={4.25}>
+  {products.map((product) => (
+    <ProductCard key={product.id} product={product} />
+  ))}
+</CustomSlider>
+
         
       </AnimatedSection>
 
@@ -93,7 +101,12 @@ const HomePage: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-          {renderedItems}
+        {products
+  .filter((p) => p.popular)
+  .map((product) => (
+    <ProductCard key={product.id} product={product} />
+  ))}
+
         </div>
       </AnimatedSection>
 

@@ -20,7 +20,7 @@ const searchSchema = yup.object().shape({
   query: yup
     .string()
     .required("Введіть запит для пошуку")
-    .min(2, "Мінімум 2 символи"),
+    .min(3, "Мінімум 3 символи"),
 });
 
 const SearchModal: React.FC<SearchModalProps> = ({ showModal, setShowModal }) => {

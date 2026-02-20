@@ -97,15 +97,27 @@ if (!product) {
 
       {/* BIG DESCRIPTION */}
       <AnimatedSection className="mt-20 text-base sm:text-lg lg:text-xl text-right max-w-4xl ml-auto">
-        Диван виготовлений із міцного дерев’яного каркасу, який забезпечує
-        довговічність і стійкість до щоденного використання.
-      </AnimatedSection>
+  {product.fullDescription}
+</AnimatedSection>
+
 
       {/* CHARACTERISTICS */}
       <AnimatedSection className="mt-12 space-y-3">
-        <Characteristic label="Матеріал" value="Міцний дерев'яний каркас" />
-        <Characteristic label="Тип обивки" value="Велюр" />
-        <Characteristic label="Функціональність" value="Розкладний" />
+      <AnimatedSection className="mt-12 space-y-3">
+  <Characteristic
+    label="Матеріал"
+    value={product.characteristics.material}
+  />
+  <Characteristic
+    label="Тип обивки"
+    value={product.characteristics.upholstery}
+  />
+  <Characteristic
+    label="Функціональність"
+    value={product.characteristics.functionality}
+  />
+</AnimatedSection>
+
       </AnimatedSection>
 
       {/* BIG SLIDER */}

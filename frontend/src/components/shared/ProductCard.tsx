@@ -11,7 +11,7 @@ const ProductCard: React.FC<Props> = ({ product }) => {
     <Link href={`/product/${product.id}`} className="w-full block">
       <div className="bg-[#f1f1f1] h-[200px] sm:h-[250px] flex items-center justify-center group cursor-pointer overflow-hidden">
         <Image
-          src={product.image}
+          src={product.images[0]}
           alt={product.title}
           width={262}
           height={170}

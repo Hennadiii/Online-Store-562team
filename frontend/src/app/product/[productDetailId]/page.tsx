@@ -23,17 +23,14 @@ const ProductDetailPage = () => {
     arrows: false,
   };
 
-  const product = {
-    title: "Еко Хоум",
-    price: "11 000 ₴",
-    description:
-      "М'який диван у скандинавському стилі, ідеальний для відпочинку.",
-    images: [
-      "/detail-item.png",
-      "/detail-big-item.png",
-      "/divan.png",
-    ],
-  };
+  const params = useParams();
+const id = Number(params.productDetailId);
+
+const product = products.find((p) => p.id === id);
+
+if (!product) {
+  return <div>Товар не знайдено</div>;
+}
 
   return (
     <section className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 overflow-hidden">
@@ -63,7 +60,8 @@ const ProductDetailPage = () => {
           </h1>
 
           <span className="mt-4 block text-xl sm:text-2xl font-medium">
-            {product.price}
+          {product.price.toLocaleString("uk-UA")} ₴
+
           </span>
 
           <p className="mt-4 text-sm sm:text-base">

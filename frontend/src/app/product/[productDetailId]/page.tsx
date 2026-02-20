@@ -80,11 +80,11 @@ if (!product) {
           {/* Accordion */}
           <div className="mt-8">
             <AccordionItem title="Умови повернення">
-              Ви можете повернути товар протягом 14 днів.
+              Ви можете повернути товар протягом 14 днів з моменту покупки.
             </AccordionItem>
 
             <AccordionItem title="Оплата і доставка">
-              Доставка здійснюється по всій Україні.
+              Доставка здійснюється по всій Україні. 
             </AccordionItem>
 
             <AccordionItem title="Догляд">

@@ -18,16 +18,16 @@ export interface Product {
     {
       id: 1,
       title: "Диван Еко Хоум",
-      price: 11000,
-      description: "М'який диван у скандинавському стилі.",
+      price: 27000,
+      description: "Диван у скандинавському стилі.",
       fullDescription:
-        "Диван виготовлений із міцного дерев’яного каркасу, що забезпечує довговічність. Ідеально підходить для сучасних інтер'єрів.",
-      images: ["/divan.png", "/detail-item.png", "/detail-big-item.png"],
+        "Диван виготовлений із міцного металевого каркасу, що забезпечує довговічність. Ідеально підходить для сучасних інтер'єрів.",
+      images: ["/ecoHome1.jpg", "/ecoHome3.jpg","/ecoHome2.jpg", ],
       category: "Дивани",
       popular: true,
       characteristics: {
-        material: "Дерев'яний каркас",
-        upholstery: "Велюр",
+        material: "Металевий каркас",
+        upholstery: "Еко шкіра",
         functionality: "Розкладний",
       },
     },
@@ -59,7 +59,7 @@ export interface Product {
       popular: false,
       characteristics: {
         material: "Метал + дерево",
-        upholstery: "Екошкіра",
+        upholstery: "Рогожа",
         functionality: "Нерозкладне",
       },
     },
@@ -69,14 +69,14 @@ export interface Product {
       price: 21000,
       description: "Містка шафа для зберігання.",
       fullDescription:
-        "Сучасна шафа з розсувними дверима.",
+        "Сучасна шафа з розпашними дверима.",
       images: ["/Modern.jpg"],
       category: "Шафи",
       popular: true,
       characteristics: {
         material: "ЛДСП",
         upholstery: "—",
-        functionality: "Розсувні двері",
+        functionality: "Розпашні двері",
       },
     },
     {
@@ -85,14 +85,14 @@ export interface Product {
       price: 9800,
       description: "Компактний комод для спальні.",
       fullDescription:
-        "Має 4 місткі шухляди.",
+        "Має 6 місткі шухляди.",
       images: ["/Oslo.jpg"],
       category: "Комоди",
       popular: false,
       characteristics: {
         material: "ДСП",
         upholstery: "—",
-        functionality: "4 шухляди",
+        functionality: "6 шухляд",
       },
     },
     {
@@ -115,16 +115,16 @@ export interface Product {
       id: 7,
       title: "Диван Nordic",
       price: 15900,
-      description: "Просторий диван у світлих тонах.",
+      description: "Просторий диван у зелених тонах.",
       fullDescription:
         "Поєднання комфорту та скандинавського дизайну.",
-      images: ["/divan2.png"],
+      images: ["/Nordic.jpg"],
       category: "Дивани",
       popular: false,
       characteristics: {
         material: "Дерев'яний каркас",
         upholstery: "Тканина",
-        functionality: "Розкладний",
+        functionality: "Не розкладається",
       },
     },
     {

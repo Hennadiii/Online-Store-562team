@@ -25,12 +25,42 @@ const CatalogPage: React.FC = () => {
         className="mt-[65px] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
 
       >
-        <CatalogItem image="/divan001.jpg" title="Дивани" />
-        <CatalogItem image="/Classic.jpg" title="Ліжка" />
-        <CatalogItem image="/Loft1.jpg" title="Крісла" />
-        <CatalogItem image="/Modern.jpg" title="Шафи" />
-        <CatalogItem image="/Wood.jpg" title="Тумби" />
-        <CatalogItem image="/Oslo.jpg" title="Комоди" />
+        <CatalogItem
+  image="/divan001.jpg"
+  title="Дивани"
+  href="/catalog/Дивани"
+/>
+
+<CatalogItem
+  image="/Classic.jpg"
+  title="Ліжка"
+  href="/catalog/Ліжка"
+/>
+
+<CatalogItem
+  image="/Loft1.jpg"
+  title="Крісла"
+  href="/catalog/Крісла"
+/>
+
+<CatalogItem
+  image="/Modern.jpg"
+  title="Шафи"
+  href="/catalog/Шафи"
+/>
+
+<CatalogItem
+  image="/Wood.jpg"
+  title="Тумби"
+  href="/catalog/Тумби"
+/>
+
+<CatalogItem
+  image="/Oslo.jpg"
+  title="Комоди"
+  href="/catalog/Комоди"
+/>
+
       </AnimatedSection>
 
       <Pagination />

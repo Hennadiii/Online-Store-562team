@@ -1,37 +1,30 @@
 import Image from "next/image";
+import Link from "next/link";
 
-interface Props {
+interface CatalogItemProps {
   image: string;
   title: string;
   price?: string;
+  href?: string;
 }
 
-const CatalogItem: React.FC<Props> = ({
-  image,
-  title,
-  price,
-}) => {
-  return (
-    <div className="w-full">
-      <div className="bg-[#f1f1f1] aspect-square flex items-center justify-center cursor-pointer group overflow-hidden">
+const CatalogItem: React.FC<CatalogItemProps> = ({ image, title, price, href }) => {
+  const content = (
+    <div className="flex flex-col">
+      <div className="relative w-full aspect-[4/3] overflow-hidden rounded-lg">
         <Image
-          className="group-hover:scale-105 duration-300 w-full h-auto object-contain"
           src={image}
-          width={500}
-          height={500}
-          alt="product"
+          alt={title}
+          fill
+          className="object-cover transition-transform duration-300 group-hover:scale-105"
         />
       </div>
-
-      <span className="block text-lg mt-2">{title}</span>
-
-      {price && (
-        <span className="block text-lg mt-1">
-          {price} ₴
-        </span>
-      )}
+      <span className="block mt-3 text-base font-medium">{title}</span>
+      {price && <span className="block mt-1 text-base">{price}</span>}
     </div>
   );
+
+  return href ? <Link href={href}>{content}</Link> : content;
 };
 
 export default CatalogItem;

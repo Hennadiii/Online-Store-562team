@@ -10,12 +10,12 @@ export const metadata: Metadata = {
 };
 
 interface PageProps {
-  params: { category: string };
-}
-
-const CategoryPage = async ({ params }: PageProps) => {
-  const { category } = await Promise.resolve(params);
-  const decodedCategory = decodeURIComponent(category);
+    params: Promise<{ category: string }>;
+  }
+  
+  const CategoryPage = async ({ params }: PageProps) => {
+    const { category } = await params;
+    const decodedCategory = decodeURIComponent(category);
 
   const categoryProducts = products.filter(
     (p) => p.category === decodedCategory

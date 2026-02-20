@@ -28,7 +28,7 @@ export interface Product {
       characteristics: {
         material: "Металевий каркас",
         upholstery: "Еко шкіра",
-        functionality: "Розкладний",
+        functionality: "Не розкладається",
       },
     },
     {

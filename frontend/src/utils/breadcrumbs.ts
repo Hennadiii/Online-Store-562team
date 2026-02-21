@@ -3,14 +3,32 @@ interface Breadcrumb {
   link?: string;
 }
 
+const staticPages: Record<string, string> = {
+  "/about-us": "Про нас",
+  "/delivery-and-payment": "Доставка і оплата",
+  "/contacts": "Контакти",
+
+  // footer pages
+  "/privacy-policy": "Політика конфіденційності",
+  "/return-policy": "Умови повернення",
+  "/public-offer": "Договір оферти",
+};
+
 export function getBreadcrumbs(pathname: string): Breadcrumb[] {
   const breadcrumbs: Breadcrumb[] = [
     { label: "Головна сторінка", link: "/" },
   ];
 
+  // --- Статические страницы ---
+  if (staticPages[pathname]) {
+    breadcrumbs.push({
+      label: staticPages[pathname],
+    });
+    return breadcrumbs;
+  }
+
   // /catalog
   if (pathname === "/catalog") {
-    breadcrumbs.push({ label: "/" });
     breadcrumbs.push({ label: "Каталог" });
     return breadcrumbs;
   }
@@ -19,9 +37,7 @@ export function getBreadcrumbs(pathname: string): Breadcrumb[] {
   if (pathname.startsWith("/catalog/")) {
     const category = decodeURIComponent(pathname.split("/")[2]);
 
-    breadcrumbs.push({ label: "/" });
     breadcrumbs.push({ label: "Каталог", link: "/catalog" });
-    breadcrumbs.push({ label: "/" });
     breadcrumbs.push({ label: category });
 
     return breadcrumbs;
@@ -29,7 +45,6 @@ export function getBreadcrumbs(pathname: string): Breadcrumb[] {
 
   // /product/:id
   if (pathname.startsWith("/product/")) {
-    breadcrumbs.push({ label: "/" });
     breadcrumbs.push({ label: "Каталог", link: "/catalog" });
     return breadcrumbs;
   }

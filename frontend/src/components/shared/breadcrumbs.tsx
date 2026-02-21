@@ -15,7 +15,7 @@ export default function Breadcrumbs({ className }: BreadcrumbsProps) {
   const pathname = usePathname();
   let items = getBreadcrumbs(pathname);
 
-  // если это страница товара
+  // Страница товара
   if (pathname.startsWith("/product/")) {
     const id = Number(pathname.split("/")[2]);
     const product = products.find((p) => p.id === id);
@@ -23,14 +23,11 @@ export default function Breadcrumbs({ className }: BreadcrumbsProps) {
     if (product) {
       items = [
         { label: "Головна сторінка", link: "/" },
-        { label: "/" },
         { label: "Каталог", link: "/catalog" },
-        { label: "/" },
         {
           label: product.category,
           link: `/catalog/${product.category}`,
         },
-        { label: "/" },
         { label: product.title },
       ];
     }
@@ -39,21 +36,32 @@ export default function Breadcrumbs({ className }: BreadcrumbsProps) {
   return (
     <AnimatedSection
       as="nav"
-      className={cn("mx-auto flex items-center justify-center", className)}
+      className={cn("w-full flex justify-center", className)}
     >
-      <ul className="flex items-center gap-x-3">
-        {items.map((item, index) => (
-          <li key={index}>
-            {item.link ? (
-              <Link className="text-grey hover:text-black" href={item.link}>
-                {item.label}
-              </Link>
-            ) : (
-              <span className="text-black">{item.label}</span>
-            )}
-          </li>
-        ))}
-      </ul>
+      <div className="w-full max-w-[1200px] px-4">
+        <ul className="flex flex-wrap justify-center text-sm text-center leading-snug">
+          {items.map((item, index) => (
+            <li key={index} className="flex items-center">
+              {item.link ? (
+                <Link
+                  href={item.link}
+                  className="text-grey hover:text-black transition-colors"
+                >
+                  {item.label}
+                </Link>
+              ) : (
+                <span className="text-black font-medium break-words">
+                  {item.label}
+                </span>
+              )}
+
+              {index < items.length - 1 && (
+                <span className="mx-2 text-grey">/</span>
+              )}
+            </li>
+          ))}
+        </ul>
+      </div>
     </AnimatedSection>
   );
 }

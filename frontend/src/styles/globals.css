@@ -53,3 +53,17 @@ html, body {
 .animate-fadeIn {
   animation: fadeIn 0.6s ease forwards;
 }
+
+/* slyder dots */
+.custom-dots {
+  display: flex !important;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 16px;
+  padding: 0;
+  list-style: none;
+}
+
+.custom-dots li.slick-active div {
+  background-color: #05566c;
+}

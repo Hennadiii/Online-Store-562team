@@ -2,7 +2,7 @@ import AnimatedSection from "@/components/shared/animatedSection";
 import Breadcrumbs from "@/components/shared/breadcrumbs";
 import CatalogItem from "@/components/shared/catalogItem";
 
-import Pagination from "@/components/shared/pagination";
+
 
 export const metadata = {
   title: "Cozy Corners | Каталог",
@@ -63,7 +63,7 @@ const CatalogPage: React.FC = () => {
 
       </AnimatedSection>
 
-      <Pagination />
+      
 
      
     </section>

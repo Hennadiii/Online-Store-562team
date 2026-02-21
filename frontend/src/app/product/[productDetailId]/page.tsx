@@ -11,6 +11,8 @@ import ProductGallery from "./ProductGallery";
 import AccordionItem from "./AccordionItem";
 import { products } from "@/data/products";
 import { useParams } from "next/navigation";
+import { useRecentlyViewed } from "@/hooks/useRecentlyViewed";
+import Link from "next/link";
 
 const ProductDetailPage = () => {
   const sliderRef = useRef<Slider | null>(null);
@@ -21,16 +23,22 @@ const ProductDetailPage = () => {
     slidesToShow: 1,
     slidesToScroll: 1,
     arrows: false,
+    dots: true,
+  dotsClass: "slick-dots custom-dots",
+  customPaging: () => (
+    <div className="w-3 h-3 rounded-full bg-gray-300 transition-colors duration-300" />
+  ),
   };
 
   const params = useParams();
 const id = Number(params.productDetailId);
 
 const product = products.find((p) => p.id === id);
-
+const recentlyViewed = useRecentlyViewed(product); // ← до if-return
 if (!product) {
   return <div>Товар не знайдено</div>;
 }
+ 
 
   return (
     <section className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 overflow-hidden">
@@ -140,62 +148,51 @@ if (!product) {
 
       {/* VIEWED */}
       {/* Viewed */}
-<h3 className="mt-20 text-2xl font-semibold uppercase">
-  Переглянуті
-</h3>
+      {recentlyViewed.length > 0 && (
+  <>
+    <h3 className="mt-20 text-2xl font-semibold uppercase">
+      Переглянуті
+    </h3>
 
-{/* Mobile carousel */}
-<div className="mt-8 flex gap-4 overflow-x-auto pb-4 lg:hidden">
-  {[1, 2, 3, 4].map((item) => (
-    <div
-      key={item}
-      className="min-w-[160px] flex-shrink-0"
-    >
-      <div className="aspect-[3/4] bg-gray-100 flex items-center justify-center group cursor-pointer overflow-hidden rounded-lg">
-        <Image
-          src="/divan.png"
-          alt="product"
-          width={180}
-          height={240}
-          className="transition-transform duration-300 group-hover:scale-105"
-        />
-      </div>
-
-      <span className="block mt-3 text-sm font-medium">
-        Еко Хоум
-      </span>
-
-      <span className="block mt-1 text-sm">
-        11 000 ₴
-      </span>
+    {/* Mobile carousel */}
+    <div className="mt-8 flex gap-4 overflow-x-auto pb-4 lg:hidden">
+      {recentlyViewed.map((item) => (
+        <Link href={`/product/${item.id}`} key={item.id} className="min-w-[160px] flex-shrink-0">
+          <div className="aspect-[3/4] bg-gray-100 flex items-center justify-center group cursor-pointer overflow-hidden rounded-lg">
+            <Image
+              src={item.images[0]}
+              alt={item.title}
+              width={180}
+              height={240}
+              className="transition-transform duration-300 group-hover:scale-105"
+            />
+          </div>
+          <span className="block mt-3 text-sm font-medium">{item.title}</span>
+          <span className="block mt-1 text-sm">{item.price.toLocaleString("uk-UA")} ₴</span>
+        </Link>
+      ))}
     </div>
-  ))}
-</div>
 
-{/* Desktop grid */}
-<div className="hidden lg:grid mt-8 mb-20 grid-cols-4 gap-6">
-  {[1, 2, 3, 4].map((item) => (
-    <div key={item}>
-      <div className="aspect-[3/4] bg-gray-100 flex items-center justify-center group cursor-pointer overflow-hidden rounded-lg">
-        <Image
-          src="/divan.png"
-          alt="product"
-          width={250}
-          height={170}
-          className="transition-transform duration-300 group-hover:scale-105"
-        />
-      </div>
-
-      <span className="block mt-3 text-base font-medium">
-        Еко Хоум
-      </span>
-
-      <span className="block mt-1 text-base">
-        11 000 ₴
-      </span>
+    {/* Desktop grid */}
+    <div className="hidden lg:grid mt-8 mb-20 grid-cols-4 gap-6">
+      {recentlyViewed.map((item) => (
+        <Link href={`/product/${item.id}`} key={item.id}>
+          <div className="aspect-[3/4] bg-gray-100 flex items-center justify-center group cursor-pointer overflow-hidden rounded-lg">
+            <Image
+              src={item.images[0]}
+              alt={item.title}
+              width={250}
+              height={170}
+              className="transition-transform duration-300 group-hover:scale-105"
+            />
+          </div>
+          <span className="block mt-3 text-base font-medium">{item.title}</span>
+          <span className="block mt-1 text-base">{item.price.toLocaleString("uk-UA")} ₴</span>
+        </Link>
+      ))}
     </div>
-  ))}
-</div>
+  </>
+)}
 
     </section>
   );

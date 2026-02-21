@@ -17,7 +17,7 @@ export interface Product {
   export const products: Product[] = [
     {
       id: 1,
-      title: "Диван Еко Хоум",
+      title: "Диван Eco Home",
       price: 27000,
       description: "Диван у скандинавському стилі.",
       fullDescription:
@@ -143,5 +143,141 @@ export interface Product {
         functionality: "Без підйомного механізму",
       },
     },
+    {
+        id: 9,
+        title: "Диван Milano",
+        price: 17800,
+        description: "Сучасний диван з глибокою посадкою.",
+        fullDescription:
+          "Диван Milano створений для максимального комфорту. Ідеально підходить для просторої вітальні та сучасного інтер'єру.",
+        images: ["/milano.jpg"],
+        category: "Дивани",
+        
+        popular: true,
+        characteristics: {
+          material: "Дерев'яний каркас",
+          upholstery: "Тканина",
+          functionality: "Розкладний",
+        },
+      },
+      {
+        id: 10,
+        title: "Диван Verona",
+        price: 16200,
+        description: "Елегантний диван у світлих відтінках.",
+        fullDescription:
+          "Verona поєднує в собі мінімалізм та комфорт. Підходить для скандинавського стилю.",
+        images: ["/verona.jpg"],
+        category: "Дивани",
+        
+        popular: false,
+        characteristics: {
+          material: "Масив дерева",
+          upholstery: "Велюр",
+          functionality: "Нерозкладний",
+        },
+      },
+      {
+        id: 11,
+        title: "Диван Kyiv ",
+        price: 18900,
+        description: "Просторий диван для великої родини.",
+        fullDescription:
+          "Має м'які подушки та міцний каркас, що забезпечує довговічність.",
+        images: ["/Kyiv.jpg"],
+        category: "Дивани",
+        
+        popular: true,
+        characteristics: {
+          material: "Дерево + метал",
+          upholstery: "Рогожа",
+          functionality: "Розкладний",
+        },
+      },
+      {
+        id: 12,
+        title: "Диван Nordic Plus",
+        price: 20500,
+        description: "Стильний диван у скандинавському стилі.",
+        fullDescription:
+          "Nordic Plus відрізняється лаконічним дизайном та високим рівнем комфорту.",
+        images: ["/Nordic Plus.jpg"],
+        category: "Дивани",
+        
+        popular: false,
+        characteristics: {
+          material: "ДСП + дерево",
+          upholstery: "Тканина",
+          functionality: "Розкладний",
+        },
+      },
+      {
+        id: 13,
+        title: "Диван Loft Pro",
+        price: 17400,
+        description: "Диван у стилі Loft з металевими ніжками.",
+        fullDescription:
+          "Ідеальний варіант для сучасних інтер'єрів у стилі Loft або мінімалізм.",
+        images: ["/Loft Pro.jpg"],
+        category: "Дивани",
+        
+        popular: true,
+        characteristics: {
+          material: "Метал + дерево",
+          upholstery: "Велюр",
+          functionality: "Нерозкладний",
+        },
+      },
+      {
+        id: 14,
+        title: "Диван Comfort XL",
+        price: 22900,
+        description: "Максимальний комфорт для великої вітальні.",
+        fullDescription:
+          "Comfort XL має широке сидіння та м'які подушки, що забезпечують зручність протягом дня.",
+        images: ["/Comfort XL.jpg"],
+        category: "Дивани",
+        
+        popular: false,
+        characteristics: {
+          material: "Масив дерева",
+          upholstery: "Тканина",
+          functionality: "Розкладний",
+        },
+      },
+      {
+        id: 15,
+        title: "Диван Urban",
+        price: 16800,
+        description: "Компактний диван для міської квартири.",
+        fullDescription:
+          "Urban чудово підходить для невеликих приміщень, поєднуючи стиль та функціональність.",
+        images: ["/Urban.jpg"],
+        category: "Дивани",
+        
+        popular: true,
+        characteristics: {
+          material: "Дерев'яний каркас",
+          upholstery: "Рогожа",
+          functionality: "Розкладний",
+        },
+      },
+      {
+        id: 16,
+        title: "Диван Prestige",
+        price: 24500,
+        description: "Преміальний диван з м'якою оббивкою.",
+        fullDescription:
+          "Prestige — це поєднання розкоші, комфорту та сучасного дизайну.",
+        images: ["/Prestige.jpg"],
+        category: "Дивани",
+        
+        popular: true,
+        characteristics: {
+          material: "Масив дерева",
+          upholstery: "Велюр преміум",
+          functionality: "Розкладний",
+        },
+      },
   ];
   

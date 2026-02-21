@@ -16,6 +16,7 @@ import UserIcon from "../../assets/user.svg";
 import FavoriteIcon from "../../assets/favorite.svg";
 import CartIcon from "../../assets/cart.svg";
 import RestorePasswordForm from "../authForms/restorePasswordForm";
+import { useFavoritesContext } from "@/context/FavoritesContext";
 
 const menuLinks = [
   { href: navTo.catalog, label: "Каталог" },
@@ -31,7 +32,7 @@ const Header = () => {
   const [showSearch, setShowsSearch] = useState(false);
   const [showCart, setShowCart] = useState(false);
   const [section, setSection] = useState(1);
-  
+  const { favorites } = useFavoritesContext();
   const [showFavorite, setShowFavorite] = useState(false);
   const showSection = () => {
     switch (section) {
@@ -122,13 +123,20 @@ const Header = () => {
               className="cursor-pointer w-6 h-6 hover:scale-110 transition"
             />
 
-             <FavoriteIcon
+<div
   onClick={() => {
     disableScroll();
     setShowFavorite(true);
   }}
-  className="cursor-pointer w-6 h-6 hover:scale-110 transition"
-/>
+  className="cursor-pointer hover:scale-110 transition"
+>
+  <Image
+    src={favorites.length > 0 ? "/favorite-active.svg" : "/favorite.svg"}
+    alt="favorite"
+    width={24}
+    height={24}
+  />
+</div>
 
 
             <CartIcon

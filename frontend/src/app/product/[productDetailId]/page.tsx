@@ -13,6 +13,7 @@ import { products } from "@/data/products";
 import { useParams } from "next/navigation";
 import { useRecentlyViewed } from "@/hooks/useRecentlyViewed";
 import Link from "next/link";
+import { useFavoritesContext } from "@/context/FavoritesContext";
 
 const ProductDetailPage = () => {
   const sliderRef = useRef<Slider | null>(null);
@@ -38,7 +39,8 @@ const recentlyViewed = useRecentlyViewed(product); // ← до if-return
 if (!product) {
   return <div>Товар не знайдено</div>;
 }
- 
+const { toggleFavorite, isFavorite } = useFavoritesContext();
+const favorited = isFavorite(product.id); 
 
   return (
     <section className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 overflow-hidden">
@@ -80,10 +82,21 @@ if (!product) {
             Купити
           </Button>
 
-          <div className="mt-6 flex items-center gap-2 cursor-pointer">
-            <Image height={20} width={20} alt="favorite" src="/favorite.svg" />
-            <span className="text-sm">Додати в обране</span>
-          </div>
+          
+<div
+  onClick={() => toggleFavorite(product)}
+  className="mt-6 flex items-center gap-2 cursor-pointer"
+>
+  <Image
+    height={30}
+    width={30}
+    alt="favorite"
+    src={favorited ? "/favorite-active.svg" : "/favorite.svg"}
+  />
+  <span className="text-sm">
+    {favorited ? "В обраному" : "Додати в обране"}
+  </span>
+</div>
 
           {/* Accordion */}
           <div className="mt-8">

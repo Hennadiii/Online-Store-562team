@@ -5,6 +5,7 @@ import "@/styles/globals.css";
 import Header from "@/components/shared/header";
 import Footer from "@/components/shared/footer";
 import ScrollToTop from "@/components/shared/scrollTop";
+import { FavoritesProvider } from "@/context/FavoritesContext";
 
 const MontserratSans = Montserrat({
   subsets: ["latin"],
@@ -26,18 +27,14 @@ export default function RootLayout({
       <body
         className={`${MontserratSans.className} antialiased min-h-screen flex flex-col`}
       >
-        {/* Header всегда сверху */}
-        <Header />
-
-        {/* Контент растягивается */}
-        <main className="flex-1">
-          {children}
-        </main>
-
-        {/* Footer всегда внизу */}
-        <Footer />
-
-        <ScrollToTop />
+        <FavoritesProvider>
+          <Header />
+          <main className="flex-1">
+            {children}
+          </main>
+          <Footer />
+          <ScrollToTop />
+        </FavoritesProvider>
       </body>
     </html>
   );

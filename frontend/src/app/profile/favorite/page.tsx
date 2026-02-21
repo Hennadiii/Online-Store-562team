@@ -1,13 +1,13 @@
+"use client";
+
 import FavoriteItem from "@/components/profile/favoriteItem";
 import ProfileSidebar from "@/components/profile/sidebar";
 import AnimatedSection from "@/components/shared/animatedSection";
+import { useFavoritesContext } from "@/context/FavoritesContext";
 
-export const metadata = {
-  title: "Cozy Corners | Обране",
-  description: "Офіційна сторінка обране нашого сайту.",
-};
+const FavoritePage = () => {
+  const { favorites } = useFavoritesContext();
 
-const MyOrders = () => {
   return (
     <AnimatedSection>
       <div className="flex gap-x-[240px] mt-9">
@@ -16,32 +16,24 @@ const MyOrders = () => {
         <section>
           <h2 className="text-[24px] leading-[120%]">Обране</h2>
 
-          <div className="mt-8 grid grid-cols-2 gap-8">
-            <FavoriteItem
-              image="/divan.png"
-              title="Космо Делюкс"
-              price="10 250"
-            />
-            <FavoriteItem
-              image="/divan.png"
-              title="Космо Делюкс"
-              price="10 250"
-            />
-            <FavoriteItem
-              image="/divan.png"
-              title="Космо Делюкс"
-              price="10 250"
-            />
-            <FavoriteItem
-              image="/divan.png"
-              title="Космо Делюкс"
-              price="10 250"
-            />
-          </div>
+          {favorites.length === 0 ? (
+            <p className="mt-8 text-gray-400">Список обраного порожній</p>
+          ) : (
+            <div className="mt-8 grid grid-cols-2 gap-8">
+              {favorites.map((item) => (
+                <FavoriteItem
+                  key={item.id}
+                  image={item.images[0]}
+                  title={item.title}
+                  price={item.price.toLocaleString("uk-UA")}
+                />
+              ))}
+            </div>
+          )}
         </section>
       </div>
     </AnimatedSection>
   );
 };
 
-export default MyOrders;
+export default FavoritePage;

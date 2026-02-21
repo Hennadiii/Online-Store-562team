@@ -9,7 +9,7 @@ interface IFavoriteModal {
 }
 
 export default function FavoriteModal({ showModal, setShowModal }: IFavoriteModal) {
-  const { favorites } = useFavoritesContext();
+  const { favorites, toggleFavorite } = useFavoritesContext();
 
   return (
     <div className="bg-white rounded-xl max-w-[min(90vw,640px)] w-full mx-auto max-h-[80vh] overflow-y-auto">
@@ -19,13 +19,16 @@ export default function FavoriteModal({ showModal, setShowModal }: IFavoriteModa
         {favorites.length === 0 ? (
           <p className="text-center text-gray-400">Список обраного порожній</p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 justify-items-center">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 justify-items-center items-start">
             {favorites.map((item) => (
               <FavoriteItem
                 key={item.id}
                 image={item.images[0]}
                 title={item.title}
                 price={item.price.toLocaleString("uk-UA")}
+                onRemove={() => toggleFavorite(item)}
+                href={`/product/${item.id}`}
+                onClick={setShowModal} // ← закрывает модалку при переходе
               />
             ))}
           </div>

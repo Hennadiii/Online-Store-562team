@@ -9,9 +9,11 @@ interface props {
   onRemove?: () => void;
   href?: string;
   onClick?: () => void;
+  onAddToCart?: (e: React.MouseEvent) => void;
+  inCart?: boolean;
 }
 
-const FavoriteItem: React.FC<props> = ({ image, title, price, onRemove, href, onClick }) => {
+const FavoriteItem: React.FC<props> = ({ image, title, price, onRemove, href, onClick, onAddToCart, inCart }) => {
   const content = (
     <div className="flex flex-col w-full max-w-[295px]">
       <div className="relative bg-[#f1f1f1] h-[199px] w-full flex items-center justify-center cursor-pointer group overflow-hidden">
@@ -26,7 +28,7 @@ const FavoriteItem: React.FC<props> = ({ image, title, price, onRemove, href, on
           <button
             onClick={(e) => {
               e.preventDefault();
-              e.stopPropagation(); // ← добавьте
+              e.stopPropagation();
               onRemove();
             }}
             className="absolute top-2 right-2 w-7 h-7 bg-white rounded-full flex items-center justify-center shadow hover:bg-red-50 transition"
@@ -39,7 +41,28 @@ const FavoriteItem: React.FC<props> = ({ image, title, price, onRemove, href, on
       <span className="block text-[20px] mt-1">
         {price} {price && "₴"}
       </span>
-      <Button className="border-black mt-4">Додати в кошик</Button>
+      {inCart ? (
+  <div
+    onClick={(e) => {
+      e.preventDefault();
+      e.stopPropagation();
+    }}
+    className="mt-4 w-full h-[56px] flex items-center justify-center text-center leading-none text-[20px] border border-grey bg-hite text-grey cursor-default select-none"
+  >
+    Товар у кошику
+  </div>
+) : (
+  <Button
+    className="mt-4 w-full h-[56px] px-8 uppercase text-[20px] bg-black text-white border border-black hover:bg-white hover:text-black transition-colors duration-300"
+    onClick={(e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      onAddToCart?.(e);
+    }}
+  >
+    Купити
+  </Button>
+)}
     </div>
   );
 

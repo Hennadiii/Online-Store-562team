@@ -7,6 +7,7 @@ const staticPages: Record<string, string> = {
   "/about-us": "Про нас",
   "/delivery-and-payment": "Доставка і оплата",
   "/contacts": "Контакти",
+  "/checkout": "Оформлення замовлення",
 
   // footer pages
   "/privacy-policy": "Політика конфіденційності",

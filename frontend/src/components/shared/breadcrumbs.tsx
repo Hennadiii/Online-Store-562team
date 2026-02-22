@@ -50,7 +50,7 @@ export default function Breadcrumbs({ className }: BreadcrumbsProps) {
                   {item.label}
                 </Link>
               ) : (
-                <span className="text-black font-medium break-words">
+                <span className="text-black font-normal break-words">
                   {item.label}
                 </span>
               )}

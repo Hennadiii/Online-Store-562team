@@ -2,6 +2,7 @@
 
 import FavoriteItem from "@/components/profile/favoriteItem";
 import { useFavoritesContext } from "@/context/FavoritesContext";
+import { useCartContext } from "@/context/CartContext";
 
 interface IFavoriteModal {
   showModal: boolean;
@@ -10,6 +11,9 @@ interface IFavoriteModal {
 
 export default function FavoriteModal({ showModal, setShowModal }: IFavoriteModal) {
   const { favorites, toggleFavorite } = useFavoritesContext();
+  const { addToCart, items } = useCartContext();
+
+  const isInCart = (id: number) => items.some((i) => i.product.id === id);
 
   return (
     <div className="bg-white rounded-xl max-w-[min(90vw,640px)] w-full mx-auto max-h-[80vh] overflow-y-auto">
@@ -28,7 +32,9 @@ export default function FavoriteModal({ showModal, setShowModal }: IFavoriteModa
                 price={item.price.toLocaleString("uk-UA")}
                 onRemove={() => toggleFavorite(item)}
                 href={`/product/${item.id}`}
-                onClick={setShowModal} // ← закрывает модалку при переходе
+                onClick={setShowModal}
+                onAddToCart={() => addToCart(item)}
+                inCart={isInCart(item.id)}
               />
             ))}
           </div>

@@ -13,10 +13,10 @@ import ModalWrapper from "./modalWrapper";
 import SearchModal from "../modals/SearchModal";
 import SearchIcon from "../../assets/search.svg";
 import UserIcon from "../../assets/user.svg";
-import FavoriteIcon from "../../assets/favorite.svg";
 import CartIcon from "../../assets/cart.svg";
 import RestorePasswordForm from "../authForms/restorePasswordForm";
 import { useFavoritesContext } from "@/context/FavoritesContext";
+import { useCartContext } from "@/context/CartContext";
 
 const menuLinks = [
   { href: navTo.catalog, label: "Каталог" },
@@ -33,7 +33,10 @@ const Header = () => {
   const [showCart, setShowCart] = useState(false);
   const [section, setSection] = useState(1);
   const { favorites } = useFavoritesContext();
+  const { items } = useCartContext();
+  const cartCount = items.reduce((sum, i) => sum + i.quantity, 0);
   const [showFavorite, setShowFavorite] = useState(false);
+
   const showSection = () => {
     switch (section) {
       case 1:
@@ -56,16 +59,16 @@ const Header = () => {
             }}
           />
         );
-        case 3: // 
-      return (
-        <RestorePasswordForm
-          setSection={setSection}
-          setShowModal={() => {
-            enableScroll();
-            setShowModal(false);
-          }}
-        />
-      );
+      case 3:
+        return (
+          <RestorePasswordForm
+            setSection={setSection}
+            setShowModal={() => {
+              enableScroll();
+              setShowModal(false);
+            }}
+          />
+        );
     }
   };
 
@@ -106,7 +109,7 @@ const Header = () => {
           </nav>
 
           {/* ICONS */}
-          <div className="flex gap-6">
+          <div className="flex gap-6 items-center">
             <SearchIcon
               onClick={() => {
                 disableScroll();
@@ -123,29 +126,35 @@ const Header = () => {
               className="cursor-pointer w-6 h-6 hover:scale-110 transition"
             />
 
-<div
-  onClick={() => {
-    disableScroll();
-    setShowFavorite(true);
-  }}
-  className="cursor-pointer hover:scale-110 transition"
->
-  <Image
-    src={favorites.length > 0 ? "/favorite-active.svg" : "/favorite.svg"}
-    alt="favorite"
-    width={24}
-    height={24}
-  />
-</div>
+            <div
+              onClick={() => {
+                disableScroll();
+                setShowFavorite(true);
+              }}
+              className="cursor-pointer hover:scale-110 transition"
+            >
+              <Image
+                src={favorites.length > 0 ? "/favorite-active.svg" : "/favorite.svg"}
+                alt="favorite"
+                width={24}
+                height={24}
+              />
+            </div>
 
-
-            <CartIcon
+            <div
               onClick={() => {
                 disableScroll();
                 setShowCart(true);
               }}
-              className="cursor-pointer w-6 h-6 hover:scale-110 transition"
-            />
+              className="relative cursor-pointer hover:scale-110 transition"
+            >
+              <CartIcon className="w-6 h-6" />
+              {cartCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-[#3C767E] text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                  {cartCount}
+                </span>
+              )}
+            </div>
           </div>
         </div>
 
@@ -197,36 +206,33 @@ const Header = () => {
 
       {/* SEARCH MODAL */}
       <ModalWrapper
-  showModal={showSearch}
-  setShowModal={() => setShowsSearch(false)}
-  center={true}
->
-  <SearchModal
-    showModal={showSearch}
-    setShowModal={() => setShowsSearch(false)}
-  />
-</ModalWrapper>
+        showModal={showSearch}
+        setShowModal={() => setShowsSearch(false)}
+        center={true}
+      >
+        <SearchModal
+          showModal={showSearch}
+          setShowModal={() => setShowsSearch(false)}
+        />
+      </ModalWrapper>
 
-{/* FAVORITE MODAL */}
-<ModalWrapper
-  showModal={showFavorite}
-  setShowModal={() => {
-    enableScroll();
-    setShowFavorite(false);
-  }}
-  center
->
-  <FavoriteModal
-    showModal={showFavorite}
-    setShowModal={() => {
-      enableScroll();
-      setShowFavorite(false);
-    }}
-  />
-</ModalWrapper>
-
-
-
+      {/* FAVORITE MODAL */}
+      <ModalWrapper
+        showModal={showFavorite}
+        setShowModal={() => {
+          enableScroll();
+          setShowFavorite(false);
+        }}
+        center
+      >
+        <FavoriteModal
+          showModal={showFavorite}
+          setShowModal={() => {
+            enableScroll();
+            setShowFavorite(false);
+          }}
+        />
+      </ModalWrapper>
 
       {/* CART */}
       <CartModal

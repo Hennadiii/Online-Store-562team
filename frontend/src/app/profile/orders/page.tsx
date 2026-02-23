@@ -50,7 +50,7 @@ const MyOrders = () => {
             key={product.id}
             title={product.title}
             image={product.images[0]}
-            price={`${product.price.toLocaleString("uk-UA")}`}
+            price={`${product.price.toLocaleString("uk-UA")} ₴`}
             href={`/product/${product.id}`}
           />
         ))}

@@ -23,7 +23,7 @@ export function getBreadcrumbs(pathname: string): Breadcrumb[] {
 
   // /profile/*
   if (pathname.startsWith("/profile/")) {
-    breadcrumbs.push({ label: "Профіль", link: "/profile" });
+    breadcrumbs.push({ label: "Мій профіль", link: "/profile" });
 
     const subPage: Record<string, string> = {
       "/profile/orders": "Мої замовлення",

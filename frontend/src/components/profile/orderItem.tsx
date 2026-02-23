@@ -1,29 +1,106 @@
 import Image from "next/image";
+import Link from "next/link";
+import { Order } from "@/@types/order";
 
-const ProfileOrderItem = () => {
+interface Props {
+  order: Order;
+}
+
+const ProfileOrderItem: React.FC<Props> = ({ order }) => {
+  const date = new Date(order.createdAt).toLocaleString("uk-UA", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
   return (
-    <article className="w-[632px] h-[218px]">
-      <div className="flex gap-x-3 justify-between">
-        <span className="leading-[120%] font-bold">№ 1203322123</span>
-        <p className="text-[12px] leading-[120%]">
-          22 листопада 2024 р, 12:12:44
-        </p>
-      </div>
-      <div className="flex gap-x-3 justify-between">
-        <span className="text-[12px] leading-[120%] mt-1">3000 ₴</span>
-        <div className="h-[34px] p-[10px] w-[82px] bg-[#b0debc] flex items-center center justify-between">
-          <span className="text-[12px] block text-[#076d21] leading-[120%]">
-            Отримано
-          </span>
+    <article className="
+      w-full
+      border border-gray-200
+      rounded-2xl
+      p-4 sm:p-6
+      bg-white
+      hover:shadow-md
+      transition
+    ">
+
+      {/* Верхняя строка */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+        <div>
+          <p className="font-semibold text-[16px]">
+            Замовлення № {order.id}
+          </p>
+          <p className="text-sm text-gray-500">
+            {date}
+          </p>
+        </div>
+
+        <div className="flex items-center gap-4">
+          <p className="font-semibold">
+            {order.totalAmount.toLocaleString("uk-UA")} ₴
+          </p>
+
+          <div className="
+            px-3 h-[32px]
+            bg-[#E6DEFF]
+            rounded-full
+            flex items-center
+          ">
+            <span className="text-xs text-[#7E6BC4] font-medium">
+              Нове
+            </span>
+          </div>
         </div>
       </div>
 
-      <div className="flex gap-x-[14px] mt-4 relative w-full">
-        <Image src="/orderItem.png" width={150} height={150} alt="orderItem" />
-        <Image src="/orderItem.png" width={150} height={150} alt="orderItem" />
-        <span className="absolute bottom-0 right-0 underline cursor-pointer font-semibold">
+      {/* Фото товаров */}
+      <div className="
+        flex gap-3
+        mt-5
+        overflow-x-auto
+        pb-2
+      ">
+        {order.items.slice(0, 3).map((item) => (
+          <div
+            key={item.productId}
+            className="
+              min-w-[80px]
+              h-[80px]
+              sm:min-w-[100px]
+              sm:h-[100px]
+              bg-gray-100
+              rounded-xl
+              overflow-hidden
+              flex items-center justify-center
+            "
+          >
+            <Image
+              src={item.image}
+              width={100}
+              height={100}
+              alt={item.title}
+              className="object-contain"
+            />
+          </div>
+        ))}
+      </div>
+
+      {/* Кнопка */}
+      <div className="mt-4 flex justify-end">
+        <Link
+          href={`/orders/${order.id}`}
+          className="
+            text-sm
+            font-semibold
+            underline
+            hover:opacity-70
+            transition
+          "
+        >
           Детальніше
-        </span>
+        </Link>
       </div>
     </article>
   );

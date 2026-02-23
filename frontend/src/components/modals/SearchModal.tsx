@@ -159,7 +159,7 @@ const SearchModal: React.FC<SearchModalProps> = ({ showModal, setShowModal }) =>
           className="
             mt-4 w-full
             bg-black text-white
-            py-3 rounded-xl
+            py-3
             text-sm font-semibold tracking-wide uppercase
             hover:bg-gray-800 active:scale-[0.98]
             transition-all duration-200

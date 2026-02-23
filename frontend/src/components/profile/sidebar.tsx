@@ -18,7 +18,7 @@ const menuItems = [
   { label: "Дані облікового запису" },
   { label: "Обране" },
   { label: "Адресна книга" },
-  { label: "Вийты", className: "text-red" },
+  { label: "Вийти", className: "text-red" },
 ];
 
 const ProfileSidebar = () => {

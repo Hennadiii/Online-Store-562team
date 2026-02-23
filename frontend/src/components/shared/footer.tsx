@@ -25,33 +25,52 @@ const policyLinks = [
   { href: navTo.privacyPolicy, label: "Політика конфіденційності" },
 ];
 
+const profileLinks = [
+  { href: "/profile/orders", label: "Мої замовлення" },
+];
+
 const Footer = () => {
   return (
     <AnimatedSection
       as="footer"
-      className="w-full max-w-[1440px] mx-auto px-4 lg:px-20 py-10 lg:py-20 overflow-hidden"
+      className="w-full max-w-[1440px] mx-auto px-4 lg:px-20 py-12 lg:py-24 border-t border-gray-200"
     >
-      {/* Контакты и соцсети */}
-      <div className="flex flex-col lg:flex-row justify-between gap-10 lg:gap-20">
-        <div className="flex flex-col gap-4 lg:gap-6">
-          <span className="text-[18px] lg:text-[24px]">cozycorners@gmail.com</span>
-          <span className="text-[18px] lg:text-[24px]">+38 (011) 621 16 12</span>
-          <p className="text-[14px] lg:text-[20px] max-w-[280px] leading-[120%]">
-            Графік роботи call-центру: з 09:00 до 20:00 <br /> Без вихідних
+      <div className="flex flex-col lg:flex-row justify-between gap-16 lg:gap-24">
+        
+        {/* Контакты */}
+        <div className="flex flex-col gap-6 lg:min-w-[280px]">
+          <div className="flex flex-col gap-2">
+            <span className="text-[20px] lg:text-[26px] font tracking-tight">
+              cozycorners@gmail.com
+            </span>
+            <span className="text-[20px] lg:text-[26px] font tracking-tight">
+              +38 (011) 621 16 12
+            </span>
+          </div>
+
+          <p className="text-[14px] lg:text-[18px] text-gray-500 leading-relaxed max-w-[300px]">
+            Графік роботи call-центру: <br />
+            з 09:00 до 20:00 <br />
+            Без вихідних
           </p>
 
           {/* Соцсети */}
-          <nav className="mt-4 lg:mt-6">
-            <ul className="flex gap-2 lg:gap-4 flex-wrap">
+          <nav className="pt-2">
+            <ul className="flex gap-3 lg:gap-5">
               {socialLinks.map(({ href, src, alt }) => (
                 <li key={alt}>
-                  <a href={href} aria-label={alt} target="_blank" rel="noopener noreferrer">
+                  <a
+                    href={href}
+                    aria-label={alt}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     <Image
                       src={src}
                       alt={alt}
-                      width={32}
-                      height={32}
-                      className="h-8 w-8 cursor-pointer transition-transform hover:scale-110"
+                      width={28}
+                      height={28}
+                      className="opacity-70 hover:opacity-100 hover:scale-110 transition duration-300"
                     />
                   </a>
                 </li>
@@ -61,12 +80,16 @@ const Footer = () => {
         </div>
 
         {/* Навигация */}
-        <div className="flex flex-col sm:flex-row gap-8 lg:gap-x-20">
+        <div className="flex flex-col gap-10 text-left lg:min-w-[340px]">
+
           <nav>
-            <ul className="flex flex-col sm:flex-row gap-4 sm:gap-x-6">
+            <ul className="flex flex-col gap-4">
               {menuLinks.map(({ href, label }) => (
                 <li key={href}>
-                  <Link href={href} className="p-1 lg:p-2 cursor-pointer hover:text-grey">
+                  <Link
+                    href={href}
+                    className="text-[15px] lg:text-[16px] text-gray-700 hover:text-black transition duration-200 leading-snug"
+                  >
                     {label}
                   </Link>
                 </li>
@@ -75,29 +98,50 @@ const Footer = () => {
           </nav>
 
           <nav>
-            <ul className="flex flex-col sm:flex-row gap-4 sm:gap-x-6">
+            <ul className="flex flex-col gap-4">
               {policyLinks.map(({ href, label }) => (
                 <li key={href}>
-                  <Link href={href} className="p-1 lg:p-2 cursor-pointer hover:text-grey">
+                  <Link
+                    href={href}
+                    className="text-[15px] lg:text-[16px] text-gray-700 hover:text-black transition duration-200 leading-snug"
+                  >
                     {label}
                   </Link>
                 </li>
               ))}
             </ul>
           </nav>
+
+          <nav>
+            <ul className="flex flex-col gap-4">
+              {profileLinks.map(({ href, label }) => (
+                <li key={href}>
+                  <Link
+                    href={href}
+                    className="text-[15px] lg:text-[16px] font-medium text-gray-800 hover:text-black transition duration-200 leading-snug"
+                  >
+                    {label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
         </div>
       </div>
 
-      {/* Логотип большой (только для десктопа) */}
-      <h6 className="hidden lg:block text-center text-[180px] font-bold leading-[120%] mt-10">
+      {/* Большой логотип */}
+      <h6 className="hidden lg:block text-center text-[160px] font-bold tracking-tight text-black mt-16">
         Cozy Corners
       </h6>
 
-      {/* Маленький копирайт */}
-      <span className="block text-center text-[12px] mt-4">
-  2024-{new Date().getFullYear()} ©
-</span>
+      {/* Разделитель */}
+      <div className="mt-12 h-px w-full bg-gray-200" />
 
+      {/* Копирайт */}
+      <span className="block text-center text-[13px] text-gray-500 mt-6">
+        2024-{new Date().getFullYear()} © Cozy Corners
+      </span>
     </AnimatedSection>
   );
 };

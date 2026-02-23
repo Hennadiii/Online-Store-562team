@@ -60,5 +60,10 @@ export function useCart() {
     0
   );
 
-  return { items, addToCart, removeFromCart, updateQuantity, total };
+  const clearCart = () => {
+    localStorage.removeItem(STORAGE_KEY);
+    setItems([]);
+  };
+  
+  return { items, addToCart, removeFromCart, updateQuantity, total, clearCart };
 }

@@ -117,13 +117,13 @@ const CartModal: React.FC<props> = ({ isOpen, setIsOpen }) => {
             <Link
               href="/checkout"
               onClick={() => setIsOpen(false)}
-              className="block w-full bg-black text-white text-center py-3 rounded hover:bg-gray-800 transition"
+              className="block w-full bg-black text-white text-center py-3  hover:bg-gray-800 transition"
             >
               Оформити замовлення
             </Link>
             <button
               onClick={() => setIsOpen(false)}
-              className="block w-full border border-black text-center py-3 rounded hover:bg-gray-100 transition"
+              className="block w-full border border-black text-center py-3  hover:bg-gray-100 transition"
             >
               Продовжити покупки
             </button>

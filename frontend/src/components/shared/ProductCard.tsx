@@ -24,7 +24,7 @@ const ProductCard: React.FC<Props> = ({ product }) => {
       </span>
 
       <span className="text-[16px] sm:text-[20px] block mt-1 font-semibold">
-        {product.price.toLocaleString()} ₴
+      {product.price.toLocaleString("uk-UA")} ₴
       </span>
     </Link>
   );

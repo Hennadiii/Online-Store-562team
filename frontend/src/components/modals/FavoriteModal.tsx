@@ -15,10 +15,25 @@ export default function FavoriteModal({ showModal, setShowModal }: IFavoriteModa
 
   const isInCart = (id: number) => items.some((i) => i.product.id === id);
 
+  
   return (
-    <div className="bg-white rounded-xl max-w-[min(90vw,640px)] w-full mx-auto max-h-[80vh] overflow-y-auto">
+    <div className="bg-white rounded-xl max-w-[min(90vw,640px)] w-full mx-auto max-h-[80vh] overflow-y-auto no-scrollbar">
       <div className="p-5 sm:p-6 md:p-8">
         <h2 className="text-2xl font-bold mb-6 md:mb-8 text-center">Обране</h2>
+       
+        {/* Кнопка закрытия — фиксирована над скроллом */}
+  <div className="absolute top-4 right-2 z-10">
+    <button
+      onClick={setShowModal}
+      aria-label="Закрити"
+      className="group relative w-9 h-9 flex items-center justify-center rounded-full text-white bg-[#3C767E] hover:text-black hover:bg-gray-400 transition duration-300"
+    >
+      <span className="block text-xl leading-none transition-transform duration-500 group-hover:rotate-90">
+        ✕
+      </span>
+    </button>
+  </div>
+          
 
         {favorites.length === 0 ? (
           <p className="text-center text-gray-400">Список обраного порожній</p>

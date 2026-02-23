@@ -67,3 +67,11 @@ html, body {
 .custom-dots li.slick-active div {
   background-color: #3C767E;
 }
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

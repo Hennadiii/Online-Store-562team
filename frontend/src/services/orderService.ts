@@ -1,13 +1,21 @@
 import { CreateOrderDTO, Order } from "@/@types/order";
 
-// Заменить на fetch("/api/orders", { method: "POST" }) при подключении backend
-export async function submitOrder(data: CreateOrderDTO): Promise<Order> {
-  await new Promise((resolve) => setTimeout(resolve, 800)); // имитация запроса
+// Берем URL из переменных окружения Vercel
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-  return {
-    ...data,
-    id: Math.random().toString(36).slice(2, 9).toUpperCase(),
-    status: "created",
-    createdAt: new Date().toISOString(),
-  };
+export async function submitOrder(data: CreateOrderDTO): Promise<Order> {
+  const response = await fetch(`${API_URL}/orders`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    // Если бэкенд ответит ошибкой (например, 400 или 500)
+    throw new Error(`Ошибка оформления заказа: ${response.statusText}`);
+  }
+
+  return await response.json();
 }

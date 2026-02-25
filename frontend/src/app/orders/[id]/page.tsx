@@ -23,6 +23,17 @@ const OrderPage = () => {
 
   return (
     <section className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-20 py-20">
+      {/* Кнопка назад */}
+      <Link
+        href="/profile/orders"
+        className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-black transition-colors mb-8"
+      >
+        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+        </svg>
+        Мої замовлення
+      </Link>
+
       <AnimatedSection as="h1" className="text-center text-[32px] sm:text-[48px] uppercase leading-[120%]">
         Дякуємо за замовлення!
       </AnimatedSection>
@@ -36,7 +47,7 @@ const OrderPage = () => {
         </div>
         <div className="flex justify-between items-center border-b pb-4">
           <span className="text-gray-500">Статус</span>
-          <span className="text-green-600 font-medium">Створено</span>
+          <span className="text-green-600 font-medium">Нове</span>
         </div>
 
         {/* Контактні дані */}

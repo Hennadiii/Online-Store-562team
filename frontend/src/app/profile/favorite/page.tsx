@@ -1,4 +1,4 @@
-"use client";
+/*"use client";
 
 import FavoriteItem from "@/components/profile/favoriteItem";
 import ProfileSidebar from "@/components/profile/sidebar";
@@ -36,4 +36,4 @@ const FavoritePage = () => {
   );
 };
 
-export default FavoritePage;
+export default FavoritePage;*/

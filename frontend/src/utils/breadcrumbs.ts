@@ -8,7 +8,7 @@ const staticPages: Record<string, string> = {
   "/delivery-and-payment": "Доставка і оплата",
   "/contacts": "Контакти",
   "/checkout": "Оформлення замовлення",
-  "/profile": "Профіль",
+  "/profile": "Мій профіль",
 
   // footer pages
   "/privacy-policy": "Політика конфіденційності",
@@ -27,9 +27,8 @@ export function getBreadcrumbs(pathname: string): Breadcrumb[] {
 
     const subPage: Record<string, string> = {
       "/profile/orders": "Мої замовлення",
-      "/profile/favorite": "Обране",
-      "/profile/settings": "Налаштування",
-      "/profile/address": "Адресна книга",
+      "/profile/settings": "Дані облікового запису",
+      "/profile/address": "Адреси доставки",
     };
 
     if (subPage[pathname]) {

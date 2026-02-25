@@ -135,12 +135,10 @@ const Footer = () => {
         Cozy Corners
       </h6>
 
-      {/* Разделитель */}
-      <div className="mt-12 h-px w-full bg-gray-200" />
 
       {/* Копирайт */}
       <span className="block text-center text-[13px] text-gray-500 mt-6">
-        2024-{new Date().getFullYear()} © Cozy Corners
+        2024-{new Date().getFullYear()} © 
       </span>
     </AnimatedSection>
   );

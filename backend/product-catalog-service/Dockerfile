@@ -13,4 +13,5 @@ COPY --from=build /app/target/*.jar app.jar
 
 EXPOSE 8080
 
-ENTRYPOINT ["java","-jar","/app/app.jar"]
+# ✅ КЛЮЧЕВОЕ ИСПРАВЛЕНИЕ
+ENTRYPOINT ["sh", "-c", "java -Dserver.port=$PORT -jar /app/app.jar"]

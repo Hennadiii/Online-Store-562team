@@ -15,7 +15,7 @@ import java.net.URI;
 /**
  * Контролер для керування операціями з продуктами.
  */
-@CrossOrigin(origins = "*") /*CORS */
+@CrossOrigin(origins = "*")
 @RestController
 public class ProductControllerImpl implements ProductController {
 

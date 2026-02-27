@@ -13,39 +13,55 @@ import java.util.List;
 @Service
 public class ProductDtoConverter {
 
-    public Product convertToEntity(ProductDto productDto) {
+    public Product convertToEntity(ProductDto dto) {
         Product product = new Product();
-        product.setId(productDto.getId());
-        product.setName(productDto.getName());
-        product.setPrice(productDto.getPrice());
-        product.setDescription(productDto.getDescription());
-        product.setCategory(new Category(productDto.getCategory()));
-        product.setImages(convertImages(productDto.getImages()));
-        product.setKeywords(productDto.getKeywords());
-        product.setProducer(new Producer(productDto.getProducer()));
+        product.setId(dto.getId());
+        product.setName(dto.getTitle()); // title из фронта -> name в базу
+        product.setPrice(dto.getPrice());
+        product.setDescription(dto.getDescription());
+        product.setFullDescription(dto.getFullDescription());
+        product.setPopular(dto.getPopular());
+
+        // Маппим характеристики "вглубь"
+        if (dto.getCharacteristics() != null) {
+            product.setMaterial(dto.getCharacteristics().getMaterial());
+            product.setUpholstery(dto.getCharacteristics().getUpholstery());
+            product.setFunctionality(dto.getCharacteristics().getFunctionality());
+        }
+
+        if (dto.getCategory() != null) {
+            product.setCategory(new Category(dto.getCategory()));
+        }
+        
+        // Превращаем строки-ссылки в объекты Image
+        if (dto.getImages() != null) {
+            product.setImages(dto.getImages().stream()
+                    .map(url -> new Image(url)) // Нужен конструктор в Image(String url)
+                    .toList());
+        }
+        
         return product;
     }
-    
-    public ProductDto convertToDto(Product product) {
-        ProductDto productDto = new ProductDto();
-        productDto.setId(product.getId());
-        productDto.setName(product.getName());
-        productDto.setPrice(product.getPrice());
-        productDto.setDescription(product.getDescription());
-        Category category = product.getCategory();
-        productDto.setCategory(category!=null ? product.getCategory().getName() : null);
-        Producer producer = product.getProducer();
-        productDto.setProducer(producer!=null ? product.getProducer().getName() : null);
-        productDto.setImages(product.getImages().stream().map(Image::getBytes).toList());
-        productDto.setKeywords(product.getKeywords());
-        return productDto;
-    }
 
-    List<Image> convertImages(List<byte[]> bytes) {
-        List<Image> images = new ArrayList<>();
-        if (bytes != null && !bytes.isEmpty()) {
-            images = bytes.stream().map(Image::new).toList();
-        }
-        return images;
+    public ProductDto convertToDto(Product product) {
+        return ProductDto.builder()
+                .id(product.getId())
+                .title(product.getName()) // name из базы -> title для фронта
+                .price(product.getPrice())
+                .description(product.getDescription())
+                .fullDescription(product.getFullDescription())
+                .popular(product.getPopular())
+                .category(product.getCategory() != null ? product.getCategory().getName() : null)
+                // Собираем объект характеристик
+                .characteristics(ProductDto.CharacteristicsDto.builder()
+                        .material(product.getMaterial())
+                        .upholstery(product.getUpholstery())
+                        .functionality(product.getFunctionality())
+                        .build())
+                // Превращаем объекты Image обратно в список строк-URL
+                .images(product.getImages().stream()
+                        .map(Image::getUrl) // В классе Image должен быть метод getUrl()
+                        .toList())
+                .build();
     }
 }

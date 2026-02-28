@@ -50,7 +50,6 @@ const ProductDetailPage = () => {
 
   return (
     <section className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 overflow-hidden">
-
       {/* Breadcrumbs */}
       <AnimatedSection className="mt-8 flex justify-center">
         <Breadcrumbs />
@@ -58,7 +57,6 @@ const ProductDetailPage = () => {
 
       {/* TOP BLOCK */}
       <AnimatedSection className="mt-12 flex flex-col lg:flex-row gap-12">
-
         {/* Gallery */}
         <div className="w-full lg:w-2/3">
           <ProductGallery images={product.images} />
@@ -66,10 +64,7 @@ const ProductDetailPage = () => {
 
         {/* INFO */}
         <div className="w-full lg:w-1/3">
-
-          <span className="text-sm text-green-600">
-            в наявності
-          </span>
+          <span className="text-sm text-green-600">в наявності</span>
 
           <h1 className="mt-4 text-2xl sm:text-3xl font-semibold">
             {product.title}
@@ -79,8 +74,11 @@ const ProductDetailPage = () => {
             {product.price.toLocaleString("uk-UA")} ₴
           </span>
 
+          <p className="mt-4 text-sm sm:text-base">{product.description}</p>
+
           <p className="mt-4 text-sm sm:text-base">
-            {product.description}
+            <span className="text-gray-500">Виробник:</span>{" "}
+            <span className="text-black">{product.producer}</span>
           </p>
 
           <Button
@@ -123,7 +121,6 @@ const ProductDetailPage = () => {
               Рекомендується суха чистка.
             </AccordionItem>
           </div>
-
         </div>
       </AnimatedSection>
 
@@ -135,9 +132,18 @@ const ProductDetailPage = () => {
       {/* CHARACTERISTICS */}
       <AnimatedSection className="mt-12 space-y-3">
         <AnimatedSection className="mt-12 space-y-3">
-          <Characteristic label="Матеріал" value={product.characteristics.material} />
-          <Characteristic label="Тип обивки" value={product.characteristics.upholstery} />
-          <Characteristic label="Функціональність" value={product.characteristics.functionality} />
+          <Characteristic
+            label="Матеріал"
+            value={product.characteristics.material}
+          />
+          <Characteristic
+            label="Тип обивки"
+            value={product.characteristics.upholstery}
+          />
+          <Characteristic
+            label="Функціональність"
+            value={product.characteristics.functionality}
+          />
         </AnimatedSection>
       </AnimatedSection>
 
@@ -164,7 +170,11 @@ const ProductDetailPage = () => {
           {/* Mobile carousel */}
           <div className="mt-8 flex gap-4 overflow-x-auto pb-4 lg:hidden">
             {recentlyViewed.map((item) => (
-              <Link href={`/product/${item.id}`} key={item.id} className="min-w-[160px] flex-shrink-0">
+              <Link
+                href={`/product/${item.id}`}
+                key={item.id}
+                className="min-w-[160px] flex-shrink-0"
+              >
                 <div className="aspect-[3/4] bg-gray-100 flex items-center justify-center group cursor-pointer overflow-hidden rounded-lg">
                   <Image
                     src={item.images[0]}
@@ -174,8 +184,12 @@ const ProductDetailPage = () => {
                     className="transition-transform duration-300 group-hover:scale-105"
                   />
                 </div>
-                <span className="block mt-3 text-sm font-medium">{item.title}</span>
-                <span className="block mt-1 text-sm">{item.price.toLocaleString("uk-UA")} ₴</span>
+                <span className="block mt-3 text-sm font-medium">
+                  {item.title}
+                </span>
+                <span className="block mt-1 text-sm">
+                  {item.price.toLocaleString("uk-UA")} ₴
+                </span>
               </Link>
             ))}
           </div>
@@ -193,8 +207,12 @@ const ProductDetailPage = () => {
                     className="transition-transform duration-300 group-hover:scale-105"
                   />
                 </div>
-                <span className="block mt-3 text-base font-medium">{item.title}</span>
-                <span className="block mt-1 text-base">{item.price.toLocaleString("uk-UA")} ₴</span>
+                <span className="block mt-3 text-base font-medium">
+                  {item.title}
+                </span>
+                <span className="block mt-1 text-base">
+                  {item.price.toLocaleString("uk-UA")} ₴
+                </span>
               </Link>
             ))}
           </div>
@@ -202,7 +220,6 @@ const ProductDetailPage = () => {
       )}
 
       <CartModal isOpen={showCart} setIsOpen={setShowCart} />
-
     </section>
   );
 };

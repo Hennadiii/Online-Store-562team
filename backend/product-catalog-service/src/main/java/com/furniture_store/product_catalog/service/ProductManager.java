@@ -4,6 +4,8 @@ import com.furniture_store.product_catalog.dto.Filter;
 import com.furniture_store.product_catalog.dto.PaginatedResponse;
 import com.furniture_store.product_catalog.dto.ProductDto;
 import com.furniture_store.product_catalog.entity.Product;
+import com.furniture_store.product_catalog.entity.Category;
+import com.furniture_store.product_catalog.entity.Producer;
 import com.furniture_store.product_catalog.exception.ProductAlreadyExistsException;
 import com.furniture_store.product_catalog.exception.ProductNotFoundException;
 import com.furniture_store.product_catalog.repository.CategoryRepository;
@@ -18,6 +20,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Сервисный класс для управления продуктами.
+ */
 @Service
 public class ProductManager {
 
@@ -36,7 +41,10 @@ public class ProductManager {
         this.categoryRepository = categoryRepository;
     }
 
-    @Transactional
+    /**
+     * Получает список продуктов с фильтрацией и пагинацией.
+     */
+    @Transactional(readOnly = true)
     public PaginatedResponse<ProductDto> getProductList(Filter filter, String sort, String order, Integer page, Integer pageSize) {
         Page<Product> products = productRepository.findAllWithFilters(
                 filter.category(), filter.minPrice(), filter.maxPrice(), filter.producer(),
@@ -46,7 +54,10 @@ public class ProductManager {
         return new PaginatedResponse<>(productDtoList, products);
     }
 
-    @Transactional
+    /**
+     * Поиск продуктов по ключевому слову.
+     */
+    @Transactional(readOnly = true)
     public PaginatedResponse<ProductDto> searchProduct(String keyword, Filter filter, String sort, String order, Integer page, Integer pageSize) {
         Page<Product> foundProducts = productRepository.findAllByContainsKey(
                 keyword, filter.category(), filter.minPrice(), filter.maxPrice(), filter.producer(), 
@@ -56,60 +67,83 @@ public class ProductManager {
         return new PaginatedResponse<>(productDtoList, foundProducts);
     }
 
+    /**
+     * Добавляет новый продукт.
+     */
     @Transactional
     public Long addProduct(ProductDto productDto) {
-        if (productDto.getId() != null && getProduct(productDto.getId()) != null) {
+        // Проверка существования по ID
+        if (productDto.getId() != null && productRepository.existsById(productDto.getId())) {
             throw new ProductAlreadyExistsException("Product with such id already exists");
         }
-        // ИСПРАВЛЕНО: используем getTitle() вместо getName()
+        
+        // Проверка по имени (используем getTitle() из DTO)
         if (productRepository.existsByName(productDto.getTitle())) {
             throw new ProductAlreadyExistsException("Product with such name already exists");
         }
         
         Product product = productDtoConverter.convertToEntity(productDto);
         
-        try {
-            product.setCategory(categoryRepository.findByName(productDto.getCategory()).orElseThrow());
-        } catch (Exception e) {
-            categoryRepository.saveAndFlush(product.getCategory());
-        }
+        // Привязка или создание Категории
+        product.setCategory(categoryRepository.findByName(productDto.getCategory())
+                .orElseGet(() -> categoryRepository.save(new Category(productDto.getCategory()))));
 
-        // ИСПРАВЛЕНО: Убрали блок поиска/сохранения Producer, так как в DTO его больше нет
-        
+        // Привязка или создание Производителя (Producer)
+        product.setProducer(producerRepository.findByName(productDto.getProducer())
+                .orElseGet(() -> producerRepository.save(new Producer(productDto.getProducer()))));
+
         productRepository.save(product);
         return product.getId();
     }
 
-    @Transactional
+    /**
+     * Возвращает товар по ID.
+     */
+    @Transactional(readOnly = true)
     public ProductDto getProduct(Long id) {
         Product product = productRepository.findById(id).orElseThrow(ProductNotFoundException::new);
         return productDtoConverter.convertToDto(product);
     }
 
+    /**
+     * Удаляет продукт.
+     */
     @Transactional
     public void deleteProduct(Long id) {
         productRepository.deleteById(id);
     }
 
+    /**
+     * Обновляет данные продукта.
+     */
     @Transactional
     public void updateProduct(ProductDto productDto) {
         Product product = productDtoConverter.convertToEntity(productDto);
-        product.setCategory(categoryRepository.findByName(productDto.getCategory()).orElse(product.getCategory()));
         
-        // ИСПРАВЛЕНО: Убрали установку Producer
+        // Обновляем категорию
+        product.setCategory(categoryRepository.findByName(productDto.getCategory())
+                .orElseGet(() -> categoryRepository.save(new Category(productDto.getCategory()))));
+        
+        // Обновляем производителя
+        product.setProducer(producerRepository.findByName(productDto.getProducer())
+                .orElseGet(() -> producerRepository.save(new Producer(productDto.getProducer()))));
         
         productRepository.save(product);
     }
 
+    /**
+     * Настройка сортировки (учитывает разницу между title в DTO и name в Entity).
+     */
     Sort parseSort(String property, String order) {
         Sort sort;
         Optional<Sort.Direction> direction = Sort.Direction.fromOptionalString(order);
         try {
-            // Если фронт присылает "title", проверяем наличие поля "name" в Entity для сортировки в БД
+            // Маппинг: если фронт просит title, в БД сортируем по name
             String entityProperty = property.equals("title") ? "name" : property;
             Product.class.getDeclaredField(entityProperty);
             sort = Sort.by(direction.orElse(Sort.Direction.ASC), entityProperty);
         } catch (NoSuchFieldException e) {
+            // Сортировка по умолчанию (новые товары сверху)
             sort = Sort.by(Sort.Direction.DESC, "addedAt");
         }
         return sort;

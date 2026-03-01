@@ -1,13 +1,9 @@
 package com.furniture_store.product_catalog.dto;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -15,28 +11,15 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProductDto {
-
     private Long id;
-
-    @NotBlank(message = "Title is mandatory")
-    private String title; // Было name -> стало title для фронта
-
-    @NotNull(message = "Price is mandatory")
+    private String title;      // Это имя для фронта
     private Float price;
-
     private String description;
-    
-    private String fullDescription; // Новое поле
-
+    private String fullDescription;
     private String category;
-
-    private Boolean popular; // Новое поле
-
-    // Теперь это список ссылок (URL), а не тяжелые байты
-    @Builder.Default
-    private List<String> images = new ArrayList<>();
-
-    // Вложенный объект для характеристик
+    private String producer;   // Возвращаем поле сюда!
+    private Boolean popular;
+    private List<String> images;
     private CharacteristicsDto characteristics;
 
     @Data

@@ -10,7 +10,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-@Table(name = "products") // Хорошая практика - называть таблицу во множественном числе
+@Table(name = "products")
 @NoArgsConstructor
 @AllArgsConstructor
 public class Product {
@@ -43,8 +43,9 @@ public class Product {
 
     private LocalDateTime addedAt = LocalDateTime.now();
 
-    // ВАЖНО: Убедись, что в классе Image поле bytes заменено на String url
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    // Исправлено: Добавлена аннотация @JoinColumn для корректной связи в БД
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @JoinColumn(name = "product_id") 
     private List<Image> images = new ArrayList<>();
 
     @ElementCollection

@@ -10,7 +10,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
         // Добавляем адрес твоего бэкенда на Render (замени на свой!)
         @Server(url = "https://online-store-562team.onrender.com", description = "Production Server"),
         // Оставляем локальный сервер для тестов дома
-        @Server(url = "http://localhost:10000", description = "Local Server")
+        @Server(url = "http://localhost:8080", description = "Local Server")
     }
 )
 @SpringBootApplication

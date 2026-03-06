@@ -10,8 +10,10 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class SwaggerConfig {
 
-    @Value("${server.port}")
-    private String serverPort;
+    // Локально: http://localhost:8080 (значення за замовчуванням)
+    // На Render: задати змінну оточення APP_SERVER_URL=https://your-service.onrender.com
+    @Value("${app.server-url:http://localhost:8080}")
+    private String serverUrl;
 
     @Bean
     public OpenAPI openAPI() {
@@ -21,7 +23,7 @@ public class SwaggerConfig {
                         .summary("CRUD операції для роботи з товарами")
                         .description("API-документація мікросервісу каталогу товарів"))
                 .addServersItem(new Server()
-                        .url("http://localhost:" + serverPort)
-                        .description("Local server"));
+                        .url(serverUrl)
+                        .description("Server"));
     }
 }

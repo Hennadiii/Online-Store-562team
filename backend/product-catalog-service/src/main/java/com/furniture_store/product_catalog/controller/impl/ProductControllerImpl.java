@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.net.URI;
 
@@ -70,16 +72,17 @@ public class ProductControllerImpl implements ProductController {
      * @return відповідь {@link ResponseEntity} з кодом 201 Created та URI нового продукту в заголовку Location
      */
     @Override
-    @PostMapping("/products")
-    public ResponseEntity<Void> addProduct(@RequestBody @Validated ProductDto product) {
-        Long id = productManager.addProduct(product);
-        URI uri = ServletUriComponentsBuilder
-                .fromCurrentRequestUri()
-                .path("/{productId}")
-                .buildAndExpand(id)
-                .toUri();
-        return ResponseEntity.created(uri).build();
-    }
+@PostMapping("/products")
+public ResponseEntity<Long> addProduct(@RequestBody @Validated ProductDto product) {
+
+    Long id = productManager.addProduct(product);
+
+    URI location = URI.create("/products/" + id);
+
+    return ResponseEntity
+            .created(location)
+            .body(id);
+}
 
     /**
      * Отримує інформацію про продукт за його ідентифікатором.
@@ -100,10 +103,11 @@ public class ProductControllerImpl implements ProductController {
      * @param id Ідентифікатор продукту, який потрібно видалити
      */
     @Override
-    @DeleteMapping("/products/{id}")
-    public void deleteProduct(@PathVariable Long id) {
-        productManager.deleteProduct(id);
-    }
+@DeleteMapping("/products/{id}")
+@ResponseStatus(HttpStatus.NO_CONTENT)
+public void deleteProduct(@PathVariable Long id) {
+    productManager.deleteProduct(id);
+}
 
     /**
      * Оновлює дані існуючого продукту за його ідентифікатором.
@@ -114,11 +118,11 @@ public class ProductControllerImpl implements ProductController {
      * @param product об'єкт DTO продукту з оновленими даними
      */
     @Override
-    @PutMapping("/products/{id}")
-    public void updateProduct(@PathVariable Long id, @RequestBody @Validated ProductDto product) {
-        product.setId(id);
-        productManager.updateProduct(product);
-    }
+@PutMapping("/products/{id}")
+public ResponseEntity<Void> updateProduct(@PathVariable Long id, @RequestBody @Validated ProductDto productDto) {
+    productManager.updateProduct(id, productDto); // передаём ID отдельно
+    return ResponseEntity.ok().build();           // возвращаем ResponseEntity<Void>
+}
 
 }
 

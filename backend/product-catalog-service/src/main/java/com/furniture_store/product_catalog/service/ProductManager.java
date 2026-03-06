@@ -109,28 +109,64 @@ public class ProductManager {
      * Удаляет продукт.
      */
     @Transactional
-    public void deleteProduct(Long id) {
-        productRepository.deleteById(id);
+public void deleteProduct(Long id) {
+
+    if (!productRepository.existsById(id)) {
+        throw new ProductNotFoundException();
     }
+
+    productRepository.deleteById(id);
+}
 
     /**
      * Обновляет данные продукта.
+     * Загружает существующий entity из базы и обновляет только его поля.
      */
     @Transactional
-    public void updateProduct(ProductDto productDto) {
-        Product product = productDtoConverter.convertToEntity(productDto);
-        
-        // Обновляем категорию
-        product.setCategory(categoryRepository.findByName(productDto.getCategory())
-                .orElseGet(() -> categoryRepository.save(new Category(productDto.getCategory()))));
-        
-        // Обновляем производителя
-        product.setProducer(producerRepository.findByName(productDto.getProducer())
-                .orElseGet(() -> producerRepository.save(new Producer(productDto.getProducer()))));
-        
-        productRepository.save(product);
+public void updateProduct(Long id, ProductDto productDto) {
+    // Проверяем, что продукт существует
+    Product product = productRepository.findById(id)
+            .orElseThrow(ProductNotFoundException::new);
+
+    // Якщо назва змінюється — перевіряємо що нова назва не зайнята
+if (!product.getName().equals(productDto.getTitle())
+    && productRepository.existsByName(productDto.getTitle())) {
+throw new ProductAlreadyExistsException("Product with such name already exists");
+}        
+
+    // Обновляем поля
+    product.setName(productDto.getTitle());
+    product.setPrice(productDto.getPrice());
+    product.setDescription(productDto.getDescription());
+    product.setFullDescription(productDto.getFullDescription());
+    product.setPopular(productDto.getPopular() != null ? productDto.getPopular() : false);
+
+    // Обновляем характеристики
+    if (productDto.getCharacteristics() != null) {
+        product.setMaterial(productDto.getCharacteristics().getMaterial());
+        product.setUpholstery(productDto.getCharacteristics().getUpholstery());
+        product.setFunctionality(productDto.getCharacteristics().getFunctionality());
     }
 
+    // Обновляем категорию
+    product.setCategory(categoryRepository.findByName(productDto.getCategory())
+            .orElseGet(() -> categoryRepository.save(new Category(productDto.getCategory()))));
+
+    // Обновляем производителя
+    product.setProducer(producerRepository.findByName(productDto.getProducer())
+            .orElseGet(() -> producerRepository.save(new Producer(productDto.getProducer()))));
+
+    // Обновляем изображения
+    product.getImages().clear();
+    if (productDto.getImages() != null) {
+        productDto.getImages().stream()
+                .map(com.furniture_store.product_catalog.entity.Image::new)
+                .forEach(product.getImages()::add);
+    }
+
+    // Сохраняем изменения
+    productRepository.save(product);
+}
     /**
      * Настройка сортировки (учитывает разницу между title в DTO и name в Entity).
      */

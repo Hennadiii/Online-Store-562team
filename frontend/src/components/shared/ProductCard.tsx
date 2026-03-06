@@ -1,9 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Product } from "@/data/products";
+import { ProductDto } from "@/types/product";
 
 interface Props {
-  product: Product;
+  product: ProductDto;
 }
 
 const ProductCard: React.FC<Props> = ({ product }) => {
@@ -11,7 +11,7 @@ const ProductCard: React.FC<Props> = ({ product }) => {
     <Link href={`/product/${product.id}`} className="w-full block">
       <div className="bg-[#f1f1f1] h-[200px] sm:h-[250px] flex items-center justify-center group cursor-pointer overflow-hidden">
         <Image
-          src={product.images[0]}
+          src={product.images[0] || "/Oslo.jpg"}
           alt={product.title}
           width={262}
           height={170}
@@ -24,7 +24,7 @@ const ProductCard: React.FC<Props> = ({ product }) => {
       </span>
 
       <span className="text-[16px] sm:text-[20px] block mt-1 font-semibold">
-      {product.price.toLocaleString("uk-UA")} ₴
+        {product.price.toLocaleString("uk-UA")} ₴
       </span>
     </Link>
   );

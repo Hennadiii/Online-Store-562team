@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import "@/styles/globals.css";
 
+
 import Header from "@/components/shared/header";
 import Footer from "@/components/shared/footer";
 import ScrollToTop from "@/components/shared/scrollTop";

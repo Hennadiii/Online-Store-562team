@@ -1,17 +1,17 @@
 import { useState, useEffect } from "react";
-import { Product } from "@/data/products";
+import { ProductDto } from "@/types/product";
 
 const STORAGE_KEY = "favorites";
 
 export function useFavorites() {
-  const [favorites, setFavorites] = useState<Product[]>([]);
+  const [favorites, setFavorites] = useState<ProductDto[]>([]);
 
   useEffect(() => {
     const stored = localStorage.getItem(STORAGE_KEY);
     setFavorites(stored ? JSON.parse(stored) : []);
   }, []);
 
-  const toggleFavorite = (product: Product) => {
+  const toggleFavorite = (product: ProductDto) => {
     setFavorites((prev) => {
       const exists = prev.find((p) => p.id === product.id);
       const updated = exists

@@ -2,11 +2,11 @@
 
 import { createContext, useContext, ReactNode } from "react";
 import { useFavorites } from "@/hooks/useFavorites";
-import { Product } from "@/data/products";
+import { ProductDto } from "@/types/product";
 
 interface FavoritesContextType {
-  favorites: Product[];
-  toggleFavorite: (product: Product) => void;
+  favorites: ProductDto[];
+  toggleFavorite: (product: ProductDto) => void;
   isFavorite: (id: number) => boolean;
 }
 

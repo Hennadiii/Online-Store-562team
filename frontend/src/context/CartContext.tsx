@@ -2,11 +2,11 @@
 
 import { createContext, useContext, ReactNode } from "react";
 import { useCart, CartItem } from "@/hooks/useCart";
-import { Product } from "@/data/products";
+import { ProductDto } from "@/types/product";
 
 interface CartContextType {
   items: CartItem[];
-  addToCart: (product: Product) => void;
+  addToCart: (product: ProductDto) => void;
   removeFromCart: (id: number) => void;
   updateQuantity: (id: number, quantity: number) => void;
   clearCart: () => void;

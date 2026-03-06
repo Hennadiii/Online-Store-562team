@@ -2,12 +2,11 @@ import BedArrow from "@/assets/bed-arrow.svg";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import AnimatedSection from "@/components/shared/animatedSection";
-import CustomSlider from "@/components/shared/customSlider";
+import CatalogSlider from "@/components/shared/CatalogSlider";
 import Link from "next/link";
-import { products } from "@/data/products";
 import ProductCard from "@/components/shared/ProductCard";
-
-
+import { getProducts } from "@/services/productService";
+import type { ProductDto } from "@/types/product";
 
 export const metadata = {
   title: "Cozy Corners | Home",
@@ -18,7 +17,18 @@ const tabs = ["Дивани", "Ліжка", "Крісла", "Шафи", "Тум�
 
 const data = ["Еко Хоум", "Ліжка", "Тумби", "Крісла", "Комоди", "Дивани2", "Дивани3", "Дивани4"];
 
-const HomePage: React.FC = () => {
+const HomePage: React.FC = async () => {
+  // Завантажуємо всі товари (перша сторінка, 50 позицій)
+  let allProducts: ProductDto[] = [];
+  try {
+    const res = await getProducts({ page: 0, pageSize: 50 });
+    allProducts = res.content;
+  } catch {
+    allProducts = [];
+  }
+
+  const popularProducts = allProducts.filter((p) => p.popular);
+
   const renderedItems = data.map((product, idx) => (
     <div key={idx} className="w-full">
       <div className="bg-[#f1f1f1] h-[200px] sm:h-[250px] flex items-center justify-center group cursor-pointer">
@@ -51,16 +61,12 @@ const HomePage: React.FC = () => {
 
         <div className="relative mt-20 sm:mt-[90px] w-full h-[400px] sm:h-[481px] flex flex-col items-center justify-center gap-y-4 sm:gap-y-10 bg-home bg-cover bg-center pt-36 sm:pt-[235px] pb-10">
           <div className="flex flex-col sm:flex-row gap-4">
-  <Link href="/catalog">
-  <Button className="w-[250px] sm:w-[297px]">
-    Каталог
-  </Button>
-  </Link>
-
+            <Link href="/catalog">
+              <Button className="w-[250px] sm:w-[297px]">Каталог</Button>
+            </Link>
             <Button className="w-[250px] sm:w-[297px]" variant="second">Консультація</Button>
           </div>
 
-          {/* BedViviana */}
           <div className="absolute bottom-4 right-4 flex items-center gap-2 text-white text-xs sm:text-sm">
             <span>Ліжко Вівіана</span>
             <BedArrow className="h-[17px] w-[118px] text-[#948d80] transition-all group-hover:scale-110 group-hover:text-white" />
@@ -71,26 +77,13 @@ const HomePage: React.FC = () => {
       {/* Catalog Slider */}
       <AnimatedSection className="mt-20 sm:mt-[95px]">
         <h2 className="mb-4 text-h2">КАТАЛОГ</h2>
-        <CustomSlider slidesToShow={4.25}>
-  {products.map((product) => (
-    <ProductCard key={product.id} product={product} />
-  ))}
-</CustomSlider>
-
-        
+        <CatalogSlider products={allProducts} />
       </AnimatedSection>
 
       {/* Popular Section */}
       <AnimatedSection className="mt-20 sm:mt-[90px]">
         <div className="relative">
-        {/* Популярне */}
-        <h2 className="text-[50px] sm:text-[52px] md:text-[54px] uppercase mb-4">
-  Популярне
-</h2>
-
-
-
-
+          <h2 className="text-[50px] sm:text-[52px] md:text-[54px] uppercase mb-4">Популярне</h2>
           <ul className="flex flex-wrap gap-2 sm:gap-4 mb-4">
             {tabs.map((item, index) => (
               <li key={index} className="p-2">
@@ -101,12 +94,13 @@ const HomePage: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-        {products
-  .filter((p) => p.popular)
-  .map((product) => (
-    <ProductCard key={product.id} product={product} />
-  ))}
-
+          {popularProducts.length > 0 ? (
+            popularProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))
+          ) : (
+            <p className="col-span-4 text-gray-400 text-sm">Популярні товари відсутні</p>
+          )}
         </div>
       </AnimatedSection>
 
@@ -118,7 +112,7 @@ const HomePage: React.FC = () => {
           </p>
 
           <p className="mt-3 text-center lg:text-left text-[16px] sm:text-[20px] leading-[120%]">
-            Не знаєте, як обрати меблі для вашого простору? Залиште email, і наш дизайнер допоможе створити стильний та комфортний інтер’єр.
+            Не знаєте, як обрати меблі для вашого простору? Залиште email, і наш дизайнер допоможе створити стильний та комфортний інтер'єр.
           </p>
 
           <form className="mt-8 sm:mt-[105px] flex flex-col gap-4">
@@ -136,9 +130,8 @@ const HomePage: React.FC = () => {
           <p className="mt-4 sm:mt-[22px] text-[14px] sm:text-[16px] leading-[120%]">
             Ваша інформація буде збережена в обліковому записі магазину. Продовжуючи, ви погоджуєтеся з
             <Link href="/privacy-policy" className="underline ml-1">
-  Політикою конфіденційності
-</Link>
-
+              Політикою конфіденційності
+            </Link>
           </p>
         </div>
 
@@ -169,8 +162,8 @@ const HomePage: React.FC = () => {
               <h4>Наповни</h4>
               <h5 className="float-right mr-4 sm:mr-[125px] font-second font-medium lowercase text-accent">дім</h5>
               <h5 className="ml-4 sm:ml-[90px] font-medium uppercase text-black text-[50px] sm:text-[80px] leading-[120%]">
-      гармонією
-    </h5>
+                гармонією
+              </h5>
             </div>
             <p className="mt-6 text-[16px] sm:text-[20px] font-medium uppercase leading-[120%]">
               Ми пропонуємо широкий вибір меблів для спальні, включаючи більше 1000 найменувань продукції, що поєднує стиль, комфорт і якість.
@@ -179,11 +172,8 @@ const HomePage: React.FC = () => {
               У нашому асортименті — меблі від найкращих виробників, які задовольнять найвибагливіші смаки.
             </p>
             <Link href="/about-us">
-  <Button className="mt-6 w-full border-black">
-    Більше про нас
-  </Button>
-</Link>
-
+              <Button className="mt-6 w-full border-black">Більше про нас</Button>
+            </Link>
           </div>
         </div>
       </AnimatedSection>

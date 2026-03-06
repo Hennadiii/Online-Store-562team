@@ -5,33 +5,41 @@ import AnimatedSection from "./animatedSection";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { getBreadcrumbs } from "@/utils/breadcrumbs";
-import { products } from "@/data/products";
+import { useEffect, useState } from "react";
+import { getProductById } from "@/services/productService";
 
 interface BreadcrumbsProps {
   className?: string;
 }
 
+interface Breadcrumb {
+  label: string;
+  link?: string;
+}
+
 export default function Breadcrumbs({ className }: BreadcrumbsProps) {
   const pathname = usePathname();
-  let items = getBreadcrumbs(pathname);
+  const [items, setItems] = useState<Breadcrumb[]>(getBreadcrumbs(pathname));
 
-  // Страница товара
-  if (pathname.startsWith("/product/")) {
+  useEffect(() => {
+    if (!pathname.startsWith("/product/")) return;
+
     const id = Number(pathname.split("/")[2]);
-    const product = products.find((p) => p.id === id);
+    if (isNaN(id)) return;
 
-    if (product) {
-      items = [
-        { label: "Головна сторінка", link: "/" },
-        { label: "Каталог", link: "/catalog" },
-        {
-          label: product.category,
-          link: `/catalog/${product.category}`,
-        },
-        { label: product.title },
-      ];
-    }
-  }
+    getProductById(id)
+      .then((product) => {
+        setItems([
+          { label: "Головна сторінка", link: "/" },
+          { label: "Каталог", link: "/catalog" },
+          { label: product.category, link: `/catalog/${product.category}` },
+          { label: product.title },
+        ]);
+      })
+      .catch(() => {
+        // якщо не вдалося завантажити — залишаємо дефолтні breadcrumbs
+      });
+  }, [pathname]);
 
   return (
     <AnimatedSection

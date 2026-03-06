@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import { Product } from "@/data/products";
+import { ProductDto } from "@/types/product";
 
 export interface CartItem {
-  product: Product;
+  product: ProductDto;
   quantity: number;
 }
 
@@ -16,12 +16,7 @@ export function useCart() {
     setItems(stored ? JSON.parse(stored) : []);
   }, []);
 
-  const save = (updated: CartItem[]) => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-    setItems(updated);
-  };
-
-  const addToCart = (product: Product) => {
+  const addToCart = (product: ProductDto) => {
     setItems((prev) => {
       const exists = prev.find((i) => i.product.id === product.id);
       const updated = exists
@@ -55,15 +50,12 @@ export function useCart() {
     });
   };
 
-  const total = items.reduce(
-    (sum, i) => sum + i.product.price * i.quantity,
-    0
-  );
+  const total = items.reduce((sum, i) => sum + i.product.price * i.quantity, 0);
 
   const clearCart = () => {
     localStorage.removeItem(STORAGE_KEY);
     setItems([]);
   };
-  
+
   return { items, addToCart, removeFromCart, updateQuantity, total, clearCart };
 }

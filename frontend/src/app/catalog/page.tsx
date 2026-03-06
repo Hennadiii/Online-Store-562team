@@ -4,7 +4,7 @@ import AnimatedSection from "@/components/shared/animatedSection";
 import Breadcrumbs from "@/components/shared/breadcrumbs";
 import CatalogItem from "@/components/shared/catalogItem";
 import Pagination from "@/components/shared/pagination";
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { getProducts } from "@/services/productService";
 import type { ProductDto } from "@/types/product";
 
@@ -20,6 +20,7 @@ const categoryImages: Record<string, string> = {
 };
 
 const ITEMS_PER_PAGE = 6;
+const DEBOUNCE_MS = 400;
 
 const CatalogPage: React.FC = () => {
   const [selected, setSelected] = useState<string[]>([]);
@@ -38,54 +39,71 @@ const CatalogPage: React.FC = () => {
   const showPriceFilter = selected.length === 1;
 
   const prevCategoryRef = useRef<string>("");
+  const abortRef = useRef<AbortController | null>(null);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const fetchProducts = useCallback(async () => {
-    if (!showProducts) return;
-    setLoading(true);
-    try {
-      if (selected.length === 1) {
-        // Один чекбокс — фільтруємо на бекенді
-        const res = await getProducts({
-          filter: {
-            category: selected[0],
-            minPrice: priceMin > absoluteMin ? priceMin : undefined,
-            maxPrice: priceMax < absoluteMax ? priceMax : undefined,
-          },
-          page: currentPage - 1,
-          pageSize: ITEMS_PER_PAGE,
-        });
-
-        setProducts(res.content);
-        setTotalPages(res.totalPages);
-        setTotalElements(res.totalElements);
-      } else {
-        // Кілька чекбоксів — завантажуємо всі і фільтруємо на клієнті
-        const res = await getProducts({
-          filter: {},
-          page: 0,
-          pageSize: 200,
-        });
-
-        const filtered = res.content.filter((p) => selected.includes(p.category));
-        const totalFiltered = filtered.length;
-        const totalPagesFiltered = Math.ceil(totalFiltered / ITEMS_PER_PAGE);
-        const start = (currentPage - 1) * ITEMS_PER_PAGE;
-        const paginated = filtered.slice(start, start + ITEMS_PER_PAGE);
-
-        setProducts(paginated);
-        setTotalPages(totalPagesFiltered);
-        setTotalElements(totalFiltered);
-      }
-    } catch (e) {
-      console.error("Помилка завантаження товарів:", e);
-    } finally {
-      setLoading(false);
-    }
-  }, [selected, priceMin, priceMax, currentPage, showProducts, absoluteMin, absoluteMax]);
-
+  // Основний ефект — з debounce та AbortController
   useEffect(() => {
-    fetchProducts();
-  }, [fetchProducts]);
+    if (!showProducts) return;
+
+    // Скасовуємо попередній debounce
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+
+    debounceRef.current = setTimeout(async () => {
+      // Скасовуємо попередній запит
+      if (abortRef.current) abortRef.current.abort();
+      const controller = new AbortController();
+      abortRef.current = controller;
+
+      setLoading(true);
+      try {
+        if (selected.length === 1) {
+          const res = await getProducts({
+            filter: {
+              category: selected[0],
+              minPrice: priceMin > absoluteMin ? priceMin : undefined,
+              maxPrice: priceMax < absoluteMax ? priceMax : undefined,
+            },
+            page: currentPage - 1,
+            pageSize: ITEMS_PER_PAGE,
+          }, controller.signal);
+
+          if (!controller.signal.aborted) {
+            setProducts(res.content);
+            setTotalPages(res.totalPages);
+            setTotalElements(res.totalElements);
+          }
+        } else {
+          const res = await getProducts({
+            filter: {},
+            page: 0,
+            pageSize: 200,
+          }, controller.signal);
+
+          if (!controller.signal.aborted) {
+            const filtered = res.content.filter((p) => selected.includes(p.category));
+            const totalFiltered = filtered.length;
+            const totalPagesFiltered = Math.ceil(totalFiltered / ITEMS_PER_PAGE);
+            const start = (currentPage - 1) * ITEMS_PER_PAGE;
+            const paginated = filtered.slice(start, start + ITEMS_PER_PAGE);
+
+            setProducts(paginated);
+            setTotalPages(totalPagesFiltered);
+            setTotalElements(totalFiltered);
+          }
+        }
+      } catch (e) {
+        if (e instanceof Error && e.name === "AbortError") return;
+        console.error("Помилка завантаження товарів:", e);
+      } finally {
+        if (!controller.signal.aborted) setLoading(false);
+      }
+    }, DEBOUNCE_MS);
+
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, [selected, priceMin, priceMax, currentPage, showProducts, absoluteMin, absoluteMax]);
 
   // Ініціалізація діапазону цін при виборі однієї категорії
   useEffect(() => {

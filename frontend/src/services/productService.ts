@@ -31,13 +31,32 @@ function buildParams(params: GetProductsParams): URLSearchParams {
 }
 
 export async function getProducts(
-  params: GetProductsParams
+  params: GetProductsParams,
+  signal?: AbortSignal
 ): Promise<PaginatedResponse<ProductDto>> {
-  const res = await fetchWithTimeout(`${API_URL}/products?${buildParams(params)}`, {
-    cache: "no-store",
-  });
-  if (!res.ok) throw new Error(`getProducts failed: ${res.status}`);
-  return res.json();
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 8000);
+  
+  // Якщо прийшов зовнішній signal — скасовуємо і таймаут контролер теж
+  if (signal) {
+    signal.addEventListener("abort", () => {
+      controller.abort();
+      clearTimeout(timeout);
+    });
+  }
+
+  try {
+    const res = await fetch(`${API_URL}/products?${buildParams(params)}`, {
+      cache: "no-store",
+      signal: controller.signal,
+    });
+    clearTimeout(timeout);
+    if (!res.ok) throw new Error(`getProducts failed: ${res.status}`);
+    return res.json();
+  } catch (e) {
+    clearTimeout(timeout);
+    throw e;
+  }
 }
 
 export async function getProductsByCategory(

@@ -4,7 +4,7 @@ import AnimatedSection from "@/components/shared/animatedSection";
 import Breadcrumbs from "@/components/shared/breadcrumbs";
 import CatalogItem from "@/components/shared/catalogItem";
 import Pagination from "@/components/shared/pagination";
-import { useState, useMemo, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { getProducts } from "@/services/productService";
 import type { ProductDto } from "@/types/product";
 
@@ -25,6 +25,9 @@ const CatalogPage: React.FC = () => {
   const [selected, setSelected] = useState<string[]>([]);
   const [priceMin, setPriceMin] = useState<number>(0);
   const [priceMax, setPriceMax] = useState<number>(0);
+  // Абсолютные границы диапазона — устанавливаются один раз при выборе категории
+  const [absoluteMin, setAbsoluteMin] = useState<number>(0);
+  const [absoluteMax, setAbsoluteMax] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState(1);
 
   const [products, setProducts] = useState<ProductDto[]>([]);
@@ -33,24 +36,24 @@ const CatalogPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
 
   const showProducts = selected.length > 0;
+  // Фильтр по цене показывается только при одной выбранной категории
   const showPriceFilter = selected.length === 1;
 
-  const absoluteMin = useMemo(
-    () => (products.length ? Math.min(...products.map((p) => p.price)) : 0),
-    [products]
-  );
-  const absoluteMax = useMemo(
-    () => (products.length ? Math.max(...products.map((p) => p.price)) : 0),
-    [products]
-  );
+  // Ref для отслеживания предыдущей выбранной категории
+  // (чтобы сбрасывать диапазон цен при смене категории)
+  const prevCategoryRef = useRef<string>("");
 
   const fetchProducts = useCallback(async () => {
     if (!showProducts) return;
     setLoading(true);
     try {
+      const isSingleCategory = selected.length === 1;
+      const category = isSingleCategory ? selected[0] : undefined;
+
       const res = await getProducts({
         filter: {
-          category: selected.length === 1 ? selected[0] : undefined,
+          category,
+          // Передаём ценовой фильтр только при одной категории и если диапазон задан
           minPrice: showPriceFilter && priceMin > 0 ? priceMin : undefined,
           maxPrice: showPriceFilter && priceMax > 0 ? priceMax : undefined,
         },
@@ -58,18 +61,8 @@ const CatalogPage: React.FC = () => {
         pageSize: ITEMS_PER_PAGE,
       });
 
-      const filtered =
-        selected.length > 1
-          ? res.content.filter((p) => selected.includes(p.category))
-          : res.content;
-
-      setProducts(filtered);
-      if (selected.length === 1 && priceMin === 0 && priceMax === 0) {
-        const min = Math.min(...filtered.map((p) => p.price));
-        const max = Math.max(...filtered.map((p) => p.price));
-        setPriceMin(min);
-        setPriceMax(max);
-      }
+      // Никакой клиентской фильтрации — всё делает сервер
+      setProducts(res.content);
       setTotalPages(res.totalPages);
       setTotalElements(res.totalElements);
     } catch (e) {
@@ -83,18 +76,72 @@ const CatalogPage: React.FC = () => {
     fetchProducts();
   }, [fetchProducts]);
 
+  // Отдельный эффект: инициализация диапазона цен при выборе одной категории.
+  // Загружаем ВСЕ товары категории (без ценового фильтра) чтобы найти min/max.
+  useEffect(() => {
+    if (selected.length !== 1) return;
+
+    const category = selected[0];
+    // Если категория не изменилась — не перезагружаем границы
+    if (prevCategoryRef.current === category) return;
+    prevCategoryRef.current = category;
+
+    const initPriceRange = async () => {
+      try {
+        // Запрашиваем первую страницу без ценового фильтра
+        // pageSize=100 чтобы получить репрезентативную выборку для min/max
+        const res = await getProducts({
+          filter: { category },
+          page: 0,
+          pageSize: 100,
+        });
+
+        if (res.content.length > 0) {
+          const prices = res.content.map((p) => p.price);
+          const min = Math.min(...prices);
+          const max = Math.max(...prices);
+          setAbsoluteMin(min);
+          setAbsoluteMax(max);
+          setPriceMin(min);
+          setPriceMax(max);
+        }
+      } catch (e) {
+        console.error("Помилка ініціалізації діапазону цін:", e);
+      }
+    };
+
+    initPriceRange();
+  }, [selected]);
+
   const toggleCategory = (title: string) => {
-    const next = selected.includes(title)
+    const isAlreadySelected = selected.includes(title);
+    const next = isAlreadySelected
       ? selected.filter((c) => c !== title)
       : [...selected, title];
+
     setSelected(next);
     setCurrentPage(1);
+
+    // Сбрасываем ценовой диапазон при изменении набора категорий
     setPriceMin(0);
     setPriceMax(0);
+    setAbsoluteMin(0);
+    setAbsoluteMax(0);
+    prevCategoryRef.current = "";
+  };
+
+  const resetFilters = () => {
+    setSelected([]);
+    setPriceMin(0);
+    setPriceMax(0);
+    setAbsoluteMin(0);
+    setAbsoluteMax(0);
+    setCurrentPage(1);
+    prevCategoryRef.current = "";
   };
 
   return (
-    <section className="mx-auto  max-w-[1440px] bg-first pb-[32px] px-4 sm:px-6 lg:px-8">
+    <section className="mx-auto max-w-[1440px] bg-first pb-[32px] px-4 sm:px-6 lg:px-8">
       <AnimatedSection as="h1" className="text-h2 mt-14 text-center uppercase">
         Каталог
       </AnimatedSection>
@@ -115,7 +162,11 @@ const CatalogPage: React.FC = () => {
                     onChange={() => toggleCategory(cat)}
                     className="w-4 h-4 cursor-pointer"
                   />
-                  <span className={`text-sm ${selected.includes(cat) ? "font-semibold" : "text-gray-600"}`}>
+                  <span
+                    className={`text-sm ${
+                      selected.includes(cat) ? "font-semibold" : "text-gray-600"
+                    }`}
+                  >
                     {cat}
                   </span>
                 </label>
@@ -125,19 +176,15 @@ const CatalogPage: React.FC = () => {
 
           {selected.length > 0 && (
             <button
-              onClick={() => {
-                setSelected([]);
-                setPriceMin(0);
-                setPriceMax(0);
-                setCurrentPage(1);
-              }}
+              onClick={resetFilters}
               className="mt-4 text-xs underline text-gray-400 hover:text-black transition"
             >
               Скинути фільтр
             </button>
           )}
 
-          {showPriceFilter && products.length > 0 && (
+          {/* Ценовой фильтр — только при одной выбранной категории */}
+          {showPriceFilter && absoluteMax > 0 && (
             <div className="mt-8">
               <h3 className="text-base font-semibold uppercase mb-4">Ціна</h3>
               <div className="flex gap-2 mb-4">
@@ -148,7 +195,13 @@ const CatalogPage: React.FC = () => {
                     value={priceMin}
                     min={absoluteMin}
                     max={priceMax}
-                    onChange={(e) => { setPriceMin(Number(e.target.value)); setCurrentPage(1); }}
+                    onChange={(e) => {
+                      const val = Number(e.target.value);
+                      if (val <= priceMax) {
+                        setPriceMin(val);
+                        setCurrentPage(1);
+                      }
+                    }}
                     className="w-full border-b border-black px-1 py-1 text-sm outline-none bg-transparent"
                   />
                 </div>
@@ -159,20 +212,44 @@ const CatalogPage: React.FC = () => {
                     value={priceMax}
                     min={priceMin}
                     max={absoluteMax}
-                    onChange={(e) => { setPriceMax(Number(e.target.value)); setCurrentPage(1); }}
+                    onChange={(e) => {
+                      const val = Number(e.target.value);
+                      if (val >= priceMin) {
+                        setPriceMax(val);
+                        setCurrentPage(1);
+                      }
+                    }}
                     className="w-full border-b border-black px-1 py-1 text-sm outline-none bg-transparent"
                   />
                 </div>
               </div>
               <div className="relative flex flex-col gap-2">
                 <input
-                  type="range" min={absoluteMin} max={absoluteMax} value={priceMin}
-                  onChange={(e) => { const val = Number(e.target.value); if (val <= priceMax) { setPriceMin(val); setCurrentPage(1); } }}
+                  type="range"
+                  min={absoluteMin}
+                  max={absoluteMax}
+                  value={priceMin}
+                  onChange={(e) => {
+                    const val = Number(e.target.value);
+                    if (val <= priceMax) {
+                      setPriceMin(val);
+                      setCurrentPage(1);
+                    }
+                  }}
                   className="w-full accent-black"
                 />
                 <input
-                  type="range" min={absoluteMin} max={absoluteMax} value={priceMax}
-                  onChange={(e) => { const val = Number(e.target.value); if (val >= priceMin) { setPriceMax(val); setCurrentPage(1); } }}
+                  type="range"
+                  min={absoluteMin}
+                  max={absoluteMax}
+                  value={priceMax}
+                  onChange={(e) => {
+                    const val = Number(e.target.value);
+                    if (val >= priceMin) {
+                      setPriceMax(val);
+                      setCurrentPage(1);
+                    }
+                  }}
                   className="w-full accent-black"
                 />
               </div>
@@ -186,7 +263,7 @@ const CatalogPage: React.FC = () => {
 
         {/* Контент */}
         <div className="flex-1">
-          {showProducts && showPriceFilter && (
+          {showProducts && (
             <p className="text-sm text-gray-500 tracking-wide mb-6">
               Знайдено товарів:{" "}
               <span className="text-black font-medium">{totalElements}</span>

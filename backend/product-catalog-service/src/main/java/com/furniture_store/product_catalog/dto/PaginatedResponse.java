@@ -32,7 +32,7 @@ public class PaginatedResponse<T> {
      */
     public PaginatedResponse(List<T> content, Page<?> page){
         this.content = content;
-        this.totalElements = page.getNumberOfElements();
+        this.totalElements = (int) page.getTotalElements(); // общее кол-во
         this.totalPages = page.getTotalPages();
         this.number = page.getNumber();
         this.size = page.getSize();

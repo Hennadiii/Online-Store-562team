@@ -38,7 +38,7 @@ const AnimatedSection: React.FC<props> = ({
     <Component
       ref={ref}
       className={cn(
-        "opacity-0 translate-y-10 transition-all duration-700 ease-out",
+        "opacity-0 translate-y-t10 transition-all duration-700 ease-out",
         isVisible && "opacity-100 translate-y-0",
         className, // Подключаем кастомные классы
       )}

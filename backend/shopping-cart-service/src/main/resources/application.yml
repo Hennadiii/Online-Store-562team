@@ -1,0 +1,42 @@
+server:
+  port: 9080
+
+---
+
+spring:
+  profiles:
+    active: prod
+
+# Production profile configuration
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+  sql:
+    init:
+      mode: always
+#      data-locations: classpath:data-postgres.sql
+      schema-locations: classpath:schema-postgres.sql
+  datasource:
+    url: jdbc:postgresql://localhost:5432/furniture_shopping_cart_db
+    username: team562
+    password: teamChallenge
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    open-in-view: false
+    defer-datasource-initialization: true
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        generate_statistics: false
+    show-sql: false
+  logging:
+    level:
+      org: info
+      com: off
+
+
+

@@ -1,0 +1,40 @@
+#version: '3.8'
+
+services:
+  product-catalog:
+    container_name: "shopping-cart-service"
+    build:
+      context: .
+    ports:
+      - "9080:9080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/furniture_shopping_cart_db  # використовуємо ім'я контейнера db
+      - SPRING_DATASOURCE_USERNAME=team562
+      - SPRING_DATASOURCE_PASSWORD=teamChallenge
+      - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.PostgreSQLDialect
+      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver
+      - SPRING_JPA_PROPERTIES_HIBERNATE_DDL_AUTO=update
+      - SPRING_JPA_HIBERNATE_NAMING_PHYSICAL_STRATEGY=org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+    depends_on:
+      - db
+    healthcheck:
+      test: ["CMD", "pg_isready", "-h", "db", "-p", "5432"]
+      interval: 30s
+      retries: 5
+      start_period: 5s
+      timeout: 5s
+
+  db:
+    image: "postgres:latest"
+    container_name: "shopping-cart-db"
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=team562
+      - POSTGRES_PASSWORD=teamChallenge
+      - POSTGRES_DB=furniture_shopping_cart_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

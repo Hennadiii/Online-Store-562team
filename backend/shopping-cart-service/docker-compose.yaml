@@ -1,40 +1,48 @@
-#version: '3.8'
+version: '3.8'
 
 services:
-  product-catalog:
-    container_name: "shopping-cart-service"
+
+  product-catalog-service:
+    # Если product-catalog-service в отдельной папке — укажи путь к его Dockerfile
+    # Если он уже запущен отдельно — убери этот блок и используй только network_mode
+    image: product-catalog-service:latest   # или build: ../product-catalog-service
+    container_name: product-catalog-service
+    ports:
+      - "8080:8080"
+    networks:
+      - store-network
+
+  shopping-cart-service:
+    container_name: shopping-cart-service
     build:
       context: .
     ports:
       - "9080:9080"
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/furniture_shopping_cart_db  # використовуємо ім'я контейнера db
-      - SPRING_DATASOURCE_USERNAME=team562
-      - SPRING_DATASOURCE_PASSWORD=teamChallenge
-      - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.PostgreSQLDialect
-      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver
-      - SPRING_JPA_PROPERTIES_HIBERNATE_DDL_AUTO=update
-      - SPRING_JPA_HIBERNATE_NAMING_PHYSICAL_STRATEGY=org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+      - SPRING_PROFILES_ACTIVE=docker
     depends_on:
       - db
-    healthcheck:
-      test: ["CMD", "pg_isready", "-h", "db", "-p", "5432"]
-      interval: 30s
-      retries: 5
-      start_period: 5s
-      timeout: 5s
+      - product-catalog-service
+    networks:
+      - store-network
 
   db:
-    image: "postgres:latest"
-    container_name: "shopping-cart-db"
+    image: postgres:15
+    container_name: shopping-cart-db
     ports:
-      - "5432:5432"
+      - "5433:5432"
     environment:
-      - POSTGRES_USER=team562
-      - POSTGRES_PASSWORD=teamChallenge
-      - POSTGRES_DB=furniture_shopping_cart_db
+      POSTGRES_USER: team562
+      POSTGRES_PASSWORD: teamChallenge
+      POSTGRES_DB: furniture_shopping_cart_db
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - store-network
 
 volumes:
   postgres_data:
+
+networks:
+  store-network:
+    driver: bridge

@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+
+  # ── Product Catalog Service ──────────────────────────────────────────────
+  product-catalog-service:
+    build:
+      context: ./product-catalog-service
+    container_name: product-catalog-service
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://product-catalog-db:5432/products
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+    depends_on:
+      - product-catalog-db
+    networks:
+      - store-network
+
+  product-catalog-db:
+    image: postgres:15
+    container_name: product-catalog-db
+    environment:
+      POSTGRES_DB: products
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - product_catalog_data:/var/lib/postgresql/data
+    networks:
+      - store-network
+
+  # ── Shopping Cart Service ────────────────────────────────────────────────
+  shopping-cart-service:
+    build:
+      context: ./shopping-cart-service
+    container_name: shopping-cart-service
+    ports:
+      - "9080:9080"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    depends_on:
+      - shopping-cart-db
+      - product-catalog-service
+    networks:
+      - store-network
+
+  shopping-cart-db:
+    image: postgres:15
+    container_name: shopping-cart-db
+    environment:
+      POSTGRES_DB: furniture_shopping_cart_db
+      POSTGRES_USER: team562
+      POSTGRES_PASSWORD: teamChallenge
+    ports:
+      - "5433:5432"
+    volumes:
+      - shopping_cart_data:/var/lib/postgresql/data
+    networks:
+      - store-network
+
+# ── Volumes ──────────────────────────────────────────────────────────────────
+volumes:
+  product_catalog_data:
+  shopping_cart_data:
+
+# ── Networks ─────────────────────────────────────────────────────────────────
+networks:
+  store-network:
+    driver: bridge

@@ -6,6 +6,7 @@ import com.furniture_store.shoppingcartservice.dto.ShoppingCartDtoResponse;
 import com.furniture_store.shoppingcartservice.entity.ShoppingCart;
 import com.furniture_store.shoppingcartservice.service.ShoppingCartService;
 import com.furniture_store.shoppingcartservice.service.mapper.ShoppingCartMapperResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,14 +31,16 @@ public class ShoppingCartControllerImpl implements ShoppingCartController {
     @Override
     @GetMapping("/{cartId}")
     public ResponseEntity<ShoppingCartDtoResponse> getCart(@PathVariable Long cartId) {
-            ShoppingCart cart = shoppingCartService.getCartById(cartId);
-            ShoppingCartDtoResponse response = shoppingCartMapperResponse.toDto(cart);
-            return ResponseEntity.status(HttpStatus.OK).body(response);
+        ShoppingCart cart = shoppingCartService.getCartById(cartId);
+        ShoppingCartDtoResponse response = shoppingCartMapperResponse.toDto(cart);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @Override
     @PostMapping("/{cartId}/items")
-    public ResponseEntity<ShoppingCartDtoResponse> addItemToCart(@PathVariable Long cartId, @RequestBody CartItemDtoRequest request) {
+    public ResponseEntity<ShoppingCartDtoResponse> addItemToCart(
+            @PathVariable Long cartId,
+            @Valid @RequestBody CartItemDtoRequest request) {
         ShoppingCart cart = shoppingCartService.addItemToCart(cartId, request);
         ShoppingCartDtoResponse response = shoppingCartMapperResponse.toDto(cart);
         return ResponseEntity.ok(response);
@@ -45,7 +48,10 @@ public class ShoppingCartControllerImpl implements ShoppingCartController {
 
     @Override
     @PutMapping("/{cartId}/items/{productId}")
-    public ResponseEntity<ShoppingCartDtoResponse> updateItemQuantity(@PathVariable Long cartId, @PathVariable Long productId, @RequestBody CartItemDtoRequest request) {
+    public ResponseEntity<ShoppingCartDtoResponse> updateItemQuantity(
+            @PathVariable Long cartId,
+            @PathVariable Long productId,
+            @Valid @RequestBody CartItemDtoRequest request) {
         ShoppingCart cart = shoppingCartService.updateItemQuantity(cartId, productId, request.getQuantity());
         ShoppingCartDtoResponse response = shoppingCartMapperResponse.toDto(cart);
         return ResponseEntity.ok(response);
@@ -53,7 +59,9 @@ public class ShoppingCartControllerImpl implements ShoppingCartController {
 
     @Override
     @DeleteMapping("/{cartId}/items/{productId}")
-    public ResponseEntity<ShoppingCartDtoResponse> removeItemFromCart(@PathVariable Long cartId, @PathVariable Long productId) {
+    public ResponseEntity<ShoppingCartDtoResponse> removeItemFromCart(
+            @PathVariable Long cartId,
+            @PathVariable Long productId) {
         ShoppingCart cart = shoppingCartService.removeItemFromCart(cartId, productId);
         ShoppingCartDtoResponse response = shoppingCartMapperResponse.toDto(cart);
         return ResponseEntity.ok(response);

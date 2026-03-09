@@ -13,7 +13,7 @@ public class CorsConfig implements WebMvcConfigurer {
                 .allowedOrigins(
                         "http://localhost:3000",       // Next.js локально
                         "http://localhost:3001",
-                        "https://*.vercel.app",        // Vercel продакшен
+                        "https://online-store-562team.vercel.app",  // точный URL продакшена
                         "https://*.vercel.app"
                 )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")

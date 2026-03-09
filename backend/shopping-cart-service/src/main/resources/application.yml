@@ -7,7 +7,7 @@ spring:
   profiles:
     active: prod
 
-# ── LOCAL profile (запуск через IDE, без Docker) ─────────────────────────────
+# ── LOCAL profile ─────────────────────────────────────────────────────────────
 ---
 spring:
   config:
@@ -32,7 +32,7 @@ spring:
 product-catalog:
   base-url: http://localhost:8080
 
-# ── DOCKER profile (оба сервиса в docker-compose) ────────────────────────────
+# ── DOCKER profile ────────────────────────────────────────────────────────────
 ---
 spring:
   config:
@@ -65,18 +65,18 @@ spring:
       on-profile: prod
   sql:
     init:
-      mode: always
+      mode: never
       schema-locations: classpath:schema-postgres.sql
   datasource:
-    url: ${DATABASE_URL}
-    username: ${DATABASE_USER}
-    password: ${DATABASE_PASSWORD}
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
     open-in-view: false
     defer-datasource-initialization: true
     hibernate:
-      ddl-auto: none
+      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:none}
     show-sql: false
 
 product-catalog:
@@ -84,7 +84,5 @@ product-catalog:
 
 logging:
   level:
-    com.furniture_store: DEBUG
-    org.springframework.web: DEBUG
-    org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql: TRACE
+    org: info
+    com: off

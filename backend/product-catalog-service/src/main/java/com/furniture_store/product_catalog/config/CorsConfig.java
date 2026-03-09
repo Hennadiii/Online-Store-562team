@@ -12,8 +12,9 @@ public class CorsConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowedOrigins(
                         "http://localhost:3000",
-                        "http://localhost:9080",       // shopping-cart-service
-                        "https://*.vercel.app"         // Vercel продакшен
+                        "http://localhost:9080",
+                        "https://online-store-562team.vercel.app",  // точный URL продакшена
+                        "https://*.vercel.app"                       // все preview деплои
                 )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")

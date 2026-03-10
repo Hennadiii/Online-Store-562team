@@ -27,26 +27,33 @@ public class OrderManager {
         this.orderDtoMapper = orderDtoMapper;
     }
 
-    public void addOrder(PostOrderDto orderDto) {
-        addOrder(orderDtoMapper.toEntity(orderDto));
+    public DisplayOrderDto addOrder(PostOrderDto orderDto) {
+        return addOrder(orderDtoMapper.toEntity(orderDto));
     }
 
-
-    public void addOrder(Order order) {
-        if (order.getId() != null && orderRepository.existsById(order.getId())) throw new OrderAlreadyExistsException();
+    public DisplayOrderDto addOrder(Order order) {
+        if (order.getId() != null && orderRepository.existsById(order.getId())) {
+            throw new OrderAlreadyExistsException();
+        }
         order.setId(null);
         order.getDelivery().setId(null);
         order.getItems().forEach(x -> x.setId(null));
-        orderRepository.save(order);
+        Order saved = orderRepository.save(order);
+        return orderDtoMapper.toDto(saved);
     }
 
     public DisplayOrderDto getOrder(Long id) {
-        return orderDtoMapper.toDto(orderRepository.findById(id).orElseThrow(() -> new OrderNotFoundException("")));
+        return orderDtoMapper.toDto(
+                orderRepository.findById(id)
+                        .orElseThrow(() -> new OrderNotFoundException(""))
+        );
     }
 
     public List<DisplayOrderDto> getOrders(int page, int size) {
         Pageable pageable = Pageable.ofSize(size).withPage(page);
-        return orderRepository.findAll(pageable).stream().map(orderDtoMapper::toDto).toList();
+        return orderRepository.findAll(pageable).stream()
+                .map(orderDtoMapper::toDto)
+                .toList();
     }
 
     public void updateOrder(PostOrderDto orderDto) {
@@ -54,17 +61,19 @@ public class OrderManager {
     }
 
     public void updateOrder(Order order) {
-        Order entity = orderRepository.findById(order.getId()).orElseThrow(() -> new OrderNotFoundException(""));
+        Order entity = orderRepository.findById(order.getId())
+                .orElseThrow(() -> new OrderNotFoundException(""));
         entity.setStatus(order.getStatus());
         entity.setItems(order.getItems());
         entity.setDelivery(order.getDelivery());
         entity.setCustomerName(order.getCustomerName());
         entity.setUpdatedAt(LocalDateTime.now());
-        orderRepository.save(order);
+        orderRepository.save(entity);
     }
 
     public void setOrderStatus(Long id, String status) {
-        Order order = orderRepository.findById(id).orElseThrow(() -> new OrderNotFoundException(""));
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new OrderNotFoundException(""));
         try {
             order.setStatus(OrderStatus.valueOf(status.toUpperCase()));
         } catch (IllegalArgumentException e) {

@@ -61,10 +61,43 @@ services:
     networks:
       - store-network
 
+  # ── Order Management Service ─────────────────────────────────────────────
+  order-management-service:
+    build:
+      context: ./order-management-service
+    container_name: order-management-service
+    ports:
+      - "564:564"
+    environment:
+      SERVER_PORT: 564
+      POSTGRES_URL: jdbc:postgresql://order-management-db:5432/order-management-db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: order-management-db
+    depends_on:
+      - order-management-db
+    networks:
+      - store-network
+
+  order-management-db:
+    image: postgres:16
+    container_name: order-management-db
+    environment:
+      POSTGRES_DB: order-management-db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5434:5432"
+    volumes:
+      - order_management_data:/var/lib/postgresql/data
+    networks:
+      - store-network
+
 # ── Volumes ──────────────────────────────────────────────────────────────────
 volumes:
   product_catalog_data:
   shopping_cart_data:
+  order_management_data:
 
 # ── Networks ─────────────────────────────────────────────────────────────────
 networks:

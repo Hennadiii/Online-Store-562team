@@ -4,6 +4,7 @@ import com.furniture_store.order_management_service.dto.DisplayOrderDto;
 import com.furniture_store.order_management_service.dto.PostOrderDto;
 import com.furniture_store.order_management_service.service.OrderManager;
 import com.furniture_store.order_management_service.web.OrderController;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +12,16 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = {
+        "http://localhost:3000",
+        "https://online-store-562team.vercel.app"
+}, allowedHeaders = "*", methods = {
+        RequestMethod.GET,
+        RequestMethod.POST,
+        RequestMethod.PUT,
+        RequestMethod.DELETE,
+        RequestMethod.OPTIONS
+})
 public class OrderControllerImpl implements OrderController {
 
     private final OrderManager orderManager;
@@ -21,8 +32,9 @@ public class OrderControllerImpl implements OrderController {
 
     @Override
     @PostMapping("/orders")
-    public void createOrder(@RequestBody @Validated PostOrderDto order) {
-        orderManager.addOrder(order);
+    public ResponseEntity<DisplayOrderDto> createOrder(@RequestBody @Validated PostOrderDto order) {
+        DisplayOrderDto created = orderManager.addOrder(order);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @Override
@@ -34,7 +46,7 @@ public class OrderControllerImpl implements OrderController {
     @Override
     @GetMapping("/orders/{id}")
     public ResponseEntity<DisplayOrderDto> getOrder(@PathVariable long id) {
-            return ResponseEntity.ok(orderManager.getOrder(id));
+        return ResponseEntity.ok(orderManager.getOrder(id));
     }
 
     @Override

@@ -17,7 +17,16 @@ public class Delivery {
     @Id
     @GeneratedValue
     private Long id;
-    private String address;
+
     @Enumerated
     private DeliveryMode deliveryMode;
+
+    // Адреса розбита по полях як на фронтенді
+    private String city;
+    private String region;
+    private String street;
+    private String build;
+    private String apartament;
+    private String floor;
+    private Boolean elevator;
 }

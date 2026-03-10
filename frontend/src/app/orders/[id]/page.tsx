@@ -12,7 +12,7 @@ const OrderPage = () => {
   const { order } = useOrderContext();
   const params = useParams();
 
-  if (!order || order.id !== params.id) {
+  if (!order || String(order.id) !== String(params.id)) {
     return (
       <section className="mx-auto max-w-[1440px] px-4 py-20 text-center">
         <h1 className="text-2xl">Замовлення не знайдено</h1>

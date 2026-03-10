@@ -14,10 +14,9 @@ const recommended = products.slice(0, 4);
 const statuses = ["Усі", "Нове", "Обробляється", "Відправлено", "Отримано", "Повернено"];
 
 const MyOrders = () => {
-  const { orders } = useOrderContext();
+  const { orders, loading } = useOrderContext();
   const [activeStatus, setActiveStatus] = useState("Усі");
 
-  // Фильтруем заказы по выбранному статусу
   const filteredOrders =
     activeStatus === "Усі"
       ? orders
@@ -26,11 +25,10 @@ const MyOrders = () => {
   return (
     <AnimatedSection className="px-4 sm:px-6 lg:px-8 max-w-[1440px] mx-auto pb-20">
       <section className="flex flex-col lg:flex-row gap-8 lg:gap-x-20 mt-9">
-        {/* Сайдбар */}
         <ProfileSidebar />
 
         <div className="flex-1 flex flex-col gap-6">
-          {/* Фильтр заказов */}
+          {/* Фільтр замовлень */}
           <div className="flex overflow-x-auto gap-3 mb-6 py-2">
             {statuses.map((status) => {
               const isActive = status === activeStatus;
@@ -50,11 +48,11 @@ const MyOrders = () => {
             })}
           </div>
 
-          
-        
-          {/* Список заказов */}
+          {/* Список замовлень */}
           <div className="flex flex-col gap-6">
-            {filteredOrders.length === 0 ? (
+            {loading ? (
+              <p className="text-gray-400">Завантаження...</p>
+            ) : filteredOrders.length === 0 ? (
               <p className="text-gray-400">У вас ще немає замовлень</p>
             ) : (
               filteredOrders.map((order) => (
@@ -63,10 +61,8 @@ const MyOrders = () => {
             )}
           </div>
 
-          {/* Рекомендации */}
-          <h3 className="text-[20px] sm:text-[24px] lg:text-[32px] 
-                          leading-[120%] uppercase 
-                          mt-12 sm:mt-16 lg:mt-20 text-center px-2">
+          {/* Рекомендації */}
+          <h3 className="text-[20px] sm:text-[24px] lg:text-[32px] leading-[120%] uppercase mt-12 sm:mt-16 lg:mt-20 text-center px-2">
             Вам може сподобатись
           </h3>
 
@@ -82,7 +78,6 @@ const MyOrders = () => {
             ))}
           </section>
 
-          {/* Кнопка каталог */}
           <Link href="/catalog" className="flex justify-center mt-8 sm:mt-12">
             <Button className="w-full max-w-[622px] active:bg-accent active:text-white text-white bg-black hover:text-black hover:bg-white border-accent">
               Каталог

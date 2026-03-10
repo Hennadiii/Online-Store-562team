@@ -58,10 +58,7 @@ const DeliveryInfoForm: React.FC<Props> = ({ values, errors, onChange }) => {
       <form
         className={cn(
           "flex w-full flex-col gap-y-[34px] overflow-hidden transition-all duration-700 ease-in-out",
-          {
-            "max-h-0": values.deliveryMethod === "pickup",
-            "max-h-screen": values.deliveryMethod !== "pickup",
-          }
+          values.deliveryMethod === "pickup" ? "max-h-0" : "max-h-[1000px]"
         )}
       >
         {inputFields.map(({ id, label, placeholder }) => (
@@ -78,8 +75,8 @@ const DeliveryInfoForm: React.FC<Props> = ({ values, errors, onChange }) => {
               placeholder={placeholder}
             />
             {errors[id] && (
-  <span style={{ color: "red" }} className="text-xs">{errors[id]}</span>
-)}
+              <span style={{ color: "red" }} className="text-xs">{errors[id]}</span>
+            )}
           </div>
         ))}
 

@@ -9,10 +9,12 @@ import AnimatedSection from "@/components/shared/animatedSection";
 
 
 const OrderPage = () => {
-  const { order } = useOrderContext();
+  const { orders } = useOrderContext();
   const params = useParams();
 
-  if (!order || String(order.id) !== String(params.id)) {
+  const order = orders.find((o) => String(o.id) === String(params.id));
+
+  if (!order) {
     return (
       <section className="mx-auto max-w-[1440px] px-4 py-20 text-center">
         <h1 className="text-2xl">Замовлення не знайдено</h1>
@@ -65,10 +67,19 @@ const OrderPage = () => {
             <p>Самовивіз з магазину</p>
           ) : (
             <>
-              <p>{order.delivery.city}, {order.delivery.region}</p>
-              <p>{order.delivery.street}, {order.delivery.build}</p>
-              {order.delivery.apartament && <p>Кв. {order.delivery.apartament}, поверх {order.delivery.floor}</p>}
-            </>
+  <p>{order.delivery.city}, {order.delivery.region}</p>
+  <p>{order.delivery.street}, {order.delivery.build}</p>
+
+  {order.delivery.apartament && (
+    <p>Кв. {order.delivery.apartament}</p>
+  )}
+
+  {order.delivery.floor && (
+    <p>Поверх {order.delivery.floor}</p>
+  )}
+
+  <p>Вантажний ліфт: {order.delivery.elevator ? "Є" : "НЕМАЄ"}</p>
+</>
           )}
         </div>
 
@@ -79,7 +90,11 @@ const OrderPage = () => {
             {order.items.map((item) => (
               <div key={item.productId} className="flex gap-4 items-center">
                 <div className="w-[80px] h-[80px] bg-gray-100 flex-shrink-0 flex items-center justify-center rounded overflow-hidden">
-                  <Image src={item.image} alt={item.title} width={80} height={80} className="object-contain" />
+                  {item.image ? (
+                    <Image src={item.image} alt={item.title} width={80} height={80} className="object-contain" />
+                  ) : (
+                    <div className="w-full h-full bg-gray-200 rounded" />
+                  )}
                 </div>
                 <div className="flex flex-1 justify-between">
                   <div>

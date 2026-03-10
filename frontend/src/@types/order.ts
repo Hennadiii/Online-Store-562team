@@ -47,12 +47,22 @@ export interface BackendPostOrderDto {
   };
 }
 
+// ── DisplayOrderItemDto (те що бекенд повертає для item) ───────────────────
+
+export interface BackendDisplayOrderItemDto {
+  id: number;
+  productId: number;
+  quantity: number;
+  pricePerUnit: number;  // ціна за одиницю — є на бекенді
+  amount: number;        // pricePerUnit * quantity
+}
+
 // ── DisplayOrderDto (те що бекенд повертає) ────────────────────────────────
 
 export interface BackendDisplayOrderDto {
   id: number;
   customerName: string;
-  orderItems: { id: number; productId: number; quantity: number }[];
+  orderItems: BackendDisplayOrderItemDto[];
   delivery: {
     id: number;
     deliveryMode: string;

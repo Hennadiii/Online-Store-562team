@@ -4,6 +4,7 @@ import ProfileOrderItem from "@/components/profile/orderItem";
 import ProfileSidebar from "@/components/profile/sidebar";
 import AnimatedSection from "@/components/shared/animatedSection";
 import CatalogItem from "@/components/shared/catalogItem";
+import Pagination from "@/components/shared/pagination";
 import { Button } from "@/components/ui/button";
 import { useOrderContext } from "@/context/OrderContext";
 import { products } from "@/data/products";
@@ -11,16 +12,43 @@ import { useState } from "react";
 import Link from "next/link";
 
 const recommended = products.slice(0, 4);
+
 const statuses = ["Усі", "Нове", "Обробляється", "Відправлено", "Отримано", "Повернено"];
+
+// Маппінг бекенд статусів → UI статуси
+const statusMap: Record<string, string> = {
+  UNPAID: "Нове",
+  PAID: "Обробляється",
+  SHIPPED: "Відправлено",
+  DELIVERED: "Отримано",
+  created: "Нове", // фронтенд статус до перезавантаження
+};
+
+const ORDERS_PER_PAGE = 5;
 
 const MyOrders = () => {
   const { orders, loading } = useOrderContext();
   const [activeStatus, setActiveStatus] = useState("Усі");
+  const [currentPage, setCurrentPage] = useState(1);
 
   const filteredOrders =
     activeStatus === "Усі"
       ? orders
-      : orders.filter((o) => o.status === activeStatus);
+      : orders.filter((o) => {
+          const mapped = statusMap[o.status] ?? o.status;
+          return mapped === activeStatus;
+        });
+
+  const pageCount = Math.ceil(filteredOrders.length / ORDERS_PER_PAGE);
+  const paginatedOrders = filteredOrders.slice(
+    (currentPage - 1) * ORDERS_PER_PAGE,
+    currentPage * ORDERS_PER_PAGE
+  );
+
+  const handleStatusChange = (status: string) => {
+    setActiveStatus(status);
+    setCurrentPage(1); // скидаємо на першу сторінку при зміні фільтру
+  };
 
   return (
     <AnimatedSection className="px-4 sm:px-6 lg:px-8 max-w-[1440px] mx-auto pb-20">
@@ -29,13 +57,13 @@ const MyOrders = () => {
 
         <div className="flex-1 flex flex-col gap-6">
           {/* Фільтр замовлень */}
-          <div className="flex overflow-x-auto gap-3 mb-6 py-2">
+          <div className="flex overflow-x-auto gap-3 mb-2 py-2">
             {statuses.map((status) => {
               const isActive = status === activeStatus;
               return (
                 <button
                   key={status}
-                  onClick={() => setActiveStatus(status)}
+                  onClick={() => handleStatusChange(status)}
                   className={`flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium transition ${
                     isActive
                       ? "bg-accent text-white"
@@ -52,14 +80,24 @@ const MyOrders = () => {
           <div className="flex flex-col gap-6">
             {loading ? (
               <p className="text-gray-400">Завантаження...</p>
-            ) : filteredOrders.length === 0 ? (
+            ) : paginatedOrders.length === 0 ? (
               <p className="text-gray-400">У вас ще немає замовлень</p>
             ) : (
-              filteredOrders.map((order) => (
+              paginatedOrders.map((order) => (
                 <ProfileOrderItem key={order.id} order={order} />
               ))
             )}
           </div>
+
+          {/* Пагінація */}
+          {pageCount > 1 && (
+            <Pagination
+              pageCount={pageCount}
+              currentPage={currentPage}
+              onPageChange={setCurrentPage}
+              containerClassName="mt-6 flex gap-x-4 text-[16px] sm:text-[20px] flex-wrap justify-center"
+            />
+          )}
 
           {/* Рекомендації */}
           <h3 className="text-[20px] sm:text-[24px] lg:text-[32px] leading-[120%] uppercase mt-12 sm:mt-16 lg:mt-20 text-center px-2">

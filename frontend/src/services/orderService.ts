@@ -1,4 +1,5 @@
 import { CreateOrderDTO, Order, BackendPostOrderDto, BackendDisplayOrderDto } from "@/@types/order";
+import { getProductById } from "@/services/productService";
 
 const ORDER_API_URL = process.env.NEXT_PUBLIC_ORDER_API_URL;
 
@@ -53,15 +54,44 @@ function mapFromBackend(
       elevator: backend.delivery?.elevator,
     },
     paymentMethod: "cash",
+    // Якщо є original.items (щойно оформлений заказ) — беремо їх (там є image/title/price)
+    // Якщо немає — заповнюємо з бекенду (price є, title/image збагатимо окремо)
     items: original?.items ?? backend.orderItems.map((item) => ({
       productId: item.productId,
       quantity: item.quantity,
       title: "",
       image: "",
-      price: 0,
+      price: item.pricePerUnit ?? 0,
     })),
     totalAmount: original?.totalAmount ?? backend.amount ?? 0,
   };
+}
+
+// ── Збагатити items даними з Product Catalog ───────────────────────────────
+
+async function enrichItemsFromCatalog(order: Order): Promise<Order> {
+  // Перевіряємо чи є items без title/image (завантажені з бекенду)
+  const needsEnrichment = order.items.some((item) => !item.title || !item.image);
+  if (!needsEnrichment) return order;
+
+  const enrichedItems = await Promise.all(
+    order.items.map(async (item) => {
+      if (item.title && item.image) return item; // вже є дані
+      try {
+        const product = await getProductById(item.productId);
+        return {
+          ...item,
+          title: product.title,
+          image: product.images?.[0] ?? "",
+          price: item.price > 0 ? item.price : product.price, // ціна з бекенду пріоритетна
+        };
+      } catch {
+        return item; // якщо продукт не знайдено — лишаємо як є
+      }
+    })
+  );
+
+  return { ...order, items: enrichedItems };
 }
 
 // ── Створити замовлення ────────────────────────────────────────────────────
@@ -80,17 +110,19 @@ export async function submitOrder(data: CreateOrderDTO): Promise<Order> {
   }
 
   const backend: BackendDisplayOrderDto = await response.json();
+  // При створенні — передаємо original щоб зберегти image/title/price з кошика
   return mapFromBackend(backend, data);
 }
 
-// ── Завантажити замовлення за ID ───────────────────────────────────────────
+// ── Завантажити замовлення за ID (з збагаченням з каталогу) ───────────────
 
 export async function fetchOrder(id: string): Promise<Order | null> {
   try {
     const response = await fetch(`${ORDER_API_URL}/orders/${id}`);
     if (!response.ok) return null;
     const backend: BackendDisplayOrderDto = await response.json();
-    return mapFromBackend(backend);
+    const order = mapFromBackend(backend);
+    return await enrichItemsFromCatalog(order);
   } catch {
     return null;
   }

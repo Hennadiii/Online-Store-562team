@@ -14,7 +14,8 @@ services:
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
     depends_on:
-      - product-catalog-db
+      product-catalog-db:
+        condition: service_healthy
     networks:
       - store-network
 
@@ -31,6 +32,11 @@ services:
       - product_catalog_data:/var/lib/postgresql/data
     networks:
       - store-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d products"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   # ── Shopping Cart Service ────────────────────────────────────────────────
   shopping-cart-service:
@@ -42,8 +48,10 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: docker
     depends_on:
-      - shopping-cart-db
-      - product-catalog-service
+      shopping-cart-db:
+        condition: service_healthy
+      product-catalog-service:
+        condition: service_started
     networks:
       - store-network
 
@@ -60,6 +68,11 @@ services:
       - shopping_cart_data:/var/lib/postgresql/data
     networks:
       - store-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U team562 -d furniture_shopping_cart_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   # ── Order Management Service ─────────────────────────────────────────────
   order-management-service:
@@ -74,13 +87,17 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
       POSTGRES_DB: order-management-db
+      PRODUCT_CATALOG_URL: http://product-catalog-service:8080
     depends_on:
-      - order-management-db
+      order-management-db:
+        condition: service_healthy
+      product-catalog-service:
+        condition: service_started
     networks:
       - store-network
 
   order-management-db:
-    image: postgres:16
+    image: postgres:15
     container_name: order-management-db
     environment:
       POSTGRES_DB: order-management-db
@@ -92,6 +109,11 @@ services:
       - order_management_data:/var/lib/postgresql/data
     networks:
       - store-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d order-management-db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
 # ── Volumes ──────────────────────────────────────────────────────────────────
 volumes:

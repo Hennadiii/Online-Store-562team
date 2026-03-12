@@ -63,7 +63,7 @@ public class OrderManager {
     public void updateOrder(Order order) {
         Order entity = orderRepository.findById(order.getId())
                 .orElseThrow(() -> new OrderNotFoundException(""));
-        entity.setStatus(order.getStatus());
+        // п.11 — статус НЕ оновлюємо через updateOrder, тільки через setOrderStatus
         entity.setItems(order.getItems());
         entity.setDelivery(order.getDelivery());
         entity.setCustomerName(order.getCustomerName());

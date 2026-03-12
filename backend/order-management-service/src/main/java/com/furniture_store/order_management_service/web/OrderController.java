@@ -2,10 +2,10 @@ package com.furniture_store.order_management_service.web;
 
 import com.furniture_store.order_management_service.dto.DisplayOrderDto;
 import com.furniture_store.order_management_service.dto.PostOrderDto;
+import com.furniture_store.order_management_service.dto.StatusRequest;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,7 +26,7 @@ public interface OrderController {
     @PostMapping("/orders")
     ResponseEntity<DisplayOrderDto> createOrder(
             @Parameter(description = "Дані нового замовлення")
-            @RequestBody @Validated PostOrderDto order
+            @RequestBody PostOrderDto order
     );
 
     @Operation(summary = "Отримати список замовлень")
@@ -52,13 +52,17 @@ public interface OrderController {
     @PutMapping("/orders/{id}")
     void updateOrder(
             @Parameter(description = "Ідентифікатор замовлення") @PathVariable long id,
-            @Parameter(description = "Оновлені дані замовлення") @RequestBody @Validated PostOrderDto order
+            @Parameter(description = "Оновлені дані замовлення") @RequestBody PostOrderDto order
     );
 
     @Operation(summary = "Оновити статус замовлення")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Статус успішно оновлено"),
+            @ApiResponse(responseCode = "400", description = "Невірний статус")
+    })
     @PutMapping("/orders/{id}/status")
     void updateOrderStatus(
             @Parameter(description = "Ідентифікатор замовлення") @PathVariable Long id,
-            @Parameter(description = "Новий статус замовлення") @RequestBody String status
+            @Parameter(description = "Новий статус") @RequestBody StatusRequest status
     );
 }

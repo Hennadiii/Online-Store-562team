@@ -6,7 +6,9 @@ import com.furniture_store.order_management_service.dto.DisplayOrderItemDto;
 import com.furniture_store.order_management_service.dto.PostOrderItemDto;
 import com.furniture_store.order_management_service.entity.OrderItem;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -20,12 +22,19 @@ public class OrderItemMapper {
         orderItem.setQuantity(dto.getQuantity());
         orderItem.setProductId(dto.getProductId());
 
-        // Отримуємо актуальну ціну з Product Catalog Service
+        // п.4 — перевіряємо існування товару і отримуємо актуальну ціну
         try {
             ProductCatalogResponse product = productCatalogClient.getProductById(dto.getProductId());
+            if (product == null) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "Product not found: " + dto.getProductId());
+            }
             orderItem.setPricePerUnit(product.getPrice() != null ? product.getPrice() : 0.0);
+        } catch (ResponseStatusException e) {
+            throw e;
         } catch (Exception e) {
-            orderItem.setPricePerUnit(0.0);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+                    "Product not found: " + dto.getProductId());
         }
 
         return orderItem;

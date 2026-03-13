@@ -83,10 +83,9 @@ services:
       - "564:564"
     environment:
       SERVER_PORT: 564
-      POSTGRES_URL: jdbc:postgresql://order-management-db:5432/order-management-db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: order-management-db
+      SPRING_DATASOURCE_URL: jdbc:postgresql://order-management-db:5432/order-management-db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: password
       PRODUCT_CATALOG_URL: http://product-catalog-service:8080
     depends_on:
       order-management-db:

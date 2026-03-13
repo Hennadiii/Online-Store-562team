@@ -1,10 +1,7 @@
 name: Keep Services Alive
-
 on:
   schedule:
-    # Запускати кожні 10 хвилин (формат POSIX cron)
     - cron: '*/10 * * * *'
-  # Дозволяє запустити пінг вручну для перевірки
   workflow_dispatch:
 
 jobs:
@@ -15,13 +12,11 @@ jobs:
         run: |
           echo "Sending pings to Render services..."
           
-          # Список ваших сервісів (замініть на реальні URL з Render)
           urls=(
-            "https://online-store-562team.onrender.com/health"
-            "https://online-store-562team-zezi.onrender.com/health"
-            "https://order-management-service-vi3s.onrender.com/health"
+            "https://online-store-562team.onrender.com/products"
+            "https://online-store-562team-zezi.onrender.com/api/carts/1"
+            "https://order-management-service-vi3s.onrender.com/orders?page=0&pageSize=1"
           )
-
           for url in "${urls[@]}"; do
             echo "Pinging $url..."
             curl -s -o /dev/null -w "%{http_code}" "$url" || echo "Failed to ping $url"

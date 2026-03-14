@@ -13,7 +13,7 @@ jobs:
           echo "Sending pings to Render services..."
           
           urls=(
-            "https://online-store-562team.onrender.com/products"
+            "https://online-store-562team.onrender.com/products?page=0&size=1"
             "https://online-store-562team-zezi.onrender.com/api/carts/1"
             "https://order-management-service-vi3s.onrender.com/orders?page=0&pageSize=1"
           )

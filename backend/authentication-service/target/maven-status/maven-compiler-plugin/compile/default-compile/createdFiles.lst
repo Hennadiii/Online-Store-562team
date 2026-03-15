@@ -1,0 +1,16 @@
+com\furniture\authentication_service\dto\RefreshTokenRequest.class
+com\furniture\authentication_service\service\AuthService.class
+com\furniture\authentication_service\dto\TokenResponse.class
+com\furniture\authentication_service\AuthApplication.class
+com\furniture\authentication_service\dto\RegisterRequest.class
+com\furniture\authentication_service\service\TokenService.class
+com\furniture\authentication_service\config\AuthServiceConfig.class
+com\furniture\authentication_service\config\SecurityConfig.class
+com\furniture\authentication_service\repository\UserRepository.class
+com\furniture\authentication_service\dto\LoginRequest.class
+com\furniture\authentication_service\model\Token.class
+com\furniture\authentication_service\controller\AuthController.class
+com\furniture\authentication_service\config\AuthServiceConfig$1.class
+com\furniture\authentication_service\repository\TokenRepository.class
+com\furniture\authentication_service\model\User.class
+com\furniture\authentication_service\exception\CustomException.class

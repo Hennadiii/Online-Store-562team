@@ -215,4 +215,29 @@ public class AuthService {
         return personRepository.findById(UUID.fromString(tokenService.getUserIdFromToken(token)))
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
     }
+
+    public PersonResponse updateProfile(String authHeader, UpdateProfileRequest request) {
+        Person person = getPersonFromHeader(authHeader);
+    
+        String fullName = (request.getFirstName() + " " + request.getLastName()).trim();
+        person.setName(fullName);
+        person.setPhone(request.getPhone());
+    
+        // Якщо email змінився — перевіряємо що він не зайнятий
+        if (!person.getEmail().equalsIgnoreCase(request.getEmail())) {
+            if (personRepository.existsByEmail(request.getEmail())) {
+                throw new CustomException("Email вже використовується");
+            }
+            person.setEmail(request.getEmail());
+        }
+    
+        personRepository.save(person);
+    
+        return new PersonResponse(
+            person.getId().toString(),
+            person.getName(),
+            person.getEmail(),
+            person.getPhone()
+        );
+    }
 }

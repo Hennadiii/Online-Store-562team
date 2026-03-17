@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.furniture.authentication_service.dto.UpdateProfileRequest;
 
 @RestController
 @RequestMapping("/user")
@@ -76,4 +77,13 @@ public class UserControllerImpl implements UserController {
         authService.verifyNewEmail(authHeader, newEmail);
         return ResponseEntity.ok("Your email has been successfully updated");
     }
+
+
+    @Override
+@PutMapping("/profile")
+public ResponseEntity<PersonResponse> updateProfile(
+        @RequestHeader("Authorization") String authHeader,
+        @RequestBody @Valid UpdateProfileRequest request) {
+    return ResponseEntity.ok(authService.updateProfile(authHeader, request));
+}
 }

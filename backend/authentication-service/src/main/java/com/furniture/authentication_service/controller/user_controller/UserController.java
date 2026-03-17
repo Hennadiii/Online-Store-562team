@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.furniture.authentication_service.dto.UpdateProfileRequest;
 
 public interface UserController {
 
@@ -80,4 +81,17 @@ public interface UserController {
     ResponseEntity<String> verifyEmail(
             @RequestHeader("Authorization") String authHeader,
             @RequestBody String newEmail);
+
+            @Operation(summary = "Оновити профіль користувача",
+            security = @SecurityRequirement(name = "bearerAuth"),
+            responses = {
+                @ApiResponse(responseCode = "200", description = "Профіль оновлено",
+                    content = @Content(schema = @Schema(implementation = PersonResponse.class))),
+                @ApiResponse(responseCode = "400", description = "Невалідні дані"),
+                @ApiResponse(responseCode = "403", description = "Невірний токен")
+            })
+        @PutMapping("/profile")
+        ResponseEntity<PersonResponse> updateProfile(
+            @RequestHeader("Authorization") String authHeader,
+            @RequestBody @Valid UpdateProfileRequest request);       
 }

@@ -6,6 +6,7 @@ export interface IloginFormInputs {
 export interface IregisterFormInputs extends IloginFormInputs {
   first_name: string;
   second_name: string;
+  phone: string;
   passwordConfirm: string;
 }
 

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { navTo } from "@/utils/navigations";
 import FavoriteModal from "../modals/FavoriteModal";
 import { disableScroll, enableScroll } from "@/utils/scrollbar";
@@ -17,6 +18,7 @@ import CartIcon from "../../assets/cart.svg";
 import RestorePasswordForm from "../authForms/restorePasswordForm";
 import { useFavoritesContext } from "@/context/FavoritesContext";
 import { useCartContext } from "@/context/CartContext";
+import { useAuthContext } from "@/context/AuthContext";
 
 const menuLinks = [
   { href: navTo.catalog, label: "Каталог" },
@@ -27,15 +29,25 @@ const menuLinks = [
 
 const Header = () => {
   const [open, setOpen] = useState(false);
-
   const [showModal, setShowModal] = useState(false);
   const [showSearch, setShowsSearch] = useState(false);
   const [showCart, setShowCart] = useState(false);
   const [section, setSection] = useState(1);
   const { favorites } = useFavoritesContext();
   const { items } = useCartContext();
+  const { isAuthenticated, logout } = useAuthContext();
   const cartCount = items.reduce((sum, i) => sum + i.quantity, 0);
   const [showFavorite, setShowFavorite] = useState(false);
+  const router = useRouter();
+
+  const handleUserClick = () => {
+    if (isAuthenticated) {
+      router.push("/profile");
+    } else {
+      disableScroll();
+      setShowModal(true);
+    }
+  };
 
   const showSection = () => {
     switch (section) {
@@ -118,13 +130,16 @@ const Header = () => {
               className="cursor-pointer w-6 h-6 hover:scale-110 transition"
             />
 
-            <UserIcon
-              onClick={() => {
-                disableScroll();
-                setShowModal(true);
-              }}
-              className="cursor-pointer w-6 h-6 hover:scale-110 transition"
-            />
+            {/* USER ICON — профіль або логін */}
+            <div className="relative cursor-pointer" onClick={handleUserClick}>
+              {isAuthenticated ? (
+                <div className="w-6 h-6 rounded-full bg-[#3C767E] flex items-center justify-center hover:scale-110 transition">
+                  <span className="text-white text-[10px] font-bold">✓</span>
+                </div>
+              ) : (
+                <UserIcon className="w-6 h-6 hover:scale-110 transition" />
+              )}
+            </div>
 
             <div
               onClick={() => {
@@ -165,28 +180,23 @@ const Header = () => {
               onClick={() => setOpen(false)}
               className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40"
             />
-
             <div className="fixed top-0 left-0 h-full w-[280px] bg-white shadow-xl p-6 flex flex-col gap-8 z-50 animate-slideIn">
-
-              <button
-                onClick={() => setOpen(false)}
-                className="self-end text-xl"
-              >
-                ✕
-              </button>
-
+              <button onClick={() => setOpen(false)} className="self-end text-xl">✕</button>
               <nav className="flex flex-col gap-6 text-lg">
                 {menuLinks.map(({ href, label }) => (
-                  <Link
-                    key={href}
-                    href={href}
-                    onClick={() => setOpen(false)}
-                    className="border-b border-black/10 pb-2"
-                  >
+                  <Link key={href} href={href} onClick={() => setOpen(false)} className="border-b border-black/10 pb-2">
                     {label}
                   </Link>
                 ))}
               </nav>
+              {isAuthenticated && (
+                <button
+                  onClick={() => { logout(); setOpen(false); }}
+                  className="text-left text-red-500 font-medium"
+                >
+                  Вийти
+                </button>
+              )}
             </div>
           </>
         )}
@@ -205,43 +215,24 @@ const Header = () => {
       </ModalWrapper>
 
       {/* SEARCH MODAL */}
-      <ModalWrapper
-        showModal={showSearch}
-        setShowModal={() => setShowsSearch(false)}
-        center={true}
-      >
-        <SearchModal
-          showModal={showSearch}
-          setShowModal={() => setShowsSearch(false)}
-        />
+      <ModalWrapper showModal={showSearch} setShowModal={() => setShowsSearch(false)} center={true}>
+        <SearchModal showModal={showSearch} setShowModal={() => setShowsSearch(false)} />
       </ModalWrapper>
 
       {/* FAVORITE MODAL */}
       <ModalWrapper
         showModal={showFavorite}
-        setShowModal={() => {
-          enableScroll();
-          setShowFavorite(false);
-        }}
+        setShowModal={() => { enableScroll(); setShowFavorite(false); }}
         center
       >
         <FavoriteModal
           showModal={showFavorite}
-          setShowModal={() => {
-            enableScroll();
-            setShowFavorite(false);
-          }}
+          setShowModal={() => { enableScroll(); setShowFavorite(false); }}
         />
       </ModalWrapper>
 
       {/* CART */}
-      <CartModal
-        isOpen={showCart}
-        setIsOpen={() => {
-          enableScroll();
-          setShowCart(false);
-        }}
-      />
+      <CartModal isOpen={showCart} setIsOpen={() => { enableScroll(); setShowCart(false); }} />
     </>
   );
 };

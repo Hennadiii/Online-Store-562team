@@ -1,9 +1,21 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import ProfileSidebar from "@/components/profile/sidebar";
 import Link from "next/link";
+import { authService, UserProfile } from "@/services/authService";
 
 const ProfilePage = () => {
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+
+  useEffect(() => {
+    authService.getMe().then(setProfile);
+  }, []);
+
+  const nameParts = profile?.name?.split(" ") || [];
+  const firstName = nameParts[0] || "";
+  const lastName = nameParts.slice(1).join(" ") || "";
+
   return (
     <section className="px-4 sm:px-6 lg:px-8 max-w-[1280px] mx-auto pb-20">
       <div className="flex flex-col lg:flex-row gap-8 lg:gap-x-20 mt-9">
@@ -18,9 +30,9 @@ const ProfilePage = () => {
 
             <div className="flex flex-col divide-y divide-gray-100">
               {[
-                { label: "Імʼя та прізвище", value: "Марина Зоряна" },
-                { label: "Email",             value: "marinzor@gmail.com" },
-                { label: "Телефон",           value: "+380 (33) 219 00 33" },
+                { label: "Імʼя та прізвище", value: profile ? `${firstName} ${lastName}`.trim() : "—" },
+                { label: "Email",             value: profile?.email || "—" },
+                { label: "Телефон",           value: profile?.phone || "—" },
               ].map(({ label, value }) => (
                 <div key={label} className="py-4 flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-0">
                   <p className="text-xs text-gray-400 font-medium sm:w-44 shrink-0">{label}</p>

@@ -10,6 +10,7 @@ import ScrollToTop from "@/components/shared/scrollTop";
 import { FavoritesProvider } from "@/context/FavoritesContext";
 import { CartProvider } from "@/context/CartContext";
 import { OrderProvider } from "@/context/OrderContext";
+import { AuthProvider } from "@/context/AuthContext";
 
 const MontserratSans = Montserrat({
   subsets: ["latin"],
@@ -28,23 +29,19 @@ export default function RootLayout({
 }) {
   return (
     <html lang="uk">
-      <body
-        className={`${MontserratSans.className} antialiased min-h-screen flex flex-col`}
-      >
-       
-       <FavoritesProvider>
-  <CartProvider>
-    <OrderProvider>
-      <Header />
-      <main className="flex-1">{children}</main>
-      <Footer />
-      <ScrollToTop />
-    </OrderProvider>
-  </CartProvider>
-</FavoritesProvider>
-
-
-
+      <body className={`${MontserratSans.className} antialiased min-h-screen flex flex-col`}>
+        <AuthProvider>
+          <FavoritesProvider>
+            <CartProvider>
+              <OrderProvider>
+                <Header />
+                <main className="flex-1">{children}</main>
+                <Footer />
+                <ScrollToTop />
+              </OrderProvider>
+            </CartProvider>
+          </FavoritesProvider>
+        </AuthProvider>
       </body>
     </html>
   );

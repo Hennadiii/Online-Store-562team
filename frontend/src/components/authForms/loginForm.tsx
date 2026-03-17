@@ -10,6 +10,8 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import Image from "next/image";
 import { useState } from "react";
 import { cn } from "@/utils/twMerge";
+import { authService } from "@/services/authService";
+import { useAuthContext } from "@/context/AuthContext";
 
 const LoginSchema = yup.object().shape({
   email: yup.string().required("Email is required").email("Invalid email"),
@@ -26,6 +28,9 @@ const LoginForm: React.FC<Iauthorization> = ({
   isModal = true,
 }) => {
   const [showPassword, setShowPassword] = useState(false);
+  const [serverError, setServerError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const { login } = useAuthContext();
 
   const {
     register,
@@ -36,8 +41,18 @@ const LoginForm: React.FC<Iauthorization> = ({
     mode: "onBlur",
   });
 
-  const onSubmit: SubmitHandler<IloginFormInputs> = (data) => {
-    console.log(data);
+  const onSubmit: SubmitHandler<IloginFormInputs> = async (data) => {
+    setServerError(null);
+    setLoading(true);
+    try {
+      const tokens = await authService.login(data);
+      login(tokens);
+      setShowModal?.(false);
+    } catch (err: unknown) {
+      setServerError(err instanceof Error ? err.message : "Помилка входу");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -48,7 +63,6 @@ const LoginForm: React.FC<Iauthorization> = ({
         { "shadow-lg": isModal }
       )}
     >
-      {/* Кнопка закрытия */}
       {isModal && (
         <div
           onClick={() => setShowModal && setShowModal(false)}
@@ -58,16 +72,13 @@ const LoginForm: React.FC<Iauthorization> = ({
         </div>
       )}
 
-      {/* Заголовок */}
       <span className="block text-center font-bold text-lg">Вхід</span>
 
-      {/* Email */}
       <div className="flex flex-col">
         <label className="text-[12px] text-accent mb-1">Email</label>
         <Input {...register("email")} placeholder="Email" error={errors.email} />
       </div>
 
-      {/* Пароль */}
       <div className="relative flex flex-col">
         <label className="text-[12px] text-accent mb-1">Пароль</label>
         <Input
@@ -77,7 +88,7 @@ const LoginForm: React.FC<Iauthorization> = ({
           error={errors.password}
         />
         <Image
-          className="absolute right-2 top-2 cursor-pointer"
+          className="absolute right-2 top-8 cursor-pointer"
           onClick={() => setShowPassword((prev) => !prev)}
           src={showPassword ? "/open-eye.svg" : "/closed-eye.svg"}
           width={24}
@@ -86,6 +97,10 @@ const LoginForm: React.FC<Iauthorization> = ({
         />
       </div>
 
+      {serverError && (
+        <p className="text-red-500 text-sm text-center">{serverError}</p>
+      )}
+
       <a
         onClick={() => setSection && setSection(3)}
         className="text-[12px] underline mt-2 cursor-pointer"
@@ -93,21 +108,15 @@ const LoginForm: React.FC<Iauthorization> = ({
         Забули пароль?
       </a>
 
-      {/* Кнопка ВХІД */}
-      <Button type="submit" variant="black" className="w-full mt-4">
-        ВХІД
+      <Button type="submit" variant="black" className="w-full mt-4" disabled={loading}>
+        {loading ? "Завантаження..." : "ВХІД"}
       </Button>
 
-      {/* Соц. вход (Google) */}
-      <Button
-        type="button"
-        className="flex w-full gap-x-3 border-black pl-3 mt-2"
-      >
+      <Button type="button" className="flex w-full gap-x-3 border-black pl-3 mt-2">
         <Image width={24} height={24} src="/google.svg" alt="google" />
         Увійти через Google
       </Button>
 
-      {/* Переключение на регистрацию */}
       {isModal && (
         <div className="flex justify-between text-[12px] mt-4">
           <span>Ще не маєте аккаунта?</span>

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class AuthService {
@@ -23,6 +24,8 @@ public class AuthService {
     private final TokenRepository tokenRepository;
     private static final String USER_NOT_FOUND = "User not found";
     private static final String RESET_PASSWORD_LINK = "https://online-Store-562.com/reset-password?token=";
+
+    private static final boolean EMAIL_VERIFICATION_ENABLED = false;
 
     public AuthService(PersonRepository personRepository, TokenService tokenService, PasswordEncoder passwordEncoder, NotificationServiceClient notificationServiceClient, TokenRepository tokenRepository) {
         this.personRepository = personRepository;
@@ -39,33 +42,40 @@ public class AuthService {
         request.cleanFieldsFromExtraSpaces();
 
         Person person = new Person();
-        person.setName(request.getName());
+        person.setName(request.getFullName());
         person.setPhone(request.getPhone());
         person.setEmail(request.getEmail());
         person.setRole(Role.USER);
         person.setPasswordHash(passwordEncoder.encode(request.getPassword()));
 
+        if (!EMAIL_VERIFICATION_ENABLED) {
+            person.setEmailVerified(true);
+        }
+
         personRepository.save(person);
-        String verificationRefreshToken = tokenService.generateRefreshToken(person);
-        notificationServiceClient.sendVerificationEmail(person.getEmail(), verificationRefreshToken);
+
+        if (EMAIL_VERIFICATION_ENABLED) {
+            String verificationRefreshToken = tokenService.generateRefreshToken(person);
+            notificationServiceClient.sendVerificationEmail(person.getEmail(), verificationRefreshToken);
+        }
     }
 
     public void adminRegister(RegisterRequest request) {
         List<Person> personList = personRepository.findAllByRole(Role.ADMIN);
 
-        // Check for a registered administrator
         if (personRepository.existsByEmail(request.getEmail()) || !personList.isEmpty()) {
             throw new CustomException("Цей акаунт вже використовується");
         }
         register(request);
 
-        // Assigning a role to an administrator
         Person admin = personRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
         admin.setRole(Role.ADMIN);
+        personRepository.save(admin);
     }
 
     public void resendVerificationLink(LoginRequest request) {
+        if (!EMAIL_VERIFICATION_ENABLED) return;
         Person person = getPersonByEmail(request.getEmail());
         String verificationRefreshToken = tokenService.generateRefreshToken(person);
         notificationServiceClient.sendVerificationEmail(person.getEmail(), verificationRefreshToken);
@@ -73,7 +83,6 @@ public class AuthService {
 
     public String verifyUser(String authHeader) {
         Person person = getPersonFromHeader(authHeader);
-
         if (person.isEmailVerified()) {
             return "Person is already verified.";
         }
@@ -85,8 +94,7 @@ public class AuthService {
     public TokenResponse login(LoginRequest request) {
         Person person = getPersonByEmail(request.getEmail());
 
-        //перевірити логін та пароль і тоді перревіряти валідність користувача
-        if (!person.isEmailVerified()) {
+        if (EMAIL_VERIFICATION_ENABLED && !person.isEmailVerified()) {
             throw new CustomException("Акаунт не верифікований. Будь ласка, перевірте Ваш email");
         }
 
@@ -108,15 +116,13 @@ public class AuthService {
     }
 
     public void processForgotPassword(String personId) {
+        if (!EMAIL_VERIFICATION_ENABLED) return;
         Person person = getPersonById(personId);
-
         String email = person.getEmail();
         if (email == null || email.isEmpty()) {
             throw new CustomException("User does not have a registered email");
         }
-
         String refreshToken = tokenService.generateRefreshToken(person);
-
         String resetLink = RESET_PASSWORD_LINK + refreshToken;
         notificationServiceClient.sendPasswordResetEmail(email, resetLink);
     }
@@ -134,9 +140,8 @@ public class AuthService {
 
     public PersonResponse getUserById(String id) {
         Person person = getPersonById(id);
-
         return new PersonResponse(
-                person.getId(),
+                person.getId().toString(),
                 person.getName(),
                 person.getEmail(),
                 person.getPhone()
@@ -145,10 +150,9 @@ public class AuthService {
 
     public List<PersonResponse> getAllUsers() {
         List<Person> persons = personRepository.findAll();
-
         return persons.stream()
                 .map(user -> new PersonResponse(
-                        user.getId(),
+                        user.getId().toString(),
                         user.getName(),
                         user.getEmail(),
                         user.getPhone()))
@@ -158,7 +162,7 @@ public class AuthService {
     public void updateEmail(String authHeader, String email, String newEmail) {
         Person person = getPersonByEmail(email);
 
-        if (!person.getId().equalsIgnoreCase(tokenService.getUserIdFromToken(authHeader.substring(7)))) {
+        if (!person.getId().toString().equalsIgnoreCase(tokenService.getUserIdFromToken(authHeader.substring(7)))) {
             throw new CustomException("User can change the own email only");
         }
 
@@ -166,10 +170,10 @@ public class AuthService {
             throw new CustomException("Email already in use");
         }
 
-        String verificationEmailToken = tokenService.generateRefreshToken(person);
-
-        // Відправляє на електронну пошту лист з посиланням дя верифікації
-        notificationServiceClient.sendVerificationEmail(newEmail, verificationEmailToken);
+        if (EMAIL_VERIFICATION_ENABLED) {
+            String verificationEmailToken = tokenService.generateRefreshToken(person);
+            notificationServiceClient.sendVerificationEmail(newEmail, verificationEmailToken);
+        }
     }
 
     public void verifyNewEmail(String authHeader, String newEmail) {
@@ -180,25 +184,24 @@ public class AuthService {
 
     public void blockUserById(String id) {
         Person person = getPersonById(id);
-
         if (person.isBlocked()) {
             throw new CustomException("User is already blocked.");
         }
-
         person.setBlocked(true);
         personRepository.save(person);
     }
 
     public void deleteUserById(String id) {
-        if (!personRepository.existsById(id)) {
+        UUID uuid = UUID.fromString(id);
+        if (!personRepository.existsById(uuid)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, USER_NOT_FOUND);
         }
-        tokenRepository.deleteByPersonId(id);
-        personRepository.deleteById(id);
+        tokenRepository.deleteByPersonId(uuid);
+        personRepository.deleteById(uuid);
     }
 
     private Person getPersonById(String personId) {
-        return personRepository.findById(personId)
+        return personRepository.findById(UUID.fromString(personId))
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
     }
 
@@ -209,8 +212,7 @@ public class AuthService {
 
     private Person getPersonFromHeader(String authHeader) {
         String token = authHeader.substring(7);
-        return personRepository.findById(tokenService.getUserIdFromToken(token))
+        return personRepository.findById(UUID.fromString(tokenService.getUserIdFromToken(token)))
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
     }
-
 }

@@ -18,6 +18,7 @@ import java.security.Key;
 import java.time.Instant;
 import java.util.Base64;
 import java.util.Date;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -40,25 +41,18 @@ public class TokenService {
         this.personRepository = personRepository;
     }
 
-    /**
-     * Генерує Access Token.
-     */
     public String generateAccessToken(Person person) {
         return Jwts.builder()
-                .setSubject(person.getId())
+                .setSubject(person.getId().toString())
                 .claim("role", person.getRole().name())
                 .setExpiration(new Date(System.currentTimeMillis() + accessTokenExpirationMs))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
-
-    /**
-     * Генерує Refresh Token і зберігає його в базі даних.
-     */
     public String generateRefreshToken(Person person) {
         String newRefreshToken = Jwts.builder()
-                .setSubject(person.getId())
+                .setSubject(person.getId().toString())
                 .claim("role", person.getRole().name())
                 .setExpiration(new Date(System.currentTimeMillis() + refreshTokenExpirationMs))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
@@ -73,13 +67,11 @@ public class TokenService {
         return newRefreshToken;
     }
 
-    /**
-     * Оновлює токени (access та refresh) на основі Refresh Token.
-     */
     @Transactional
     public TokenResponse updateTokens(String authHeader) {
         String refreshToken = authHeader.substring(7);
-        Person person = personRepository.findById(getUserIdFromToken(refreshToken))
+        UUID personId = UUID.fromString(getUserIdFromToken(refreshToken));
+        Person person = personRepository.findById(personId)
                 .orElseThrow(() -> new CustomException("Invalid credentials"));
 
         String newAccessToken = generateAccessToken(person);
@@ -88,24 +80,17 @@ public class TokenService {
         return new TokenResponse(newAccessToken, newRefreshToken);
     }
 
-    /**
-     * Відкликання токенів (logout).
-     */
     public void invalidateToken(String refreshToken) {
         tokenRepository.findByRefreshToken(refreshToken)
                 .ifPresent(tokenRepository::delete);
     }
 
-    /**
-     * Витягує ID користувача з Token.
-     */
     public String getUserIdFromToken(String token) {
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
-
         return claims.getSubject();
     }
 

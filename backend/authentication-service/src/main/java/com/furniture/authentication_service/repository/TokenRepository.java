@@ -8,35 +8,14 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.Instant;
 import java.util.Optional;
+import java.util.UUID;
 
-public interface TokenRepository extends JpaRepository<Token, String> {
+public interface TokenRepository extends JpaRepository<Token, UUID> {
 
-    /**
-     * Знаходить токен за значенням refreshToken.
-     *
-     * @param refreshToken Значення Refresh Token
-     * @return Optional<Token>
-     */
     Optional<Token> findByRefreshToken(String refreshToken);
 
-    /**
-     * Видаляє всі токени користувача за userId.
-     *
-     * @param personId ID користувача
-     */
-    void deleteByPersonId(String personId);
+    void deleteByPersonId(UUID personId);
 
-    /**
-     * Видаляє всі токени, термін дії яких закінчився.
-     * <p>
-     * Цей метод виконує запит до бази даних і видаляє всі записи в таблиці "Token",
-     * де значення поля "expiresAt" менше за переданий час (поточний час).
-     * Це корисно для очищення бази від прострочених токенів.
-     *
-     * @param now Поточний час, використовується для порівняння з полем "expiresAt"
-     *            для визначення прострочених токенів. Токени з терміном дії
-     *            меншому за цей час будуть видалені.
-     */
     @Modifying
     @Query("DELETE FROM Token t WHERE t.expiresAt < :now")
     void deleteAllExpiredTokens(@Param("now") Instant now);

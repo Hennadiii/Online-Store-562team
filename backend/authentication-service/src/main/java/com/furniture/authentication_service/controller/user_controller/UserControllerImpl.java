@@ -1,9 +1,11 @@
 package com.furniture.authentication_service.controller.user_controller;
 
+import com.furniture.authentication_service.dto.PersonResponse;
 import com.furniture.authentication_service.dto.ResetPasswordRequest;
 import com.furniture.authentication_service.dto.TokenResponse;
 import com.furniture.authentication_service.dto.UpdateEmailRequest;
 import com.furniture.authentication_service.service.AuthService;
+import com.furniture.authentication_service.service.TokenService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -15,16 +17,24 @@ import org.springframework.web.bind.annotation.*;
 public class UserControllerImpl implements UserController {
 
     private final AuthService authService;
+    private final TokenService tokenService;
 
-    public UserControllerImpl(AuthService authService) {
+    public UserControllerImpl(AuthService authService, TokenService tokenService) {
         this.authService = authService;
+        this.tokenService = tokenService;
+    }
+
+    @Override
+    @GetMapping("/me")
+    public ResponseEntity<PersonResponse> getMe(@RequestHeader("Authorization") String authHeader) {
+        String userId = tokenService.getUserIdFromToken(authHeader.substring(7));
+        return ResponseEntity.ok(authService.getUserById(userId));
     }
 
     @Override
     @GetMapping("/verify")
     public ResponseEntity<String> verifyUser(@RequestHeader("Authorization") String authHeader) {
-        String response = authService.verifyUser(authHeader);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(authService.verifyUser(authHeader));
     }
 
     @Override

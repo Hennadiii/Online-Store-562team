@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -18,7 +18,7 @@ import CartIcon from "../../assets/cart.svg";
 import RestorePasswordForm from "../authForms/restorePasswordForm";
 import { useFavoritesContext } from "@/context/FavoritesContext";
 import { useCartContext } from "@/context/CartContext";
-import { useAuthContext } from "@/context/AuthContext";
+import { useAuthContext, getInitials, getAvatarColor } from "@/context/AuthContext";
 
 const menuLinks = [
   { href: navTo.catalog, label: "Каталог" },
@@ -33,21 +33,41 @@ const Header = () => {
   const [showSearch, setShowsSearch] = useState(false);
   const [showCart, setShowCart] = useState(false);
   const [section, setSection] = useState(1);
+  const [showFavorite, setShowFavorite] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
+
   const { favorites } = useFavoritesContext();
   const { items } = useCartContext();
-  const { isAuthenticated, logout } = useAuthContext();
-  const cartCount = items.reduce((sum, i) => sum + i.quantity, 0);
-  const [showFavorite, setShowFavorite] = useState(false);
+  const { isAuthenticated, logout, user } = useAuthContext();
+
   const router = useRouter();
+  const userMenuRef = useRef<HTMLDivElement>(null);
+
+  const cartCount = items.reduce((sum, i) => sum + i.quantity, 0);
+
+  // 👉 fallback: name → email
+  const displayText = user?.name || user?.email || "";
 
   const handleUserClick = () => {
     if (isAuthenticated) {
-      router.push("/profile");
+      setShowUserMenu((prev) => !prev);
     } else {
       disableScroll();
       setShowModal(true);
     }
   };
+
+  // ✅ закрытие dropdown при клике вне
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
+        setShowUserMenu(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const showSection = () => {
     switch (section) {
@@ -122,6 +142,7 @@ const Header = () => {
 
           {/* ICONS */}
           <div className="flex gap-6 items-center">
+
             <SearchIcon
               onClick={() => {
                 disableScroll();
@@ -130,17 +151,70 @@ const Header = () => {
               className="cursor-pointer w-6 h-6 hover:scale-110 transition"
             />
 
-            {/* USER ICON — профіль або логін */}
-            <div className="relative cursor-pointer" onClick={handleUserClick}>
-              {isAuthenticated ? (
-                <div className="w-6 h-6 rounded-full bg-[#3C767E] flex items-center justify-center hover:scale-110 transition">
-                  <span className="text-white text-[10px] font-bold">✓</span>
+            {/* USER + DROPDOWN */}
+            <div className="relative" ref={userMenuRef}>
+              <div onClick={handleUserClick} className="cursor-pointer">
+                {isAuthenticated ? (
+                  <div
+                    className="w-8 h-8 rounded-full flex items-center justify-center text-gray-700 text-xs font-semibold hover:scale-110 transition"
+                    style={{ backgroundColor: getAvatarColor(displayText) }}
+                  >
+                    {getInitials(user?.name, user?.email)}
+                  </div>
+                ) : (
+                  <UserIcon className="w-6 h-6 hover:scale-110 transition" />
+                )}
+              </div>
+
+              {/* DROPDOWN */}
+              {isAuthenticated && showUserMenu && (
+                <div className="absolute right-0 mt-3 w-52 bg-white rounded-xl shadow-lg border border-black/10 py-2 z-50 animate-fadeIn">
+
+                  <button
+                    onClick={() => {
+                      router.push("/profile");
+                      setShowUserMenu(false);
+                    }}
+                    className="w-full text-left px-4 py-2 hover:bg-gray-100 transition"
+                  >
+                    Профіль
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      router.push("/profile/orders");
+                      setShowUserMenu(false);
+                    }}
+                    className="w-full text-left px-4 py-2 hover:bg-gray-100 transition"
+                  >
+                    Мої замовлення
+                  </button>
+
+                  <div className="border-t my-2" />
+
+                  <button
+  onClick={async () => {
+    await logout();
+    setShowUserMenu(false);
+    router.push("/");
+    router.refresh(); 
+  }}
+  // Додаємо flex, items-center та justify-between для рознесення тексту та іконки
+  className="w-full flex items-center justify-between px-4 py-2 hover:bg-gray-100 transition border-t border-gray-100 mt-2"
+>
+  <span className="text-[15px]">Вийти</span>
+  
+  <img 
+    src="/Logout.svg" 
+    alt="Logout" 
+    className="w-4 h-4 opacity-70 group-hover:opacity-100" 
+  />
+</button>
                 </div>
-              ) : (
-                <UserIcon className="w-6 h-6 hover:scale-110 transition" />
               )}
             </div>
 
+            {/* FAVORITE */}
             <div
               onClick={() => {
                 disableScroll();
@@ -156,6 +230,7 @@ const Header = () => {
               />
             </div>
 
+            {/* CART */}
             <div
               onClick={() => {
                 disableScroll();
@@ -170,6 +245,7 @@ const Header = () => {
                 </span>
               )}
             </div>
+
           </div>
         </div>
 
@@ -182,19 +258,29 @@ const Header = () => {
             />
             <div className="fixed top-0 left-0 h-full w-[280px] bg-white shadow-xl p-6 flex flex-col gap-8 z-50 animate-slideIn">
               <button onClick={() => setOpen(false)} className="self-end text-xl">✕</button>
+
               <nav className="flex flex-col gap-6 text-lg">
                 {menuLinks.map(({ href, label }) => (
-                  <Link key={href} href={href} onClick={() => setOpen(false)} className="border-b border-black/10 pb-2">
+                  <Link
+                    key={href}
+                    href={href}
+                    onClick={() => setOpen(false)}
+                    className="border-b border-black/10 pb-2"
+                  >
                     {label}
                   </Link>
                 ))}
               </nav>
+
               {isAuthenticated && (
                 <button
-                  onClick={() => { logout(); setOpen(false); }}
-                  className="text-left text-red-500 font-medium"
+                  onClick={() => {
+                    logout();
+                    setOpen(false);
+                  }}
+                  className="text-left  "
                 >
-                  Вийти
+                  Вийти 
                 </button>
               )}
             </div>
@@ -214,25 +300,44 @@ const Header = () => {
         {showSection()}
       </ModalWrapper>
 
-      {/* SEARCH MODAL */}
-      <ModalWrapper showModal={showSearch} setShowModal={() => setShowsSearch(false)} center={true}>
-        <SearchModal showModal={showSearch} setShowModal={() => setShowsSearch(false)} />
+      {/* SEARCH */}
+      <ModalWrapper
+        showModal={showSearch}
+        setShowModal={() => setShowsSearch(false)}
+        center
+      >
+        <SearchModal
+          showModal={showSearch}
+          setShowModal={() => setShowsSearch(false)}
+        />
       </ModalWrapper>
 
-      {/* FAVORITE MODAL */}
+      {/* FAVORITE */}
       <ModalWrapper
         showModal={showFavorite}
-        setShowModal={() => { enableScroll(); setShowFavorite(false); }}
+        setShowModal={() => {
+          enableScroll();
+          setShowFavorite(false);
+        }}
         center
       >
         <FavoriteModal
           showModal={showFavorite}
-          setShowModal={() => { enableScroll(); setShowFavorite(false); }}
+          setShowModal={() => {
+            enableScroll();
+            setShowFavorite(false);
+          }}
         />
       </ModalWrapper>
 
       {/* CART */}
-      <CartModal isOpen={showCart} setIsOpen={() => { enableScroll(); setShowCart(false); }} />
+      <CartModal
+        isOpen={showCart}
+        setIsOpen={() => {
+          enableScroll();
+          setShowCart(false);
+        }}
+      />
     </>
   );
 };

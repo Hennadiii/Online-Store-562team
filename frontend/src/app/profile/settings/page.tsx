@@ -25,6 +25,8 @@ const SettingsPage = () => {
   const [originalProfile, setOriginalProfile] = useState({ lastName: "", firstName: "", phone: "", email: "" });
   const [profileErrors, setProfileErrors] = useState<Record<string, string>>({});
   const [profileSaved, setProfileSaved] = useState(false);
+  const [profileLoading, setProfileLoading] = useState(false);
+  const [profileApiError, setProfileApiError] = useState<string | null>(null);
 
   const [password, setPassword] = useState(initialPasswordData);
   const [passwordErrors, setPasswordErrors] = useState<Record<string, string>>({});
@@ -48,16 +50,25 @@ const SettingsPage = () => {
   const profileChanged = JSON.stringify(profile) !== JSON.stringify(originalProfile);
   const passwordChanged = JSON.stringify(password) !== JSON.stringify(initialPasswordData);
 
-  const validateField = (name: string, value: string, block: "profile" | "password", currentPassword?: typeof password) => {
+  const validateField = (
+    name: string,
+    value: string,
+    block: "profile" | "password",
+    currentPassword?: typeof password
+  ) => {
     let error = "";
     if (block === "profile") {
       switch (name) {
-        case "lastName": case "firstName":
-          if (value.trim().length < 2) error = "Мінімум 2 символи"; break;
+        case "lastName":
+        case "firstName":
+          if (value.trim().length < 2) error = "Мінімум 2 символи";
+          break;
         case "phone":
-          if (!phoneRegex.test(value)) error = "Формат: +380XXXXXXXXX"; break;
+          if (!phoneRegex.test(value)) error = "Формат: +380XXXXXXXXX";
+          break;
         case "email":
-          if (!emailRegex.test(value)) error = "Некоректний email"; break;
+          if (!emailRegex.test(value)) error = "Некоректний email";
+          break;
       }
       setProfileErrors((prev) => ({ ...prev, [name]: error }));
     }
@@ -65,9 +76,11 @@ const SettingsPage = () => {
       const pw = currentPassword ?? password;
       switch (name) {
         case "newPassword":
-          if (value && value.length < 6) error = "Мінімум 6 символів"; break;
+          if (value && value.length < 6) error = "Мінімум 6 символів";
+          break;
         case "confirmPassword":
-          if (value !== pw.newPassword) error = "Паролі не співпадають"; break;
+          if (value !== pw.newPassword) error = "Паролі не співпадають";
+          break;
       }
       setPasswordErrors((prev) => ({ ...prev, [name]: error }));
     }
@@ -78,6 +91,7 @@ const SettingsPage = () => {
     setProfile((prev) => ({ ...prev, [name]: value }));
     validateField(name, value, "profile");
     setProfileSaved(false);
+    setProfileApiError(null);
   };
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -88,22 +102,49 @@ const SettingsPage = () => {
     setPasswordSaved(false);
   };
 
-  const saveProfile = () => { setProfileSaved(true); };
-  const savePassword = () => { setPasswordSaved(true); setPassword(initialPasswordData); };
+  const saveProfile = async () => {
+    setProfileLoading(true);
+    setProfileApiError(null);
+    try {
+      const updated = await authService.updateProfile(profile);
+      if (!updated) throw new Error("Порожня відповідь від сервера");
+      const nameParts = updated.name?.split(" ") || [];
+      const refreshed = {
+        firstName: nameParts[0] || "",
+        lastName: nameParts.slice(1).join(" ") || "",
+        phone: updated.phone || "",
+        email: updated.email || "",
+      };
+      setOriginalProfile(refreshed);
+      setProfile(refreshed);
+      setProfileSaved(true);
+    } catch (e: unknown) {
+      setProfileApiError(e instanceof Error ? e.message : "Помилка збереження");
+    } finally {
+      setProfileLoading(false);
+    }
+  };
+
+  const savePassword = () => {
+    setPasswordSaved(true);
+    setPassword(initialPasswordData);
+  };
 
   const isProfileInvalid = Object.values(profileErrors).some(Boolean);
   const isPasswordInvalid = Object.values(passwordErrors).some(Boolean);
 
-  const inputBase = "w-full h-[44px] px-3 border rounded-lg bg-white transition-colors duration-200 focus:outline-none text-sm";
+  const inputBase =
+    "w-full h-[44px] px-3 border rounded-lg bg-white transition-colors duration-200 focus:outline-none text-sm";
   const inputNormal = "border-gray-300 hover:border-gray-400 focus:border-black";
   const inputChanged = "border-black bg-gray-50";
   const inputError = "border-red focus:border-red";
 
   const getInputClass = (field: string, block: "profile" | "password") => {
     const errors = block === "profile" ? profileErrors : passwordErrors;
-    const changed = block === "profile"
-      ? profile[field as keyof typeof profile] !== originalProfile[field as keyof typeof originalProfile]
-      : password[field as keyof typeof password] !== "";
+    const changed =
+      block === "profile"
+        ? profile[field as keyof typeof profile] !== originalProfile[field as keyof typeof originalProfile]
+        : password[field as keyof typeof password] !== "";
     return `${inputBase} ${errors[field] ? inputError : changed ? inputChanged : inputNormal}`;
   };
 
@@ -115,15 +156,25 @@ const SettingsPage = () => {
           <div className="w-full max-w-[720px] bg-white">
             <h2 className="text-xl sm:text-2xl font-semibold mb-1">Дані облікового запису</h2>
 
-            {profileChanged && !profileSaved && <p className="text-xs text-amber-600 mb-4">Є незбережені зміни</p>}
+            {profileChanged && !profileSaved && (
+              <p className="text-xs text-amber-600 mb-4">Є незбережені зміни</p>
+            )}
             {profileSaved && <p className="text-xs text-green-600 mb-4">✓ Зміни збережено</p>}
+            {profileApiError && <p className="text-xs text-red-600 mb-4">{profileApiError}</p>}
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-2">
               {(["lastName", "firstName"] as const).map((field) => (
                 <div key={field} className="flex flex-col gap-1.5">
                   <label className="text-xs text-gray-600 font-medium">{FIELD_LABELS[field]}</label>
-                  <input name={field} value={profile[field]} onChange={handleProfileChange} className={getInputClass(field, "profile")} />
-                  {profileErrors[field] && <span className="text-xs text-red">{profileErrors[field]}</span>}
+                  <input
+                    name={field}
+                    value={profile[field]}
+                    onChange={handleProfileChange}
+                    className={getInputClass(field, "profile")}
+                  />
+                  {profileErrors[field] && (
+                    <span className="text-xs text-red">{profileErrors[field]}</span>
+                  )}
                 </div>
               ))}
             </div>
@@ -132,49 +183,103 @@ const SettingsPage = () => {
               {(["phone", "email"] as const).map((field) => (
                 <div key={field} className="flex flex-col gap-1.5">
                   <label className="text-xs text-gray-600 font-medium">{FIELD_LABELS[field]}</label>
-                  <input name={field} type={field === "email" ? "email" : "tel"} value={profile[field]} onChange={handleProfileChange} className={getInputClass(field, "profile")} />
-                  {profileErrors[field] && <span className="text-xs text-red">{profileErrors[field]}</span>}
+                  <input
+                    name={field}
+                    type={field === "email" ? "email" : "tel"}
+                    value={profile[field]}
+                    onChange={handleProfileChange}
+                    className={getInputClass(field, "profile")}
+                  />
+                  {profileErrors[field] && (
+                    <span className="text-xs text-red">{profileErrors[field]}</span>
+                  )}
                 </div>
               ))}
             </div>
 
             <div className="flex flex-col-reverse sm:flex-row justify-end gap-3">
               {profileChanged && !profileSaved && (
-                <button type="button" onClick={() => { setProfile(originalProfile); setProfileErrors({}); setProfileSaved(false); }}
-                  className="w-full sm:w-auto px-6 h-[44px] rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-100 transition-colors text-sm">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setProfile(originalProfile);
+                    setProfileErrors({});
+                    setProfileSaved(false);
+                    setProfileApiError(null);
+                  }}
+                  className="w-full sm:w-auto px-6 h-[44px] rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-100 transition-colors text-sm"
+                >
                   Скасувати
                 </button>
               )}
-              <Button type="button" onClick={saveProfile} disabled={!profileChanged || isProfileInvalid || profileSaved}
-                className={`w-full sm:w-auto px-8 h-[44px] transition-all duration-300 text-sm font-medium ${profileSaved ? "bg-green-600 text-white cursor-default" : !profileChanged || isProfileInvalid ? "bg-gray-200 text-gray-800 cursor-not-allowed" : "bg-black text-white hover:bg-gray-800"}`}>
-                {profileSaved ? "✓ Збережено" : "Зберегти зміни"}
+              <Button
+                type="button"
+                onClick={saveProfile}
+                disabled={!profileChanged || isProfileInvalid || profileSaved || profileLoading}
+                className={`w-full sm:w-auto px-8 h-[44px] transition-all duration-300 text-sm font-medium ${
+                  profileSaved
+                    ? "bg-green-600 text-white cursor-default"
+                    : !profileChanged || isProfileInvalid
+                    ? "bg-gray-200 text-gray-800 cursor-not-allowed"
+                    : "bg-black text-white hover:bg-gray-800"
+                }`}
+              >
+                {profileLoading ? "Збереження..." : profileSaved ? "✓ Збережено" : "Зберегти зміни"}
               </Button>
             </div>
 
+            {/* Password section */}
             <div className="mt-10 pt-8 border-t border-gray-200">
               <h3 className="text-base sm:text-lg font-semibold mb-1">Зміна паролю</h3>
-              {passwordChanged && !passwordSaved && <p className="text-xs text-amber-600 mb-4">Є незбережені зміни</p>}
+              {passwordChanged && !passwordSaved && (
+                <p className="text-xs text-amber-600 mb-4">Є незбережені зміни</p>
+              )}
               {passwordSaved && <p className="text-xs text-green-600 mb-4">✓ Пароль змінено</p>}
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
                 {(["oldPassword", "newPassword", "confirmPassword"] as const).map((field) => (
                   <div key={field} className="flex flex-col gap-1.5">
                     <label className="text-xs text-gray-600 font-medium">{FIELD_LABELS[field]}</label>
-                    <input type="password" name={field} value={password[field]} onChange={handlePasswordChange} className={getInputClass(field, "password")} />
-                    {passwordErrors[field] && <span className="text-xs text-red">{passwordErrors[field]}</span>}
+                    <input
+                      type="password"
+                      name={field}
+                      value={password[field]}
+                      onChange={handlePasswordChange}
+                      className={getInputClass(field, "password")}
+                    />
+                    {passwordErrors[field] && (
+                      <span className="text-xs text-red">{passwordErrors[field]}</span>
+                    )}
                   </div>
                 ))}
               </div>
 
               <div className="flex flex-col-reverse sm:flex-row justify-end gap-3">
                 {passwordChanged && !passwordSaved && (
-                  <button type="button" onClick={() => { setPassword(initialPasswordData); setPasswordErrors({}); setPasswordSaved(false); }}
-                    className="w-full sm:w-auto px-6 h-[44px] border border-gray-300 text-gray-700 hover:bg-gray-100 transition-colors text-sm">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPassword(initialPasswordData);
+                      setPasswordErrors({});
+                      setPasswordSaved(false);
+                    }}
+                    className="w-full sm:w-auto px-6 h-[44px] border border-gray-300 text-gray-700 hover:bg-gray-100 transition-colors text-sm"
+                  >
                     Скасувати
                   </button>
                 )}
-                <Button type="button" onClick={savePassword} disabled={!passwordChanged || isPasswordInvalid || passwordSaved}
-                  className={`w-full sm:w-auto px-8 h-[44px] transition-all duration-300 text-sm font-medium ${passwordSaved ? "bg-green-600 text-white cursor-default" : !passwordChanged || isPasswordInvalid ? "bg-gray-200 text-gray-800 cursor-not-allowed" : "bg-black text-white hover:bg-gray-800"}`}>
+                <Button
+                  type="button"
+                  onClick={savePassword}
+                  disabled={!passwordChanged || isPasswordInvalid || passwordSaved}
+                  className={`w-full sm:w-auto px-8 h-[44px] transition-all duration-300 text-sm font-medium ${
+                    passwordSaved
+                      ? "bg-green-600 text-white cursor-default"
+                      : !passwordChanged || isPasswordInvalid
+                      ? "bg-gray-200 text-gray-800 cursor-not-allowed"
+                      : "bg-black text-white hover:bg-gray-800"
+                  }`}
+                >
                   {passwordSaved ? "✓ Збережено" : "Змінити пароль"}
                 </Button>
               </div>

@@ -46,9 +46,14 @@ const ProfileSidebar = () => {
 
         <button
           onClick={handleLogout}
-          className="text-[15px] text-left text-red-500 hover:text-red-700 transition-all duration-200 mt-4 pt-4 border-t border-gray-100"
+          className="flex items-center gap-2 text-[15px]  hover:text-red-700 transition-all duration-200 mt-4 pt-4 border-t border-gray-100 w-full"
         >
-          Вийти
+         <span>Вийти</span>
+         <img 
+    src="/Logout.svg" 
+    alt="Logout" 
+    className="w-4 h-4" // Задаем размер иконки (16x16px), можно подправить под ваш текст
+  />
         </button>
       </nav>
     </aside>

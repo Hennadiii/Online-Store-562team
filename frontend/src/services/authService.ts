@@ -92,4 +92,30 @@ export const authService = {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
   },
-};
+
+  async updateProfile(data: {
+    firstName: string;
+    lastName: string;
+    phone: string;
+    email: string;
+  }): Promise<{ name: string; email: string; phone: string } | null> {
+    const token = this.getAccessToken();
+    if (!token) return null;
+  
+    const res = await fetch(`${AUTH_API_URL}/user/profile`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+  
+    if (!res.ok) {
+      const err = await res.json().catch(() => null);
+      throw new Error(err?.message || "Помилка оновлення профілю");
+    }
+  
+    return res.json();
+  }
+}

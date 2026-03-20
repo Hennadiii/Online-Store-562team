@@ -117,5 +117,34 @@ export const authService = {
     }
   
     return res.json();
+  },
+
+  async changePassword(data: {
+    oldPassword: string;
+    newPassword: string;
+  }): Promise<void> {
+    const token = this.getAccessToken();
+    if (!token) throw new Error("Не авторизовано");
+  
+    const res = await fetch(`${AUTH_API_URL}/user/reset-password`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+  
+    if (!res.ok) {
+      const err = await res.json().catch(() => null);
+      throw new Error(err?.message || "Помилка зміни паролю");
+    }
+  
+    // Бекенд повертає нові токени — зберігаємо їх щоб сесія не обірвалась
+    const tokens: TokenResponse = await res.json();
+    this.saveTokens(tokens);
   }
+  
+
+  
 }

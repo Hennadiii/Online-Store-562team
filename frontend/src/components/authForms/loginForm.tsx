@@ -60,7 +60,7 @@ const LoginForm: React.FC<Iauthorization> = ({
       onSubmit={handleSubmit(onSubmit)}
       className={cn(
         "relative flex flex-col gap-6 bg-white w-full max-w-[470px] h-auto rounded-lg p-6 sm:p-8",
-        { "shadow-lg": isModal }
+        { "shadow-none": isModal }
       )}
     >
       {isModal && (
@@ -112,10 +112,19 @@ const LoginForm: React.FC<Iauthorization> = ({
         {loading ? "Завантаження..." : "ВХІД"}
       </Button>
 
-      <Button type="button" className="flex w-full gap-x-3 border-black pl-3 mt-2">
-        <Image width={24} height={24} src="/google.svg" alt="google" />
-        Увійти через Google
-      </Button>
+      <div className="relative">
+  <Button
+    type="button"
+    disabled
+    className="flex w-full gap-x-3 border-black pl-3 mt-2 opacity-50 cursor-not-allowed"
+  >
+    <Image width={24} height={24} src="/google.svg" alt="google" />
+    Увійти через Google
+  </Button>
+  <span className="absolute -top-1 right-2 text-[10px] bg-yellow-200  px-2 py-0.5 rounded-full">
+    Coming soon
+  </span>
+</div>
 
       {isModal && (
         <div className="flex justify-between text-[12px] mt-4">

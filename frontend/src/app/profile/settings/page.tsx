@@ -31,6 +31,8 @@ const SettingsPage = () => {
   const [password, setPassword] = useState(initialPasswordData);
   const [passwordErrors, setPasswordErrors] = useState<Record<string, string>>({});
   const [passwordSaved, setPasswordSaved] = useState(false);
+  const [passwordLoading, setPasswordLoading] = useState(false);
+  const [passwordApiError, setPasswordApiError] = useState<string | null>(null);
 
   useEffect(() => {
     authService.getMe().then((data) => {
@@ -75,8 +77,11 @@ const SettingsPage = () => {
     if (block === "password") {
       const pw = currentPassword ?? password;
       switch (name) {
+        case "oldPassword":
+          if (!value) error = "Введіть старий пароль";
+          break;
         case "newPassword":
-          if (value && value.length < 6) error = "Мінімум 6 символів";
+          if (value && value.length < 8) error = "Мінімум 8 символів";
           break;
         case "confirmPassword":
           if (value !== pw.newPassword) error = "Паролі не співпадають";
@@ -100,6 +105,7 @@ const SettingsPage = () => {
     setPassword(next);
     validateField(name, value, "password", next);
     setPasswordSaved(false);
+    setPasswordApiError(null);
   };
 
   const saveProfile = async () => {
@@ -125,13 +131,39 @@ const SettingsPage = () => {
     }
   };
 
-  const savePassword = () => {
-    setPasswordSaved(true);
-    setPassword(initialPasswordData);
+  const savePassword = async () => {
+    setPasswordLoading(true);
+    setPasswordApiError(null);
+    try {
+      await authService.changePassword({
+        oldPassword: password.oldPassword,
+        newPassword: password.newPassword,
+      });
+      setPasswordSaved(true);
+      setPassword(initialPasswordData);
+      setPasswordErrors({});
+    } catch (e: unknown) {
+      // Якщо бекенд повернув "Невірний старий пароль" — показуємо під інпутом
+      const msg = e instanceof Error ? e.message : "Помилка зміни паролю";
+      if (msg.toLowerCase().includes("старий пароль") || msg.toLowerCase().includes("невірний")) {
+        setPasswordErrors((prev) => ({ ...prev, oldPassword: msg }));
+      } else {
+        setPasswordApiError(msg);
+      }
+    } finally {
+      setPasswordLoading(false);
+    }
   };
 
   const isProfileInvalid = Object.values(profileErrors).some(Boolean);
   const isPasswordInvalid = Object.values(passwordErrors).some(Boolean);
+
+  // Кнопка активна лише коли всі три поля заповнені та немає помилок
+  const isPasswordFormReady =
+    password.oldPassword.trim().length > 0 &&
+    password.newPassword.length >= 8 &&
+    password.confirmPassword === password.newPassword &&
+    !isPasswordInvalid;
 
   const inputBase =
     "w-full h-[44px] px-3 border rounded-lg bg-white transition-colors duration-200 focus:outline-none text-sm";
@@ -231,10 +263,8 @@ const SettingsPage = () => {
             {/* Password section */}
             <div className="mt-10 pt-8 border-t border-gray-200">
               <h3 className="text-base sm:text-lg font-semibold mb-1">Зміна паролю</h3>
-              {passwordChanged && !passwordSaved && (
-                <p className="text-xs text-amber-600 mb-4">Є незбережені зміни</p>
-              )}
               {passwordSaved && <p className="text-xs text-green-600 mb-4">✓ Пароль змінено</p>}
+              {passwordApiError && <p className="text-xs text-red-600 mb-4">{passwordApiError}</p>}
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
                 {(["oldPassword", "newPassword", "confirmPassword"] as const).map((field) => (
@@ -262,6 +292,7 @@ const SettingsPage = () => {
                       setPassword(initialPasswordData);
                       setPasswordErrors({});
                       setPasswordSaved(false);
+                      setPasswordApiError(null);
                     }}
                     className="w-full sm:w-auto px-6 h-[44px] border border-gray-300 text-gray-700 hover:bg-gray-100 transition-colors text-sm"
                   >
@@ -271,16 +302,16 @@ const SettingsPage = () => {
                 <Button
                   type="button"
                   onClick={savePassword}
-                  disabled={!passwordChanged || isPasswordInvalid || passwordSaved}
+                  disabled={!isPasswordFormReady || passwordSaved || passwordLoading}
                   className={`w-full sm:w-auto px-8 h-[44px] transition-all duration-300 text-sm font-medium ${
                     passwordSaved
                       ? "bg-green-600 text-white cursor-default"
-                      : !passwordChanged || isPasswordInvalid
+                      : !isPasswordFormReady
                       ? "bg-gray-200 text-gray-800 cursor-not-allowed"
                       : "bg-black text-white hover:bg-gray-800"
                   }`}
                 >
-                  {passwordSaved ? "✓ Збережено" : "Змінити пароль"}
+                  {passwordLoading ? "Збереження..." : passwordSaved ? "✓ Збережено" : "Змінити пароль"}
                 </Button>
               </div>
             </div>

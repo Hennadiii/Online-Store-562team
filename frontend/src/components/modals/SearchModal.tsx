@@ -2,10 +2,13 @@
 
 import { cn } from "@/utils/twMerge";
 import Image from "next/image";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { searchProducts } from "@/services/productService";
+import type { ProductDto } from "@/types/product";
 
 interface SearchModalProps {
   showModal: boolean;
@@ -23,8 +26,15 @@ const searchSchema = yup.object().shape({
     .min(3, "Мінімум 3 символи"),
 });
 
-const SearchModal: React.FC<SearchModalProps> = ({ showModal, setShowModal }) => {
+const SearchModal: React.FC<SearchModalProps> = ({
+  showModal,
+  setShowModal,
+}) => {
   const inputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
+
+  const [results, setResults] = useState<ProductDto[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const {
     register,
@@ -44,15 +54,40 @@ const SearchModal: React.FC<SearchModalProps> = ({ showModal, setShowModal }) =>
       setTimeout(() => inputRef.current?.focus(), 100);
     } else {
       reset();
+      setResults([]);
     }
   }, [showModal]);
 
+  // 🔍 LIVE SEARCH (debounce)
+  useEffect(() => {
+    if (queryValue.length < 3) {
+      setResults([]);
+      return;
+    }
+
+    const timeout = setTimeout(async () => {
+      try {
+        setLoading(true);
+        const data = await searchProducts(queryValue);
+        setResults(data);
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setLoading(false);
+      }
+    }, 400);
+
+    return () => clearTimeout(timeout);
+  }, [queryValue]);
+
   const onSubmit = (data: SearchInputs) => {
-    console.log("Search:", data.query);
+    router.push(`/search?q=${data.query}`);
+    handleClose();
   };
 
   const handleClose = () => {
     reset();
+    setResults([]);
     setShowModal();
   };
 
@@ -66,7 +101,7 @@ const SearchModal: React.FC<SearchModalProps> = ({ showModal, setShowModal }) =>
       md:max-w-xl
       lg:max-w-2xl
     ">
-      {/* Кнопка закрытия */}
+      {/* CLOSE */}
       <button
         type="button"
         onClick={handleClose}
@@ -74,37 +109,22 @@ const SearchModal: React.FC<SearchModalProps> = ({ showModal, setShowModal }) =>
           absolute top-4 right-4
           rounded-full p-2
           text-gray-400 hover:text-black hover:bg-gray-100
-          transition-colors duration-200
         "
-        aria-label="Закрити"
       >
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
-          <path d="M18 6 6 18M6 6l12 12" strokeLinecap="round" />
-        </svg>
+        ✕
       </button>
 
-      {/* Заголовок */}
-      <p className="mb-4 text-xs font-semibold uppercase tracking-widest text-gray-400">
+      <p className="mb-4 text-xs uppercase tracking-widest text-gray-400">
         Пошук
       </p>
 
       <form onSubmit={handleSubmit(onSubmit)} noValidate>
-        {/* Строка поиска */}
         <div className={cn(
-          "flex items-center gap-2 border-b-2 pb-2 transition-colors duration-300",
+          "flex items-center gap-2 border-b-2 pb-2",
           errors.query
             ? "border-red-400"
             : "border-gray-200 focus-within:border-black"
         )}>
-          <svg
-            className="shrink-0 text-gray-400 w-5 h-5"
-            fill="none" stroke="currentColor" strokeWidth={2}
-            viewBox="0 0 24 24"
-          >
-            <circle cx="11" cy="11" r="8" />
-            <path d="m21 21-4.35-4.35" strokeLinecap="round" />
-          </svg>
-
           <input
             {...rest}
             ref={(e) => {
@@ -114,60 +134,76 @@ const SearchModal: React.FC<SearchModalProps> = ({ showModal, setShowModal }) =>
             }}
             type="text"
             placeholder="Введіть свій запит..."
-            className="
-              flex-1 min-w-0 bg-transparent outline-none
-              text-base sm:text-lg
-              placeholder-gray-300
-              py-1
-            "
+            className="flex-1 bg-transparent outline-none text-lg"
           />
-
-          {/* Кнопка очистки */}
-          {queryValue?.length > 0 && (
-            <button
-              type="button"
-              onClick={() => reset()}
-              aria-label="Очистити"
-              className="
-                shrink-0 rounded-full p-1
-                text-gray-400 hover:text-black hover:bg-gray-100
-                transition-colors
-              "
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
-                <path d="M18 6 6 18M6 6l12 12" strokeLinecap="round" />
-              </svg>
-            </button>
-          )}
         </div>
 
-        {/* Ошибка валидации */}
-        <div className="min-h-[20px] mt-2">
-          {errors.query && (
-            <p className="text-xs text-red-500 flex items-center gap-1">
-              <svg className="w-3 h-3 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M18 10A8 8 0 1 1 2 10a8 8 0 0 1 16 0zm-8-3a1 1 0 0 0-1 1v2a1 1 0 1 0 2 0V8a1 1 0 0 0-1-1zm0 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z" clipRule="evenodd" />
-              </svg>
-              {errors.query.message}
-            </p>
-          )}
-        </div>
+        {/* ERROR */}
+        {errors.query && (
+          <p className="text-xs text-red-500 mt-2">
+            {errors.query.message}
+          </p>
+        )}
 
-        {/* Кнопка поиска */}
-        <button
+        {/* RESULTS */}
+        {loading && (
+          <p className="text-sm text-gray-400 mt-3">Пошук...</p>
+        )}
+
+        {!loading && results.length > 0 && (
+          <div className="mt-4 max-h-80 overflow-y-auto border rounded-xl divide-y">
+            {results.map((product) => (
+              <div
+                key={product.id}
+                onClick={() => {
+                  router.push(`/product/${product.id}`);
+                  handleClose();
+                }}
+                className="flex items-center gap-3 p-3 hover:bg-gray-50 cursor-pointer"
+              >
+                <div className="w-14 h-14 relative rounded-md overflow-hidden bg-gray-100">
+                {product.images?.[0] ? (
+  <Image
+    src={product.images[0]}
+    alt={product.title}
+    fill
+    className="object-cover"
+  />
+) : (
+                    <div className="flex items-center justify-center w-full h-full text-xs text-gray-400">
+                      no img
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium truncate">
+                    {product.title}
+                  </p>
+                  <p className="text-xs text-gray-400">
+                    {product.price} ₴
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {!loading && queryValue.length >= 3 && results.length === 0 && (
+          <p className="text-sm text-gray-400 mt-3">
+            Нічого не знайдено
+          </p>
+        )}
+
+        {/*<button
           type="submit"
           className="
-            mt-4 w-full
-            bg-black text-white
-            py-3
-            text-sm font-semibold tracking-wide uppercase
-            hover:bg-gray-800 active:scale-[0.98]
-            transition-all duration-200
-            sm:mt-6
+            mt-6 w-full bg-black text-white py-3
+            text-sm uppercase hover:bg-gray-800
           "
         >
           Знайти
-        </button>
+        </button>*/}
       </form>
     </div>
   );

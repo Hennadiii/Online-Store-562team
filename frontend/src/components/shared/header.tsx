@@ -52,6 +52,7 @@ const Header = () => {
     if (isAuthenticated) {
       setShowUserMenu((prev) => !prev);
     } else {
+      setSection(1);
       disableScroll();
       setShowModal(true);
     }

@@ -10,26 +10,26 @@ interface FormValues {
   build: string;
   apartament: string;
   floor: string;
-  elevator: boolean;
+  elevator: boolean | null;
 }
 
 interface Props {
   values: FormValues;
   errors: Record<string, string>;
-  onChange: (field: string, value: string | boolean) => void;
+  onChange: (field: string, value: string | boolean | null) => void;
 }
 
 const inputFields = [
-  { id: "city", label: "Місто", placeholder: "Введіть ваше місто" },
-  { id: "region", label: "Область", placeholder: "Введіть вашу область" },
-  { id: "street", label: "Вулиця", placeholder: "Введіть вашу вулицю" },
-  { id: "build", label: "Будинок", placeholder: "Введіть номер вашого будинку" },
-  { id: "apartament", label: "Квартира", placeholder: "Введіть номер вашої квартири" },
-  { id: "floor", label: "Поверх", placeholder: "Введіть поверх" },
+  { id: "city",       label: "Місто",    placeholder: "Введіть ваше місто" },
+  { id: "region",     label: "Область",  placeholder: "Введіть вашу область" },
+  { id: "street",     label: "Вулиця",   placeholder: "Введіть вашу вулицю" },
+  { id: "build",      label: "Будинок",  placeholder: "Введіть номер будинку" },
+  { id: "apartament", label: "Квартира", placeholder: "Введіть номер квартири" },
+  { id: "floor",      label: "Поверх",   placeholder: "Введіть поверх" },
 ];
 
 const deliveryOptions = [
-  { id: "pickup", label: "Самовивіз з магазину" },
+  { id: "pickup",  label: "Самовивіз з магазину" },
   { id: "courier", label: "Курʼєрська доставка" },
 ];
 
@@ -58,7 +58,7 @@ const DeliveryInfoForm: React.FC<Props> = ({ values, errors, onChange }) => {
       <form
         className={cn(
           "flex w-full flex-col gap-y-[34px] overflow-hidden transition-all duration-700 ease-in-out",
-          values.deliveryMethod === "pickup" ? "max-h-0" : "max-h-[1000px]"
+          values.deliveryMethod === "pickup" ? "max-h-0" : "max-h-[1200px]"
         )}
       >
         {inputFields.map(({ id, label, placeholder }) => (
@@ -69,8 +69,8 @@ const DeliveryInfoForm: React.FC<Props> = ({ values, errors, onChange }) => {
               value={values[id as keyof FormValues] as string}
               onChange={(e) => onChange(id, e.target.value)}
               className={cn(
-                "h-[43px] w-full border-b-[1px] px-2 py-3",
-                errors[id] && "border-red-500"
+                "h-[43px] w-full border-b-[1px] px-2 py-3 outline-none",
+                errors[id] ? "border-red-500" : "border-gray-300"
               )}
               placeholder={placeholder}
             />
@@ -80,15 +80,36 @@ const DeliveryInfoForm: React.FC<Props> = ({ values, errors, onChange }) => {
           </div>
         ))}
 
-        <div className="flex gap-x-3 items-center">
-          <input
-            id="elevator"
-            className="w-6 h-6"
-            type="checkbox"
-            checked={values.elevator}
-            onChange={(e) => onChange("elevator", e.target.checked)}
-          />
-          <label htmlFor="elevator">Наявність вантажного ліфта</label>
+        {/* Ліфт — radio buttons */}
+        <div className="flex flex-col gap-y-3">
+          <label className="text-[12px] leading-[120%] text-accent">
+            Наявність вантажного ліфта
+          </label>
+          <div className="flex gap-x-6">
+            <label className="flex items-center gap-x-2 cursor-pointer text-[16px]">
+              <input
+                type="radio"
+                name="elevator"
+                checked={values.elevator === true}
+                onChange={() => onChange("elevator", true)}
+                className="w-5 h-5"
+              />
+              Є
+            </label>
+            <label className="flex items-center gap-x-2 cursor-pointer text-[16px]">
+              <input
+                type="radio"
+                name="elevator"
+                checked={values.elevator === false}
+                onChange={() => onChange("elevator", false)}
+                className="w-5 h-5"
+              />
+              Немає
+            </label>
+          </div>
+          {errors.elevator && (
+            <span style={{ color: "red" }} className="text-xs">{errors.elevator}</span>
+          )}
         </div>
       </form>
     </section>

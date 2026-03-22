@@ -54,11 +54,11 @@ public class UserControllerImpl implements UserController {
     @Override
     @PostMapping("/reset-password")
     public ResponseEntity<TokenResponse> resetPassword(
-            @RequestHeader("Authorization") String authHeader,
-            @RequestBody ResetPasswordRequest request) {
-        authService.resetPassword(authHeader, request.getNewPassword());
-        return ResponseEntity.ok(authService.newTokens(authHeader));
-    }
+        @RequestHeader("Authorization") String authHeader,
+        @RequestBody @Valid ResetPasswordRequest request) {
+    authService.resetPassword(authHeader, request.getOldPassword(), request.getNewPassword());
+    return ResponseEntity.ok(authService.newTokens(authHeader));
+}
 
     @Override
     @PatchMapping("/updateEmail/{email}")

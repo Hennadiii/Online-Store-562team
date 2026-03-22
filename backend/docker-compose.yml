@@ -2,6 +2,42 @@ version: '3.8'
 
 services:
 
+  # ── Authentication Service ───────────────────────────────────────────────
+  authentication-service:
+    build:
+      context: ./authentication-service
+    container_name: authentication-service
+    ports:
+      - "8081:8081"
+    env_file:
+      - ./authentication-service/.env
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://authentication-db:5432/auth-db
+    depends_on:
+      authentication-db:
+        condition: service_healthy
+    networks:
+      - store-network
+
+  authentication-db:
+    image: postgres:15
+    container_name: authentication-db
+    environment:
+      POSTGRES_DB: auth-db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5435:5432"
+    volumes:
+      - authentication_data:/var/lib/postgresql/data
+    networks:
+      - store-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d auth-db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
   # ── Product Catalog Service ──────────────────────────────────────────────
   product-catalog-service:
     build:
@@ -116,6 +152,7 @@ services:
 
 # ── Volumes ──────────────────────────────────────────────────────────────────
 volumes:
+  authentication_data:
   product_catalog_data:
   shopping_cart_data:
   order_management_data:

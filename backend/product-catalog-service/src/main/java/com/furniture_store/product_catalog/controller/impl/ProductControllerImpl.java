@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.net.URI;
+import java.util.List;
 
 /**
  * Контролер для керування операціями з продуктами.
@@ -123,5 +124,11 @@ public ResponseEntity<Void> updateProduct(@PathVariable Long id, @RequestBody @V
     return ResponseEntity.ok().build();           // возвращаем ResponseEntity<Void>
 }
 
+
+@Override
+@GetMapping("/products/search/simple")
+public List<ProductDto> searchSimple(@RequestParam("q") String query) {
+    return productManager.searchSimple(query);
+}
 }
 

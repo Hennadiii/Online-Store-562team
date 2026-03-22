@@ -127,8 +127,13 @@ public class AuthService {
         notificationServiceClient.sendPasswordResetEmail(email, resetLink);
     }
 
-    public void resetPassword(String authHeader, String newPassword) {
+    public void resetPassword(String authHeader, String oldPassword, String newPassword) {
         Person person = getPersonFromHeader(authHeader);
+    
+        if (!passwordEncoder.matches(oldPassword, person.getPasswordHash())) {
+            throw new CustomException("Невірний старий пароль");
+        }
+    
         person.setPasswordHash(passwordEncoder.encode(newPassword));
         personRepository.save(person);
     }

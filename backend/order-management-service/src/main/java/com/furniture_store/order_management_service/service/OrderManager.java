@@ -49,6 +49,13 @@ public class OrderManager {
         );
     }
 
+    public DisplayOrderDto getOrderByToken(Long id, String token) {
+        return orderDtoMapper.toDto(
+                orderRepository.findByIdAndGuestToken(id, token)
+                        .orElseThrow(() -> new OrderNotFoundException("Order not found or invalid token"))
+        );
+    }
+
     public List<DisplayOrderDto> getOrders(int page, int size) {
         Pageable pageable = Pageable.ofSize(size).withPage(page);
         return orderRepository.findAll(pageable).stream()
@@ -63,10 +70,11 @@ public class OrderManager {
     public void updateOrder(Order order) {
         Order entity = orderRepository.findById(order.getId())
                 .orElseThrow(() -> new OrderNotFoundException(""));
-        // п.11 — статус НЕ оновлюємо через updateOrder, тільки через setOrderStatus
         entity.setItems(order.getItems());
         entity.setDelivery(order.getDelivery());
         entity.setCustomerName(order.getCustomerName());
+        entity.setRecipientName(order.getRecipientName());
+        entity.setRecipientPhone(order.getRecipientPhone());
         entity.setUpdatedAt(LocalDateTime.now());
         orderRepository.save(entity);
     }

@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
 @Tag(name = "API товарів", description = "CRUD операції для керування товарами")
 public interface ProductController {
@@ -72,4 +73,10 @@ public interface ProductController {
     })
     @PutMapping("/products/{id}")
 ResponseEntity<Void> updateProduct(@PathVariable Long id, @RequestBody @Validated ProductDto productDto);
+
+@Operation(summary = "Швидкий пошук (для автокомпліту)",
+        description = "Повертає список товарів без пагінації для live search")
+@GetMapping("/products/search/simple")
+List<ProductDto> searchSimple(@RequestParam("q") String query);
+
 }

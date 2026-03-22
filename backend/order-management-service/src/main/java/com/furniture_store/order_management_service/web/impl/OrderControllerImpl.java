@@ -49,7 +49,12 @@ public class OrderControllerImpl {
     }
 
     @GetMapping("/orders/{id}")
-    public ResponseEntity<DisplayOrderDto> getOrder(@PathVariable long id) {
+    public ResponseEntity<DisplayOrderDto> getOrder(
+            @PathVariable long id,
+            @RequestParam(required = false) String token) {
+        if (token != null && !token.isBlank()) {
+            return ResponseEntity.ok(orderManager.getOrderByToken(id, token));
+        }
         return ResponseEntity.ok(orderManager.getOrder(id));
     }
 

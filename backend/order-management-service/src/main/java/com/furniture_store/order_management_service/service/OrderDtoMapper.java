@@ -9,6 +9,8 @@ import com.furniture_store.order_management_service.entity.Order;
 import com.furniture_store.order_management_service.entity.OrderStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 public class OrderDtoMapper {
 
@@ -23,6 +25,9 @@ public class OrderDtoMapper {
         orderDto.setId(order.getId());
         orderDto.setOrderItems(order.getItems().stream().map(orderItemMapper::toDto).toList());
         orderDto.setCustomerName(order.getCustomerName());
+        orderDto.setRecipientName(order.getRecipientName());
+        orderDto.setRecipientPhone(order.getRecipientPhone());
+        orderDto.setGuestToken(order.getGuestToken());
         orderDto.setCreatedAt(order.getCreatedAt());
         orderDto.setUpdatedAt(order.getUpdatedAt());
         orderDto.setStatus(order.getStatus().name());
@@ -30,7 +35,6 @@ public class OrderDtoMapper {
                 .map(DisplayOrderItemDto::getAmount)
                 .reduce(0d, Double::sum));
 
-        // Маппінг delivery з entity
         Delivery delivery = order.getDelivery();
         if (delivery != null) {
             DeliveryDto deliveryDto = new DeliveryDto();
@@ -54,9 +58,15 @@ public class OrderDtoMapper {
         order.setId(orderDto.getId());
         order.setItems(orderDto.getOrderItems().stream().map(orderItemMapper::toEntity).toList());
         order.setCustomerName(orderDto.getCustomerName());
+        order.setRecipientName(orderDto.getRecipientName());
+        order.setRecipientPhone(orderDto.getRecipientPhone());
         order.setStatus(OrderStatus.UNPAID);
 
-        // Маппінг delivery з DTO в entity
+        // Генеруємо guestToken якщо замовлення від гостя
+        if (orderDto.isGuest()) {
+            order.setGuestToken(UUID.randomUUID().toString());
+        }
+
         DeliveryDto dto = orderDto.getDelivery();
         if (dto != null) {
             Delivery delivery = new Delivery();

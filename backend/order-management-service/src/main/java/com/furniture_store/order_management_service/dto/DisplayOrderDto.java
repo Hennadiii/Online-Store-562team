@@ -11,6 +11,9 @@ public class DisplayOrderDto {
     private Long id;
     private List<DisplayOrderItemDto> orderItems;
     private String customerName;
+    private String recipientName;
+    private String recipientPhone;
+    private String guestToken;
     private DeliveryDto delivery;
     private LocalDateTime createdAt = LocalDateTime.now();
     private LocalDateTime updatedAt;

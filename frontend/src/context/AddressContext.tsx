@@ -14,7 +14,7 @@ export interface Address {
   apartment?: string;
   floor?: string;
   hasElevator?: boolean;
-  isSelected: boolean;
+  isDefault: boolean;
 }
 
 const MOCK_ADDRESSES: Address[] = [
@@ -30,7 +30,7 @@ const MOCK_ADDRESSES: Address[] = [
     apartment: "5",
     floor: "2",
     hasElevator: true,
-    isSelected: true,
+    isDefault: true,
   },
   {
     id: 2,
@@ -44,16 +44,16 @@ const MOCK_ADDRESSES: Address[] = [
     apartment: "10",
     floor: "",
     hasElevator: false,
-    isSelected: false,
+    isDefault: false,
   },
 ];
 
 interface AddressContextType {
   addresses: Address[];
-  addAddress: (a: Omit<Address, "id" | "isSelected">) => void;
-  updateAddress: (id: number, a: Omit<Address, "id" | "isSelected">) => void;
+  addAddress: (a: Omit<Address, "id" | "isDefault">) => void;
+  updateAddress: (id: number, a: Omit<Address, "id" | "isDefault">) => void;
   deleteAddress: (id: number) => void;
-  selectAddress: (id: number) => void;
+  setDefault: (id: number) => void;
   getDefault: () => Address | undefined;
 }
 
@@ -62,27 +62,27 @@ const AddressContext = createContext<AddressContextType | null>(null);
 export const AddressProvider = ({ children }: { children: ReactNode }) => {
   const [addresses, setAddresses] = useState<Address[]>(MOCK_ADDRESSES);
 
-  const addAddress = (data: Omit<Address, "id" | "isSelected">) =>
-    setAddresses((prev) => [...prev, { ...data, id: Date.now(), isSelected: false }]);
+  const addAddress = (data: Omit<Address, "id" | "isDefault">) =>
+    setAddresses((prev) => [...prev, { ...data, id: Date.now(), isDefault: false }]);
 
-  const updateAddress = (id: number, data: Omit<Address, "id" | "isSelected">) =>
+  const updateAddress = (id: number, data: Omit<Address, "id" | "isDefault">) =>
     setAddresses((prev) => prev.map((a) => (a.id === id ? { ...a, ...data } : a)));
 
   const deleteAddress = (id: number) =>
     setAddresses((prev) => {
       const filtered = prev.filter((a) => a.id !== id);
-      const wasSelected = prev.find((a) => a.id === id)?.isSelected;
-      if (wasSelected && filtered.length > 0) filtered[0].isSelected = true;
+      const wasDefault = prev.find((a) => a.id === id)?.isDefault;
+      if (wasDefault && filtered.length > 0) filtered[0].isDefault = true;
       return filtered;
     });
 
-  const selectAddress = (id: number) =>
-    setAddresses((prev) => prev.map((a) => ({ ...a, isSelected: a.id === id })));
+  const setDefault = (id: number) =>
+    setAddresses((prev) => prev.map((a) => ({ ...a, isDefault: a.id === id })));
 
-  const getDefault = () => addresses.find((a) => a.isSelected);
+  const getDefault = () => addresses.find((a) => a.isDefault);
 
   return (
-    <AddressContext.Provider value={{ addresses, addAddress, updateAddress, deleteAddress, selectAddress, getDefault }}>
+    <AddressContext.Provider value={{ addresses, addAddress, updateAddress, deleteAddress, setDefault, getDefault }}>
       {children}
     </AddressContext.Provider>
   );

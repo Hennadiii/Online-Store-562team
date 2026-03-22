@@ -23,8 +23,6 @@ const CheckoutPage = () => {
   const { addresses, addAddress, getDefault } = useAddressContext();
   const { isAuthenticated, user } = useAuthContext();
 
-  console.log("USER:", user); // ← додай це
-
   const [agreed, setAgreed] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -42,7 +40,7 @@ const CheckoutPage = () => {
     email: "",
   });
 
-  // Автопідстановка імені та телефону
+  // Автопідстановка контактів для авторизованого
   useEffect(() => {
     if (!isAuthenticated || !user) return;
     const nameParts = user.name?.split(" ") || [];
@@ -52,7 +50,6 @@ const CheckoutPage = () => {
       lastName: nameParts.slice(1).join(" ") || prev.lastName,
       phone: user.phone || prev.phone,
     }));
-
     const def = getDefault();
     if (def) {
       setSelectedAddressId(def.id);
@@ -60,39 +57,42 @@ const CheckoutPage = () => {
     }
   }, [isAuthenticated, user?.name, user?.phone]);
 
-  // Окремий useEffect для email — приходить асинхронно з /user/me
+  // Email приходить асинхронно
   useEffect(() => {
     if (user?.email) {
       setContact((prev) => ({ ...prev, email: user.email! }));
     }
   }, [user?.email]);
 
-  const selectedAddress = addresses.find((a) => a.id === selectedAddressId);
+  // Гість — одразу показуємо форму адреси при виборі courier
+  useEffect(() => {
+    if (!isAuthenticated && deliveryMethod === "courier") {
+      setShowNewAddressForm(true);
+    }
+  }, [isAuthenticated, deliveryMethod]);
 
-  // Адреса для замовлення — або вибрана зі списку, або введена вручну
-  const activeAddress: Address | AddressFormData | null =
-    selectedAddressId !== null ? (selectedAddress ?? null) : null;
+  const selectedAddress = addresses.find((a) => a.id === selectedAddressId) ?? null;
+
+  const getDeliveryAddr = (): Address | AddressFormData | null => {
+    if (!isAuthenticated && deliveryMethod === "courier") return newAddressData;
+    if (selectedAddress) return selectedAddress;
+    if (showNewAddressForm && isAddressValid(newAddressData)) return newAddressData;
+    return null;
+  };
 
   const handleConfirmNewAddress = () => {
     if (saveNewAddress) {
-      // Зберігаємо в контекст — з'явиться в списку автоматично
-      addAddress(newAddressData);
-      // Скидаємо форму
-      setNewAddressData(EMPTY_ADDRESS);
+      addAddress({ ...newAddressData });
       setSaveNewAddress(false);
-      setShowNewAddressForm(false);
-      // Вибираємо щойно додану — вона буде останньою в списку
-      // використовуємо поточну довжину як індикатор
-      const newId = Date.now(); // AddressContext використовує Date.now() як id
-      // Невелика затримка щоб контекст оновився
       setTimeout(() => {
-        setSelectedAddressId(
-          (prev) => addresses[addresses.length - 1]?.id ?? prev
-        );
-      }, 50);
-    } else {
-      // Не зберігаємо — просто використовуємо для поточного замовлення
-      // Зберігаємо як тимчасову адресу в окремому стейті
+        setSelectedAddressId((prev) => {
+          const last = addresses[addresses.length - 1];
+          return last ? last.id : prev;
+        });
+      }, 0);
+    }
+    if (isAuthenticated) {
+      setNewAddressData(EMPTY_ADDRESS);
       setShowNewAddressForm(false);
     }
     setErrors((prev) => ({ ...prev, address: "" }));
@@ -116,18 +116,13 @@ const CheckoutPage = () => {
     else if (!emailRegex.test(contact.email)) e.email = "Невірний формат";
 
     if (deliveryMethod === "courier") {
-      const hasAddress = activeAddress !== null ||
-        (showNewAddressForm && isAddressValid(newAddressData));
-      if (!hasAddress) e.address = "Вкажіть адресу доставки";
+      const addr = getDeliveryAddr();
+      if (!addr || !isAddressValid(addr as AddressFormData)) {
+        e.address = "Заповніть адресу доставки";
+      }
     }
 
     return e;
-  };
-
-  const getDeliveryAddr = (): AddressFormData | Address | null => {
-    if (activeAddress) return activeAddress;
-    if (showNewAddressForm && isAddressValid(newAddressData)) return newAddressData;
-    return null;
   };
 
   const handleSubmit = async () => {
@@ -135,11 +130,15 @@ const CheckoutPage = () => {
     if (Object.keys(e).length > 0) { setErrors(e); return; }
 
     let deliveryPayload: CreateOrderDTO["delivery"] = { method: deliveryMethod };
+    let recipient: CreateOrderDTO["recipient"] = undefined;
 
     if (deliveryMethod === "courier") {
       const addr = getDeliveryAddr();
       if (addr) {
-        const house = "house" in addr ? (addr as Address).house : (addr as AddressFormData).house;
+        const house = "house" in addr
+          ? (addr as Address).house
+          : (addr as AddressFormData).house;
+
         deliveryPayload = {
           method: deliveryMethod,
           city: addr.city,
@@ -150,6 +149,20 @@ const CheckoutPage = () => {
           floor: addr.floor ?? "",
           elevator: addr.hasElevator ?? false,
         };
+
+        // Для гостя recipient = contact
+        // Для авторизованого recipient = дані з адреси
+        recipient = !isAuthenticated
+          ? {
+              firstName: contact.firstName,
+              lastName: contact.lastName,
+              phone: contact.phone,
+            }
+          : {
+              firstName: addr.firstName,
+              lastName: addr.lastName,
+              phone: addr.phone,
+            };
       }
     }
 
@@ -157,8 +170,9 @@ const CheckoutPage = () => {
     try {
       const order = await submitOrder({
         customer: contact,
+        recipient,
         delivery: deliveryPayload,
-        paymentMethod: "cash",
+        paymentMethod: deliveryMethod === "pickup" ? "cash" : "prepayment",
         items: items.map(({ product, quantity }) => ({
           productId: product.id,
           title: product.title,
@@ -221,7 +235,7 @@ const CheckoutPage = () => {
                     checked={deliveryMethod === id}
                     onChange={() => {
                       setDeliveryMethod(id as "pickup" | "courier");
-                      setShowNewAddressForm(false);
+                      if (isAuthenticated) setShowNewAddressForm(false);
                     }}
                     className="h-6 w-6"
                   />
@@ -232,31 +246,47 @@ const CheckoutPage = () => {
             <p className="mt-5 text-accent">Магазин працює ПН - НД: 09:00-20:00</p>
 
             {deliveryMethod === "courier" && (
-              <div className="mt-6 flex flex-col gap-3">
+              <div className="mt-6 flex flex-col gap-4">
 
-                {/* Збережені адреси */}
+                {/* Збережені адреси — тільки для авторизованих */}
                 {isAuthenticated && addresses.length > 0 && !showNewAddressForm && (
-                  <>
-                    <p className="text-sm text-gray-500">Збережені адреси:</p>
+                  <div className="flex flex-col gap-2">
+                    <p className="text-sm text-gray-500 font-medium">
+                      Виберіть адресу доставки:
+                    </p>
                     {addresses.map((addr) => (
-                      <button
+                      <label
                         key={addr.id}
-                        type="button"
-                        onClick={() => {
-                          setSelectedAddressId(addr.id);
-                          setErrors((prev) => ({ ...prev, address: "" }));
-                        }}
-                        className={`text-left px-4 py-3 rounded-xl border transition-colors text-sm ${
+                        className={`flex items-start gap-3 px-4 py-3 rounded-xl border cursor-pointer transition-colors ${
                           selectedAddressId === addr.id
                             ? "border-black bg-gray-50"
                             : "border-gray-200 hover:border-gray-400"
                         }`}
                       >
-                        м. {addr.city}, вул. {addr.street} {addr.house}
-                        {addr.apartment ? `, кв. ${addr.apartment}` : ""}
-                      </button>
+                        <input
+                          type="radio"
+                          name="deliveryAddress"
+                          checked={selectedAddressId === addr.id}
+                          onChange={() => {
+                            setSelectedAddressId(addr.id);
+                            setErrors((prev) => ({ ...prev, address: "" }));
+                          }}
+                          className="mt-0.5 w-4 h-4 shrink-0"
+                        />
+                        <div className="flex flex-col gap-0.5">
+                          <span className="text-sm">
+                            м. {addr.city}, вул. {addr.street} {addr.house}
+                            {addr.apartment ? `, кв. ${addr.apartment}` : ""}
+                          </span>
+                          {addr.isDefault && (
+                            <span className="inline-flex w-fit bg-black text-white text-[10px] px-2 py-0.5 rounded-full tracking-wide">
+                              Основна
+                            </span>
+                          )}
+                        </div>
+                      </label>
                     ))}
-                  </>
+                  </div>
                 )}
 
                 {isAuthenticated && addresses.length === 0 && !showNewAddressForm && (
@@ -267,25 +297,29 @@ const CheckoutPage = () => {
                   <span className="text-xs text-red-500">{errors.address}</span>
                 )}
 
-                {/* Форма нової адреси */}
-                {showNewAddressForm ? (
-                  <div className="mt-2 p-4 border border-gray-200 rounded-xl bg-white">
-                    <p className="text-sm font-medium mb-3">Нова адреса доставки</p>
+                {/* Форма адреси:
+                    - Гість: завжди показується
+                    - Авторизований: показується при showNewAddressForm */}
+                {(!isAuthenticated || showNewAddressForm) ? (
+                  <div className="p-4 border border-gray-200 rounded-xl bg-white">
+                    <p className="text-sm font-medium mb-3">
+                      {isAuthenticated ? "Нова адреса доставки" : "Адреса доставки"}
+                    </p>
                     <AddressForm
                       data={newAddressData}
                       onChange={(field, value) =>
                         setNewAddressData((prev) => ({ ...prev, [field]: value }))
                       }
                       onSubmit={handleConfirmNewAddress}
-                      onCancel={() => {
+                      onCancel={isAuthenticated ? () => {
                         setShowNewAddressForm(false);
                         setNewAddressData(EMPTY_ADDRESS);
                         setSaveNewAddress(false);
                         if (addresses.length > 0) {
                           setSelectedAddressId(getDefault()?.id ?? addresses[0].id);
                         }
-                      }}
-                      submitLabel="Підтвердити"
+                      } : undefined}
+                      submitLabel={isAuthenticated ? "Підтвердити" : "Підтвердити адресу"}
                       isValid={isAddressValid(newAddressData)}
                       saveCheckbox={isAuthenticated}
                       saveValue={saveNewAddress}
@@ -293,6 +327,7 @@ const CheckoutPage = () => {
                     />
                   </div>
                 ) : (
+                  // Кнопка "Додати нову" — тільки для авторизованих
                   <button
                     type="button"
                     onClick={() => {
@@ -300,22 +335,29 @@ const CheckoutPage = () => {
                       setSelectedAddressId(null);
                       setNewAddressData(EMPTY_ADDRESS);
                     }}
-                    className="flex items-center gap-2 text-sm text-gray-600 hover:text-black transition-colors mt-1"
+                    className="flex items-center gap-2 text-sm text-gray-600 hover:text-black transition-colors"
                   >
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
                     </svg>
-                    {isAuthenticated ? "Додати нову адресу" : "Вказати адресу доставки"}
+                    Додати нову адресу
                   </button>
                 )}
               </div>
             )}
           </div>
 
+          {/* Оплата */}
           <div className="mt-[64px] flex flex-col gap-y-6">
             <span className="text-[24px] leading-[120%]">Оплата</span>
-            <p className="text-[20px] leading-[120%]">Оплата при отриманні</p>
-            <p className="text-accent">Оплата здійснюється готівкою або картою.</p>
+            <p className="text-[20px] leading-[120%]">
+              {deliveryMethod === "pickup" ? "Оплата при отриманні" : "100% передоплата"}
+            </p>
+            <p className="text-accent">
+              {deliveryMethod === "pickup"
+                ? "Оплата здійснюється готівкою або картою."
+                : "Оплата здійснюється на рахунок до відправки товару."}
+            </p>
           </div>
         </div>
 

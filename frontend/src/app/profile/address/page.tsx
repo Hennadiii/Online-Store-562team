@@ -9,23 +9,23 @@ import AddressForm, { AddressFormData, EMPTY_ADDRESS, isAddressValid } from "@/c
 
 interface AddressCardProps {
   address: Address;
-  onSelect: () => void;
+  onSetDefault: () => void;
   onEdit: () => void;
   onDelete: () => void;
 }
 
-const AddressCard = ({ address, onSelect, onEdit, onDelete }: AddressCardProps) => {
-  const { firstName, lastName, phone, city, region, street, house, apartment, floor, hasElevator, isSelected } = address;
+const AddressCard = ({ address, onSetDefault, onEdit, onDelete }: AddressCardProps) => {
+  const { firstName, lastName, phone, city, region, street, house, apartment, floor, hasElevator, isDefault } = address;
 
   return (
     <div
       className={`relative rounded-2xl border p-5 transition-all duration-200 ${
-        isSelected
+        isDefault
           ? "border-black bg-gray-50 shadow-sm"
           : "border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm"
       }`}
     >
-      {isSelected && (
+      {isDefault && (
         <span className="absolute top-4 right-4 text-[10px] font-semibold uppercase tracking-widest text-white bg-black rounded-full px-2.5 py-1">
           Основний
         </span>
@@ -46,9 +46,9 @@ const AddressCard = ({ address, onSelect, onEdit, onDelete }: AddressCardProps) 
       </div>
 
       <div className="flex items-center gap-3 pt-3 border-t border-gray-100">
-        {!isSelected && (
+        {!isDefault && (
           <button
-            onClick={onSelect}
+            onClick={onSetDefault}
             className="text-xs text-gray-600 hover:text-black transition-colors flex items-center gap-1.5"
           >
             <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -81,7 +81,7 @@ const AddressCard = ({ address, onSelect, onEdit, onDelete }: AddressCardProps) 
 };
 
 const AddressBookPage = () => {
-  const { addresses, addAddress, updateAddress, deleteAddress, selectAddress } = useAddressContext();
+  const { addresses, addAddress, updateAddress, deleteAddress, setDefault } = useAddressContext();
 
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editDraft, setEditDraft] = useState<AddressFormData>(EMPTY_ADDRESS);
@@ -90,8 +90,8 @@ const AddressBookPage = () => {
   const [deleteConfirmId, setDeleteConfirmId] = useState<number | null>(null);
 
   const handleOpenEdit = (addr: Address) => {
-    const { id, isSelected, ...rest } = addr;
-    setEditDraft(rest);
+    const { id, isDefault, ...rest } = addr;
+    setEditDraft(rest as AddressFormData);
     setEditingId(id);
   };
 
@@ -179,7 +179,7 @@ const AddressBookPage = () => {
                 <AddressCard
                   key={addr.id}
                   address={addr}
-                  onSelect={() => selectAddress(addr.id)}
+                  onSetDefault={() => setDefault(addr.id)}
                   onEdit={() => handleOpenEdit(addr)}
                   onDelete={() => setDeleteConfirmId(addr.id)}
                 />
@@ -189,7 +189,6 @@ const AddressBookPage = () => {
         </section>
       </div>
 
-      {/* Edit Modal */}
       {editingAddress && editingId !== null && (
         <Modal onClose={() => setEditingId(null)}>
           <h3 className="text-lg font-semibold mb-5">Редагувати адресу</h3>
@@ -204,7 +203,6 @@ const AddressBookPage = () => {
         </Modal>
       )}
 
-      {/* Delete Modal */}
       {deleteConfirmId !== null && (
         <Modal onClose={() => setDeleteConfirmId(null)}>
           <div className="text-center py-2">

@@ -69,13 +69,14 @@ export const authService = {
         headers: { Authorization: `Bearer ${token}` },
       }).catch(() => {});
     }
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
+    this.clearTokens();
   },
 
   saveTokens(tokens: TokenResponse): void {
     localStorage.setItem("accessToken", tokens.accessToken);
     localStorage.setItem("refreshToken", tokens.refreshToken);
+    // Cookie для middleware (захист роутів)
+    document.cookie = `accessToken=${tokens.accessToken}; path=/; max-age=3600; SameSite=Lax`;
   },
 
   getAccessToken(): string | null {
@@ -91,6 +92,8 @@ export const authService = {
   clearTokens(): void {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
+    // Очищаємо cookie
+    document.cookie = "accessToken=; path=/; max-age=0; SameSite=Lax";
   },
 
   async updateProfile(data: {
@@ -101,7 +104,7 @@ export const authService = {
   }): Promise<{ name: string; email: string; phone: string } | null> {
     const token = this.getAccessToken();
     if (!token) return null;
-  
+
     const res = await fetch(`${AUTH_API_URL}/user/profile`, {
       method: "PUT",
       headers: {
@@ -110,12 +113,12 @@ export const authService = {
       },
       body: JSON.stringify(data),
     });
-  
+
     if (!res.ok) {
       const err = await res.json().catch(() => null);
       throw new Error(err?.message || "Помилка оновлення профілю");
     }
-  
+
     return res.json();
   },
 
@@ -125,7 +128,7 @@ export const authService = {
   }): Promise<void> {
     const token = this.getAccessToken();
     if (!token) throw new Error("Не авторизовано");
-  
+
     const res = await fetch(`${AUTH_API_URL}/user/reset-password`, {
       method: "POST",
       headers: {
@@ -134,17 +137,13 @@ export const authService = {
       },
       body: JSON.stringify(data),
     });
-  
+
     if (!res.ok) {
       const err = await res.json().catch(() => null);
       throw new Error(err?.message || "Помилка зміни паролю");
     }
-  
-    // Бекенд повертає нові токени — зберігаємо їх щоб сесія не обірвалась
+
     const tokens: TokenResponse = await res.json();
     this.saveTokens(tokens);
-  }
-  
-
-  
-}
+  },
+};

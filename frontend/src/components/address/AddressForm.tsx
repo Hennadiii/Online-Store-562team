@@ -1,20 +1,18 @@
 import React from "react";
-import { Address } from "@/context/AddressContext";
 
-export type AddressFormData = Omit<Address, "id" | "isSelected">;
 
-export const EMPTY_ADDRESS: AddressFormData = {
-  firstName: "",
-  lastName: "",
-  phone: "",
-  city: "",
-  region: "",
-  street: "",
-  house: "",
-  apartment: "",
-  floor: "",
-  hasElevator: undefined,
-};
+export interface AddressFormData {
+    firstName: string;
+    lastName: string;
+    phone: string;
+    city: string;
+    region: string;
+    street: string;
+    house: string;
+    apartment?: string;
+    floor?: string;
+    hasElevator?: boolean;
+  }
 
 export const isAddressValid = (data: AddressFormData) =>
   Boolean(
@@ -26,6 +24,19 @@ export const isAddressValid = (data: AddressFormData) =>
     data.street.trim() &&
     data.house.trim()
   );
+
+  export const EMPTY_ADDRESS: AddressFormData = {
+    firstName: "",
+    lastName: "",
+    phone: "",
+    city: "",
+    region: "",
+    street: "",
+    house: "",
+    apartment: "",
+    floor: "",
+    hasElevator: undefined,
+  };  
 
 const inputBase =
   "w-full h-[44px] px-3 border rounded-lg bg-white transition-colors duration-200 focus:outline-none text-sm border-gray-300 hover:border-gray-400 focus:border-black";

@@ -7,7 +7,6 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import AnimatedSection from "@/components/shared/animatedSection";
 
-
 const OrderPage = () => {
   const { orders } = useOrderContext();
   const params = useParams();
@@ -23,9 +22,14 @@ const OrderPage = () => {
     );
   }
 
+  const recipientDiffers =
+    order.recipient &&
+    (order.recipient.firstName !== order.customer.firstName ||
+      order.recipient.lastName !== order.customer.lastName ||
+      order.recipient.phone !== order.customer.phone);
+
   return (
     <section className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-20 py-20">
-      {/* Кнопка назад */}
       <Link
         href="/profile/orders"
         className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-black transition-colors mb-8"
@@ -55,32 +59,83 @@ const OrderPage = () => {
         {/* Контактні дані */}
         <div>
           <h2 className="text-[20px] font-semibold mb-3">Контактні дані</h2>
-          <p>{order.customer.lastName} {order.customer.firstName}</p>
-          <p>{order.customer.phone}</p>
-          <p>{order.customer.email}</p>
+          <div className="flex flex-col gap-1 text-sm">
+            <p>{order.customer.firstName} {order.customer.lastName}</p>
+            <p>{order.customer.phone}</p>
+            <p>{order.customer.email}</p>
+          </div>
         </div>
+
+        {/* Отримувач — тільки якщо відрізняється від контакту */}
+        {recipientDiffers && (
+          <div>
+            <h2 className="text-[20px] font-semibold mb-3">Отримувач</h2>
+            <div className="flex flex-col gap-1 text-sm">
+              <p>{order.recipient!.firstName} {order.recipient!.lastName}</p>
+              <p>{order.recipient!.phone}</p>
+            </div>
+          </div>
+        )}
 
         {/* Доставка */}
         <div>
           <h2 className="text-[20px] font-semibold mb-3">Доставка</h2>
           {order.delivery.method === "pickup" ? (
-            <p>Самовивіз з магазину</p>
+            <p className="text-sm">Самовивіз з магазину</p>
           ) : (
-            <>
-  <p>{order.delivery.city}, {order.delivery.region}</p>
-  <p>{order.delivery.street}, {order.delivery.build}</p>
-
-  {order.delivery.apartament && (
-    <p>Кв. {order.delivery.apartament}</p>
-  )}
-
-  {order.delivery.floor && (
-    <p>Поверх {order.delivery.floor}</p>
-  )}
-
-  <p>Вантажний ліфт: {order.delivery.elevator ? "Є" : "НЕМАЄ"}</p>
-</>
+            <div className="flex flex-col gap-1.5 text-sm">
+              {order.delivery.city && (
+                <div className="flex gap-2">
+                  <span className="text-gray-500 w-32 shrink-0">Місто:</span>
+                  <span>{order.delivery.city}</span>
+                </div>
+              )}
+              {order.delivery.region && (
+                <div className="flex gap-2">
+                  <span className="text-gray-500 w-32 shrink-0">Область:</span>
+                  <span>{order.delivery.region}</span>
+                </div>
+              )}
+              {order.delivery.street && (
+                <div className="flex gap-2">
+                  <span className="text-gray-500 w-32 shrink-0">Вулиця:</span>
+                  <span>{order.delivery.street}</span>
+                </div>
+              )}
+              {order.delivery.build && (
+                <div className="flex gap-2">
+                  <span className="text-gray-500 w-32 shrink-0">Будинок:</span>
+                  <span>{order.delivery.build}</span>
+                </div>
+              )}
+              {order.delivery.apartament && (
+                <div className="flex gap-2">
+                  <span className="text-gray-500 w-32 shrink-0">Квартира:</span>
+                  <span>{order.delivery.apartament}</span>
+                </div>
+              )}
+              {order.delivery.floor && (
+                <div className="flex gap-2">
+                  <span className="text-gray-500 w-32 shrink-0">Поверх:</span>
+                  <span>{order.delivery.floor}</span>
+                </div>
+              )}
+              <div className="flex gap-2">
+                <span className="text-gray-500 w-32 shrink-0">Вантажний ліфт:</span>
+                <span>{order.delivery.elevator ? "Є" : "Немає"}</span>
+              </div>
+            </div>
           )}
+        </div>
+
+        {/* Спосіб оплати */}
+        <div>
+          <h2 className="text-[20px] font-semibold mb-3">Оплата</h2>
+          <p className="text-sm">
+            {order.delivery.method === "pickup"
+              ? "Оплата при отриманні"
+              : "100% передоплата"}
+          </p>
         </div>
 
         {/* Товари */}

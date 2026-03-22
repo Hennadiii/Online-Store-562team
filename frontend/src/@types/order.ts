@@ -8,6 +8,12 @@ export interface OrderItem {
   price: number;
 }
 
+export interface Recipient {
+  firstName: string;
+  lastName: string;
+  phone: string;
+}
+
 export interface CreateOrderDTO {
   customer: {
     firstName: string;
@@ -15,6 +21,7 @@ export interface CreateOrderDTO {
     phone: string;
     email: string;
   };
+  recipient?: Recipient;
   delivery: {
     method: "pickup" | "courier";
     city?: string;
@@ -25,7 +32,7 @@ export interface CreateOrderDTO {
     floor?: string;
     elevator?: boolean;
   };
-  paymentMethod: "cash";
+  paymentMethod: "cash" | "prepayment";
   items: OrderItem[];
   totalAmount: number;
 }
@@ -34,6 +41,8 @@ export interface CreateOrderDTO {
 
 export interface BackendPostOrderDto {
   customerName: string;
+  recipientName?: string;
+  recipientPhone?: string;
   orderItems: { productId: number; quantity: number }[];
   delivery: {
     deliveryMode: "SELF_PICKUP" | "COURIER_DELIVERY";
@@ -47,21 +56,23 @@ export interface BackendPostOrderDto {
   };
 }
 
-// ── DisplayOrderItemDto (те що бекенд повертає для item) ───────────────────
+// ── DisplayOrderItemDto ────────────────────────────────────────────────────
 
 export interface BackendDisplayOrderItemDto {
   id: number;
   productId: number;
   quantity: number;
-  pricePerUnit: number;  // ціна за одиницю — є на бекенді
-  amount: number;        // pricePerUnit * quantity
+  pricePerUnit: number;
+  amount: number;
 }
 
-// ── DisplayOrderDto (те що бекенд повертає) ────────────────────────────────
+// ── DisplayOrderDto ────────────────────────────────────────────────────────
 
 export interface BackendDisplayOrderDto {
   id: number;
   customerName: string;
+  recipientName?: string;
+  recipientPhone?: string;
   orderItems: BackendDisplayOrderItemDto[];
   delivery: {
     id: number;

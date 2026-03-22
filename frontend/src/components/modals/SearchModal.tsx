@@ -95,7 +95,7 @@ const SearchModal: React.FC<SearchModalProps> = ({
 
   return (
     <div className="
-      relative w-full bg-white shadow-2xl rounded-2xl
+      relative w-full bg-white  rounded-2xl
       px-4 pt-12 pb-6
       sm:max-w-lg sm:px-8 sm:pb-8
       md:max-w-xl

@@ -43,6 +43,7 @@ export interface BackendPostOrderDto {
   customerName: string;
   recipientName?: string;
   recipientPhone?: string;
+  guest?: boolean;
   orderItems: { productId: number; quantity: number }[];
   delivery: {
     deliveryMode: "SELF_PICKUP" | "COURIER_DELIVERY";
@@ -73,6 +74,7 @@ export interface BackendDisplayOrderDto {
   customerName: string;
   recipientName?: string;
   recipientPhone?: string;
+  guestToken?: string;
   orderItems: BackendDisplayOrderItemDto[];
   delivery: {
     id: number;
@@ -97,4 +99,5 @@ export interface Order extends CreateOrderDTO {
   id: string;
   status: "created";
   createdAt: string;
+  guestToken?: string;
 }

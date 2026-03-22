@@ -38,6 +38,14 @@ const CheckoutPage = () => {
     lastName: "",
     phone: "",
     email: "",
+    // Поля адреси для гостя
+    city: "",
+    region: "",
+    street: "",
+    house: "",
+    apartment: "",
+    floor: "",
+    hasElevator: undefined as boolean | undefined,
   });
 
   // Автопідстановка контактів для авторизованого
@@ -64,17 +72,24 @@ const CheckoutPage = () => {
     }
   }, [user?.email]);
 
-  // Гість — одразу показуємо форму адреси при виборі courier
-  useEffect(() => {
-    if (!isAuthenticated && deliveryMethod === "courier") {
-      setShowNewAddressForm(true);
-    }
-  }, [isAuthenticated, deliveryMethod]);
-
   const selectedAddress = addresses.find((a) => a.id === selectedAddressId) ?? null;
 
   const getDeliveryAddr = (): Address | AddressFormData | null => {
-    if (!isAuthenticated && deliveryMethod === "courier") return newAddressData;
+    // Гість — адреса вбудована в contact
+    if (!isAuthenticated && deliveryMethod === "courier") {
+      return {
+        firstName: contact.firstName,
+        lastName: contact.lastName,
+        phone: contact.phone,
+        city: contact.city ?? "",
+        region: contact.region ?? "",
+        street: contact.street ?? "",
+        house: contact.house ?? "",
+        apartment: contact.apartment,
+        floor: contact.floor,
+        hasElevator: contact.hasElevator,
+      };
+    }
     if (selectedAddress) return selectedAddress;
     if (showNewAddressForm && isAddressValid(newAddressData)) return newAddressData;
     return null;
@@ -91,10 +106,8 @@ const CheckoutPage = () => {
         });
       }, 0);
     }
-    if (isAuthenticated) {
-      setNewAddressData(EMPTY_ADDRESS);
-      setShowNewAddressForm(false);
-    }
+    setNewAddressData(EMPTY_ADDRESS);
+    setShowNewAddressForm(false);
     setErrors((prev) => ({ ...prev, address: "" }));
   };
 
@@ -116,9 +129,14 @@ const CheckoutPage = () => {
     else if (!emailRegex.test(contact.email)) e.email = "Невірний формат";
 
     if (deliveryMethod === "courier") {
-      const addr = getDeliveryAddr();
-      if (!addr || !isAddressValid(addr as AddressFormData)) {
-        e.address = "Заповніть адресу доставки";
+      if (!isAuthenticated) {
+        // Валідація полів адреси для гостя
+        if (!contact.city?.trim()) e.city = "Введіть місто";
+        if (!contact.street?.trim()) e.street = "Введіть вулицю";
+        if (!contact.house?.trim()) e.house = "Введіть будинок";
+      } else {
+        const addr = getDeliveryAddr();
+        if (!addr) e.address = "Виберіть або вкажіть адресу доставки";
       }
     }
 
@@ -150,8 +168,6 @@ const CheckoutPage = () => {
           elevator: addr.hasElevator ?? false,
         };
 
-        // Для гостя recipient = contact
-        // Для авторизованого recipient = дані з адреси
         recipient = !isAuthenticated
           ? {
               firstName: contact.firstName,
@@ -181,7 +197,7 @@ const CheckoutPage = () => {
           price: product.price,
         })),
         totalAmount: total,
-      });
+      }, !isAuthenticated);
 
       addOrder(order);
       clearCart();
@@ -218,6 +234,7 @@ const CheckoutPage = () => {
               setContact((prev) => ({ ...prev, [field]: value }));
               setErrors((prev) => ({ ...prev, [field]: "" }));
             }}
+            showAddressFields={!isAuthenticated && deliveryMethod === "courier"}
           />
 
           <div className="mt-[64px]">
@@ -235,7 +252,7 @@ const CheckoutPage = () => {
                     checked={deliveryMethod === id}
                     onChange={() => {
                       setDeliveryMethod(id as "pickup" | "courier");
-                      if (isAuthenticated) setShowNewAddressForm(false);
+                      setShowNewAddressForm(false);
                     }}
                     className="h-6 w-6"
                   />
@@ -245,11 +262,11 @@ const CheckoutPage = () => {
             </div>
             <p className="mt-5 text-accent">Магазин працює ПН - НД: 09:00-20:00</p>
 
-            {deliveryMethod === "courier" && (
+            {/* Адреси — тільки для авторизованих */}
+            {isAuthenticated && deliveryMethod === "courier" && (
               <div className="mt-6 flex flex-col gap-4">
 
-                {/* Збережені адреси — тільки для авторизованих */}
-                {isAuthenticated && addresses.length > 0 && !showNewAddressForm && (
+                {addresses.length > 0 && !showNewAddressForm && (
                   <div className="flex flex-col gap-2">
                     <p className="text-sm text-gray-500 font-medium">
                       Виберіть адресу доставки:
@@ -289,7 +306,7 @@ const CheckoutPage = () => {
                   </div>
                 )}
 
-                {isAuthenticated && addresses.length === 0 && !showNewAddressForm && (
+                {addresses.length === 0 && !showNewAddressForm && (
                   <p className="text-sm text-gray-400">У вас ще немає збережених адрес</p>
                 )}
 
@@ -297,29 +314,24 @@ const CheckoutPage = () => {
                   <span className="text-xs text-red-500">{errors.address}</span>
                 )}
 
-                {/* Форма адреси:
-                    - Гість: завжди показується
-                    - Авторизований: показується при showNewAddressForm */}
-                {(!isAuthenticated || showNewAddressForm) ? (
+                {showNewAddressForm ? (
                   <div className="p-4 border border-gray-200 rounded-xl bg-white">
-                    <p className="text-sm font-medium mb-3">
-                      {isAuthenticated ? "Нова адреса доставки" : "Адреса доставки"}
-                    </p>
+                    <p className="text-sm font-medium mb-3">Нова адреса доставки</p>
                     <AddressForm
                       data={newAddressData}
                       onChange={(field, value) =>
                         setNewAddressData((prev) => ({ ...prev, [field]: value }))
                       }
                       onSubmit={handleConfirmNewAddress}
-                      onCancel={isAuthenticated ? () => {
+                      onCancel={() => {
                         setShowNewAddressForm(false);
                         setNewAddressData(EMPTY_ADDRESS);
                         setSaveNewAddress(false);
                         if (addresses.length > 0) {
                           setSelectedAddressId(getDefault()?.id ?? addresses[0].id);
                         }
-                      } : undefined}
-                      submitLabel={isAuthenticated ? "Підтвердити" : "Підтвердити адресу"}
+                      }}
+                      submitLabel="Підтвердити"
                       isValid={isAddressValid(newAddressData)}
                       saveCheckbox={isAuthenticated}
                       saveValue={saveNewAddress}
@@ -327,7 +339,6 @@ const CheckoutPage = () => {
                     />
                   </div>
                 ) : (
-                  // Кнопка "Додати нову" — тільки для авторизованих
                   <button
                     type="button"
                     onClick={() => {

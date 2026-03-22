@@ -3,12 +3,12 @@ import { getProductById } from "@/services/productService";
 
 const ORDER_API_URL = process.env.NEXT_PUBLIC_ORDER_API_URL;
 
-function mapToBackend(data: CreateOrderDTO): BackendPostOrderDto {
+function mapToBackend(data: CreateOrderDTO, isGuest = false): BackendPostOrderDto {
   const { customer, recipient, delivery, items } = data;
 
   return {
     customerName: `${customer.firstName} ${customer.lastName}`,
-    // recipient — тільки якщо відрізняється від customer
+    guest: isGuest,
     ...(recipient &&
       (recipient.firstName !== customer.firstName ||
         recipient.lastName !== customer.lastName ||
@@ -37,7 +37,6 @@ function mapFromBackend(
   const deliveryMode = backend.delivery?.deliveryMode;
   const method = deliveryMode === "SELF_PICKUP" ? "pickup" : "courier";
 
-  // Парсимо recipient з бекенду якщо є
   const recipientFromBackend = backend.recipientName
     ? {
         firstName: backend.recipientName.split(" ")[0] ?? "",
@@ -50,6 +49,7 @@ function mapFromBackend(
     id: String(backend.id),
     status: "created",
     createdAt: backend.createdAt ?? new Date().toISOString(),
+    guestToken: backend.guestToken,
     customer: original?.customer ?? {
       firstName: backend.customerName?.split(" ")[0] ?? "",
       lastName: backend.customerName?.split(" ").slice(1).join(" ") ?? "",
@@ -103,8 +103,8 @@ async function enrichItemsFromCatalog(order: Order): Promise<Order> {
   return { ...order, items: enrichedItems };
 }
 
-export async function submitOrder(data: CreateOrderDTO): Promise<Order> {
-  const backendPayload = mapToBackend(data);
+export async function submitOrder(data: CreateOrderDTO, isGuest = false): Promise<Order> {
+  const backendPayload = mapToBackend(data, isGuest);
 
   const response = await fetch(`${ORDER_API_URL}/orders`, {
     method: "POST",
@@ -120,9 +120,13 @@ export async function submitOrder(data: CreateOrderDTO): Promise<Order> {
   return mapFromBackend(backend, data);
 }
 
-export async function fetchOrder(id: string): Promise<Order | null> {
+export async function fetchOrder(id: string, token?: string): Promise<Order | null> {
   try {
-    const response = await fetch(`${ORDER_API_URL}/orders/${id}`);
+    const url = token
+      ? `${ORDER_API_URL}/orders/${id}?token=${token}`
+      : `${ORDER_API_URL}/orders/${id}`;
+
+    const response = await fetch(url);
     if (!response.ok) return null;
     const backend: BackendDisplayOrderDto = await response.json();
     const order = mapFromBackend(backend);

@@ -1,23 +1,61 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useOrderContext } from "@/context/OrderContext";
-import { useParams } from "next/navigation";
+import { useAuthContext } from "@/context/AuthContext";
+import { useParams, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import AnimatedSection from "@/components/shared/animatedSection";
+import { Order } from "@/@types/order";
+import { fetchOrder } from "@/services/orderService";
 
 const OrderPage = () => {
-  const { orders } = useOrderContext();
+  const { orders, getGuestToken } = useOrderContext();
+  const { isAuthenticated } = useAuthContext();
   const params = useParams();
+  const searchParams = useSearchParams();
+  const orderId = String(params.id);
+  const urlToken = searchParams.get("token") ?? undefined;
 
-  const order = orders.find((o) => String(o.id) === String(params.id));
+  const [order, setOrder] = useState<Order | null>(null);
+  const [notFound, setNotFound] = useState(false);
 
-  if (!order) {
+  useEffect(() => {
+    const fromContext = orders.find((o) => String(o.id) === orderId);
+    if (fromContext) {
+      setOrder(fromContext);
+      return;
+    }
+
+    const load = async () => {
+      // Токен або з URL або з localStorage
+      const token = urlToken ?? getGuestToken(orderId);
+      const fetched = await fetchOrder(orderId, token);
+      if (fetched) {
+        setOrder(fetched);
+      } else {
+        setNotFound(true);
+      }
+    };
+
+    load();
+  }, [orderId, orders]);
+
+  if (notFound || (!order && orders.length > 0)) {
     return (
       <section className="mx-auto max-w-[1440px] px-4 py-20 text-center">
         <h1 className="text-2xl">Замовлення не знайдено</h1>
         <Link href="/" className="mt-6 inline-block underline">На головну</Link>
+      </section>
+    );
+  }
+
+  if (!order) {
+    return (
+      <section className="mx-auto max-w-[1440px] px-4 py-20 text-center">
+        <p className="text-gray-400">Завантаження...</p>
       </section>
     );
   }
@@ -28,17 +66,32 @@ const OrderPage = () => {
       order.recipient.lastName !== order.customer.lastName ||
       order.recipient.phone !== order.customer.phone);
 
+  const guestToken = order.guestToken ?? urlToken;
+
   return (
     <section className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-20 py-20">
-      <Link
-        href="/profile/orders"
-        className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-black transition-colors mb-8"
-      >
-        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-        </svg>
-        Мої замовлення
-      </Link>
+
+      {isAuthenticated ? (
+        <Link
+          href="/profile/orders"
+          className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-black transition-colors mb-8"
+        >
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+          </svg>
+          Мої замовлення
+        </Link>
+      ) : (
+        <Link
+          href="/"
+          className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-black transition-colors mb-8"
+        >
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+          </svg>
+          На головну
+        </Link>
+      )}
 
       <AnimatedSection as="h1" className="text-center text-[32px] sm:text-[48px] uppercase leading-[120%]">
         Дякуємо за замовлення!
@@ -46,7 +99,6 @@ const OrderPage = () => {
 
       <div className="mt-10 max-w-[700px] mx-auto flex flex-col gap-8">
 
-        {/* Статус */}
         <div className="flex justify-between items-center border-b pb-4">
           <span className="text-gray-500">Номер замовлення</span>
           <span className="font-semibold">#{order.id}</span>
@@ -56,7 +108,6 @@ const OrderPage = () => {
           <span className="text-green-600 font-medium">Нове</span>
         </div>
 
-        {/* Контактні дані */}
         <div>
           <h2 className="text-[20px] font-semibold mb-3">Контактні дані</h2>
           <div className="flex flex-col gap-1 text-sm">
@@ -66,7 +117,6 @@ const OrderPage = () => {
           </div>
         </div>
 
-        {/* Отримувач — тільки якщо відрізняється від контакту */}
         {recipientDiffers && (
           <div>
             <h2 className="text-[20px] font-semibold mb-3">Отримувач</h2>
@@ -77,7 +127,6 @@ const OrderPage = () => {
           </div>
         )}
 
-        {/* Доставка */}
         <div>
           <h2 className="text-[20px] font-semibold mb-3">Доставка</h2>
           {order.delivery.method === "pickup" ? (
@@ -128,7 +177,6 @@ const OrderPage = () => {
           )}
         </div>
 
-        {/* Спосіб оплати */}
         <div>
           <h2 className="text-[20px] font-semibold mb-3">Оплата</h2>
           <p className="text-sm">
@@ -138,7 +186,6 @@ const OrderPage = () => {
           </p>
         </div>
 
-        {/* Товари */}
         <div>
           <h2 className="text-[20px] font-semibold mb-4">Товари</h2>
           <div className="flex flex-col gap-4">
@@ -163,11 +210,23 @@ const OrderPage = () => {
           </div>
         </div>
 
-        {/* Сума */}
         <div className="border-t pt-4 flex justify-between text-[20px] font-semibold">
           <span>Разом</span>
           <span>{order.totalAmount.toLocaleString("uk-UA")} ₴</span>
         </div>
+
+        {/* Посилання для гостя — окремо від кнопки */}
+        {!isAuthenticated && guestToken && (
+          <div className="p-4 border border-gray-200 rounded-xl bg-gray-50 text-sm flex flex-col gap-2">
+            <p className="text-gray-500">Збережіть посилання щоб переглянути замовлення пізніше:</p>
+            <Link
+              href={`/orders/${order.id}?token=${guestToken}`}
+              className="font-medium underline hover:text-gray-600 break-all"
+            >
+              {typeof window !== "undefined" ? window.location.origin : ""}/orders/{order.id}?token={guestToken}
+            </Link>
+          </div>
+        )}
 
         <Link href="/catalog">
           <Button variant="black" className="w-full">Продовжити покупки</Button>

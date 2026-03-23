@@ -1,0 +1,72 @@
+# =========================
+# 🔧 BUILD (Maven / Java)
+# =========================
+target/
+*.jar
+*.war
+*.ear
+*.log
+
+# Maven wrapper
+!.mvn/wrapper/maven-wrapper.jar
+
+# Иногда target внутри src (редкий кейс)
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# =========================
+# 🔐 ENV / CONFIG
+# =========================
+.env
+.env.*
+*.env
+
+# =========================
+# 🧠 IDE
+# =========================
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# VS Code
+.vscode/
+
+# Eclipse / STS
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings/
+.springBeans
+.sts4-cache
+
+# =========================
+# 🧱 OS FILES
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# 🧪 TEST / COVERAGE
+# =========================
+coverage/
+*.lcov
+
+# =========================
+# 🐳 DOCKER (опционально)
+# =========================
+docker-compose.override.yml
+
+# =========================
+# 📦 NODE (если фронт рядом)
+# =========================
+node_modules/
+
+# =========================
+# 📄 MISC
+# =========================
+*.swp
+*.swo

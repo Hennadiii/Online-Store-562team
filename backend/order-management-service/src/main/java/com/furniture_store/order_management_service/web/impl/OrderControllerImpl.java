@@ -68,4 +68,12 @@ public class OrderControllerImpl {
     public void updateOrderStatus(@PathVariable Long id, @RequestBody @Valid StatusRequest request) {
         orderManager.setOrderStatus(id, request.getStatus().name());
     }
+
+    @GetMapping("/orders/user/{userId}")
+public List<DisplayOrderDto> getOrdersByUser(
+        @PathVariable String userId,
+        @RequestParam @Min(value = 0) int page,
+        @RequestParam @Min(value = 1) @Max(value = 100) int pageSize) {
+    return orderManager.getOrdersByUserId(userId, page, pageSize);
+}
 }

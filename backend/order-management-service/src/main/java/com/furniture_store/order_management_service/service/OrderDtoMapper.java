@@ -28,6 +28,7 @@ public class OrderDtoMapper {
         orderDto.setRecipientName(order.getRecipientName());
         orderDto.setRecipientPhone(order.getRecipientPhone());
         orderDto.setGuestToken(order.getGuestToken());
+        orderDto.setUserId(order.getUserId());
         orderDto.setCreatedAt(order.getCreatedAt());
         orderDto.setUpdatedAt(order.getUpdatedAt());
         orderDto.setStatus(order.getStatus().name());
@@ -60,9 +61,9 @@ public class OrderDtoMapper {
         order.setCustomerName(orderDto.getCustomerName());
         order.setRecipientName(orderDto.getRecipientName());
         order.setRecipientPhone(orderDto.getRecipientPhone());
+        order.setUserId(orderDto.getUserId());
         order.setStatus(OrderStatus.UNPAID);
 
-        // Генеруємо guestToken якщо замовлення від гостя
         if (orderDto.isGuest()) {
             order.setGuestToken(UUID.randomUUID().toString());
         }

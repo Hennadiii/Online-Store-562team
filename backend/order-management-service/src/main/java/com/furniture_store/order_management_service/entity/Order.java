@@ -31,6 +31,9 @@ public class Order {
     private String recipientPhone;
     private String guestToken;
 
+    // null для guest, UUID користувача для авторизованих
+    private String userId;
+
     private LocalDateTime createdAt = LocalDateTime.now();
     private LocalDateTime updatedAt;
 

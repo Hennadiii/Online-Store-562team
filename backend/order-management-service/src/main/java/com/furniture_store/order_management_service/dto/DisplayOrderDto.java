@@ -14,6 +14,7 @@ public class DisplayOrderDto {
     private String recipientName;
     private String recipientPhone;
     private String guestToken;
+    private String userId;
     private DeliveryDto delivery;
     private LocalDateTime createdAt = LocalDateTime.now();
     private LocalDateTime updatedAt;

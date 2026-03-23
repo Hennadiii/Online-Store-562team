@@ -27,6 +27,9 @@ public class PostOrderDto {
     private String recipientPhone;
     private boolean guest;
 
+    // UUID користувача — null для гостя
+    private String userId;
+
     @Valid
     @NotNull(message = "Delivery info is required")
     private DeliveryDto delivery;

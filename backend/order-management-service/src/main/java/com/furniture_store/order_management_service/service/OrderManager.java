@@ -88,4 +88,11 @@ public class OrderManager {
             throw new WrongOrderStatusException("A wrong order status specified.");
         }
     }
+
+    public List<DisplayOrderDto> getOrdersByUserId(String userId, int page, int size) {
+        Pageable pageable = Pageable.ofSize(size).withPage(page);
+        return orderRepository.findAllByUserId(userId, pageable).stream()
+                .map(orderDtoMapper::toDto)
+                .toList();
+    }
 }

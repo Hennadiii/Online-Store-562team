@@ -19,14 +19,24 @@ public class Order {
     @Id
     @GeneratedValue
     private Long id;
+
     @OneToMany(cascade = CascadeType.ALL)
     private List<OrderItem> items = new ArrayList<>();
+
     @ManyToOne(cascade = CascadeType.ALL)
     private Delivery delivery;
 
     private String customerName;
+    private String recipientName;
+    private String recipientPhone;
+    private String guestToken;
+
+    // null для guest, UUID користувача для авторизованих
+    private String userId;
+
     private LocalDateTime createdAt = LocalDateTime.now();
     private LocalDateTime updatedAt;
+
     @Enumerated
     private OrderStatus status;
 
@@ -40,13 +50,12 @@ public class Order {
         items.add(item);
     }
 
-    public void removeItem(OrderItem item){
+    public void removeItem(OrderItem item) {
         items.remove(item);
     }
 
     public void setItems(List<OrderItem> items) {
-        items.forEach(x->x.setOrder(this));
+        items.forEach(x -> x.setOrder(this));
         this.items = items;
     }
-
 }

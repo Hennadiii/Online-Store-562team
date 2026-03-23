@@ -184,4 +184,13 @@ throw new ProductAlreadyExistsException("Product with such name already exists")
         }
         return sort;
     }
+
+    @Transactional(readOnly = true)
+public List<ProductDto> searchSimple(String query) {
+    return productRepository.searchSimple(query)
+            .stream()
+            .limit(10) // ограничим
+            .map(productDtoConverter::convertToDto)
+            .toList();
+}
 }

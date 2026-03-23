@@ -23,6 +23,13 @@ public class PostOrderDto {
     @Size(min = 2, max = 255, message = "Customer name must be between 2 and 255 characters")
     private String customerName;
 
+    private String recipientName;
+    private String recipientPhone;
+    private boolean guest;
+
+    // UUID користувача — null для гостя
+    private String userId;
+
     @Valid
     @NotNull(message = "Delivery info is required")
     private DeliveryDto delivery;

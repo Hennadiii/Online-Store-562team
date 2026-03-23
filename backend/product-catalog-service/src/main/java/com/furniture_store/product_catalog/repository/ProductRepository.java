@@ -9,6 +9,9 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.Optional;
 
+import org.springframework.data.repository.query.Param;
+import java.util.List;
+
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @Query(value = "select p from Product p " +
@@ -43,4 +46,13 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     Optional<Product> findByName(String name);
 
     boolean existsByName(String name);
+
+    @Query("""
+    select distinct p from Product p
+    left join p.category c
+    left join p.producer pr
+    where lower(p.name) like lower(concat('%', :query, '%'))
+       or lower(p.description) like lower(concat('%', :query, '%'))
+""")
+List<Product> searchSimple(@Param("query") String query);
 }

@@ -197,7 +197,7 @@ const CheckoutPage = () => {
           price: product.price,
         })),
         totalAmount: total,
-      }, !isAuthenticated);
+      }, !isAuthenticated, user?.id);
 
       addOrder(order);
       clearCart();

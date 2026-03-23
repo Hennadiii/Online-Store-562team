@@ -3,12 +3,13 @@ import { getProductById } from "@/services/productService";
 
 const ORDER_API_URL = process.env.NEXT_PUBLIC_ORDER_API_URL;
 
-function mapToBackend(data: CreateOrderDTO, isGuest = false): BackendPostOrderDto {
+function mapToBackend(data: CreateOrderDTO, isGuest = false, userId?: string): BackendPostOrderDto {
   const { customer, recipient, delivery, items } = data;
 
   return {
     customerName: `${customer.firstName} ${customer.lastName}`,
     guest: isGuest,
+    userId: isGuest ? undefined : userId,
     ...(recipient &&
       (recipient.firstName !== customer.firstName ||
         recipient.lastName !== customer.lastName ||
@@ -103,8 +104,8 @@ async function enrichItemsFromCatalog(order: Order): Promise<Order> {
   return { ...order, items: enrichedItems };
 }
 
-export async function submitOrder(data: CreateOrderDTO, isGuest = false): Promise<Order> {
-  const backendPayload = mapToBackend(data, isGuest);
+export async function submitOrder(data: CreateOrderDTO, isGuest = false, userId?: string): Promise<Order> {
+  const backendPayload = mapToBackend(data, isGuest, userId);
 
   const response = await fetch(`${ORDER_API_URL}/orders`, {
     method: "POST",

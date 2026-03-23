@@ -25,10 +25,6 @@ const policyLinks = [
   { href: navTo.privacyPolicy, label: "Політика конфіденційності" },
 ];
 
-const profileLinks = [
-  { href: "/profile/orders", label: "Мої замовлення" },
-];
-
 const Footer = () => {
   return (
     <AnimatedSection
@@ -112,20 +108,7 @@ const Footer = () => {
             </ul>
           </nav>
 
-          <nav>
-            <ul className="flex flex-col gap-4">
-              {profileLinks.map(({ href, label }) => (
-                <li key={href}>
-                  <Link
-                    href={href}
-                    className="text-[15px] lg:text-[16px] font-medium text-gray-800 hover:text-black transition duration-200 leading-snug"
-                  >
-                    {label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
+          
 
         </div>
       </div>

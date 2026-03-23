@@ -7,6 +7,7 @@ import CatalogItem from "@/components/shared/catalogItem";
 import Pagination from "@/components/shared/pagination";
 import { Button } from "@/components/ui/button";
 import { useOrderContext } from "@/context/OrderContext";
+import { useAuthContext } from "@/context/AuthContext";
 import { products } from "@/data/products";
 import { useState } from "react";
 import Link from "next/link";
@@ -15,26 +16,30 @@ const recommended = products.slice(0, 4);
 
 const statuses = ["Усі", "Нове", "Обробляється", "Відправлено", "Отримано", "Повернено"];
 
-// Маппінг бекенд статусів → UI статуси
 const statusMap: Record<string, string> = {
   UNPAID: "Нове",
   PAID: "Обробляється",
   SHIPPED: "Відправлено",
   DELIVERED: "Отримано",
-  created: "Нове", // фронтенд статус до перезавантаження
+  created: "Нове",
 };
 
 const ORDERS_PER_PAGE = 5;
 
 const MyOrders = () => {
   const { orders, loading } = useOrderContext();
+  const { user } = useAuthContext();
   const [activeStatus, setActiveStatus] = useState("Усі");
   const [currentPage, setCurrentPage] = useState(1);
 
+  // Фільтруємо guest замовлення — показуємо тільки замовлення користувача
+  // Guest замовлення мають guestToken, user замовлення — ні
+  const userOrders = orders.filter((o) => !o.guestToken);
+
   const filteredOrders =
     activeStatus === "Усі"
-      ? orders
-      : orders.filter((o) => {
+      ? userOrders
+      : userOrders.filter((o) => {
           const mapped = statusMap[o.status] ?? o.status;
           return mapped === activeStatus;
         });
@@ -47,7 +52,7 @@ const MyOrders = () => {
 
   const handleStatusChange = (status: string) => {
     setActiveStatus(status);
-    setCurrentPage(1); // скидаємо на першу сторінку при зміні фільтру
+    setCurrentPage(1);
   };
 
   return (
@@ -56,7 +61,6 @@ const MyOrders = () => {
         <ProfileSidebar />
 
         <div className="flex-1 flex flex-col gap-6">
-          {/* Фільтр замовлень */}
           <div className="flex overflow-x-auto gap-3 mb-2 py-2">
             {statuses.map((status) => {
               const isActive = status === activeStatus;
@@ -76,7 +80,6 @@ const MyOrders = () => {
             })}
           </div>
 
-          {/* Список замовлень */}
           <div className="flex flex-col gap-6">
             {loading ? (
               <p className="text-gray-400">Завантаження...</p>
@@ -89,7 +92,6 @@ const MyOrders = () => {
             )}
           </div>
 
-          {/* Пагінація */}
           {pageCount > 1 && (
             <Pagination
               pageCount={pageCount}
@@ -99,7 +101,6 @@ const MyOrders = () => {
             />
           )}
 
-          {/* Рекомендації */}
           <h3 className="text-[20px] sm:text-[24px] lg:text-[32px] leading-[120%] uppercase mt-12 sm:mt-16 lg:mt-20 text-center px-2">
             Вам може сподобатись
           </h3>

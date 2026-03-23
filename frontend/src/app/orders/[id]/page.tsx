@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import AnimatedSection from "@/components/shared/animatedSection";
 import { Order } from "@/@types/order";
 import { fetchOrder } from "@/services/orderService";
+import { useRouter } from "next/navigation";
 
 const OrderPage = () => {
   const { orders, getGuestToken } = useOrderContext();
@@ -21,6 +22,8 @@ const OrderPage = () => {
 
   const [order, setOrder] = useState<Order | null>(null);
   const [notFound, setNotFound] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     const fromContext = orders.find((o) => String(o.id) === orderId);
@@ -30,7 +33,6 @@ const OrderPage = () => {
     }
 
     const load = async () => {
-      // Токен або з URL або з localStorage
       const token = urlToken ?? getGuestToken(orderId);
       const fetched = await fetchOrder(orderId, token);
       if (fetched) {
@@ -42,6 +44,21 @@ const OrderPage = () => {
 
     load();
   }, [orderId, orders]);
+
+  useEffect(() => {
+    if (isAuthenticated && urlToken) {
+      router.replace("/profile/orders");
+    }
+  }, [isAuthenticated, urlToken]);
+
+  const handleCopyLink = () => {
+    const token = order?.guestToken ?? urlToken;
+    const url = `${window.location.origin}/orders/${orderId}${token ? `?token=${token}` : ""}`;
+    navigator.clipboard.writeText(url).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    }).catch(() => {});
+  };
 
   if (notFound || (!order && orders.length > 0)) {
     return (
@@ -112,7 +129,7 @@ const OrderPage = () => {
           <h2 className="text-[20px] font-semibold mb-3">Контактні дані</h2>
           <div className="flex flex-col gap-1 text-sm">
             <p>{order.customer.firstName} {order.customer.lastName}</p>
-            <p>{order.customer.phone}</p>
+            <p>{order.customer.phone || order.recipient?.phone || ""}</p>
             <p>{order.customer.email}</p>
           </div>
         </div>
@@ -215,16 +232,36 @@ const OrderPage = () => {
           <span>{order.totalAmount.toLocaleString("uk-UA")} ₴</span>
         </div>
 
-        {/* Посилання для гостя — окремо від кнопки */}
+        {/* Copy link для гостя */}
         {!isAuthenticated && guestToken && (
-          <div className="p-4 border border-gray-200 rounded-xl bg-gray-50 text-sm flex flex-col gap-2">
-            <p className="text-gray-500">Збережіть посилання щоб переглянути замовлення пізніше:</p>
-            <Link
-              href={`/orders/${order.id}?token=${guestToken}`}
-              className="font-medium underline hover:text-gray-600 break-all"
+          <div className="p-4 border border-gray-200 rounded-xl bg-gray-50 flex flex-col gap-3">
+            <p className="text-sm text-gray-500">
+              Збережіть посилання, щоб переглянути замовлення пізніше:
+            </p>
+            <button
+              onClick={handleCopyLink}
+              className={`flex items-center gap-2 px-4 h-[44px] rounded-xl border text-sm font-medium transition-all duration-200 ${
+                copied
+                  ? "border-green-500 bg-green-50 text-green-700"
+                  : "border-gray-300 bg-white text-gray-700 hover:border-black hover:text-black"
+              }`}
             >
-              {typeof window !== "undefined" ? window.location.origin : ""}/orders/{order.id}?token={guestToken}
-            </Link>
+              {copied ? (
+                <>
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                  Посилання скопійовано!
+                </>
+              ) : (
+                <>
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                  </svg>
+                  Скопіювати посилання на замовлення
+                </>
+              )}
+            </button>
           </div>
         )}
 

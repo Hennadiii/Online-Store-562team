@@ -121,7 +121,7 @@ const LoginForm: React.FC<Iauthorization> = ({
     <Image width={24} height={24} src="/google.svg" alt="google" />
     Увійти через Google
   </Button>
-  <span className="absolute -top-1 right-2 text-[10px] bg-yellow-200  px-2 py-0.5 rounded-full">
+  <span className="absolute -top-1 right-2 text-[10px] text-white bg-black  px-2 py-0.5 rounded-full">
     Coming soon
   </span>
 </div>

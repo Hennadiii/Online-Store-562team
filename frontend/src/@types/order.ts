@@ -44,6 +44,7 @@ export interface BackendPostOrderDto {
   recipientName?: string;
   recipientPhone?: string;
   guest?: boolean;
+  userId?: string; 
   orderItems: { productId: number; quantity: number }[];
   delivery: {
     deliveryMode: "SELF_PICKUP" | "COURIER_DELIVERY";

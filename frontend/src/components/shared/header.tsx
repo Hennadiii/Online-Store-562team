@@ -36,38 +36,17 @@ const Header = () => {
   const [section, setSection] = useState(1);
   const [showFavorite, setShowFavorite] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
-  const [guestOrderLink, setGuestOrderLink] = useState<string | null>(null);
 
   const { favorites } = useFavoritesContext();
   const { items } = useCartContext();
   const { isAuthenticated, logout, user } = useAuthContext();
-  const { orders } = useOrderContext();
+  const { showGuestBanner, guestBannerLink } = useOrderContext();
 
   const router = useRouter();
   const userMenuRef = useRef<HTMLDivElement>(null);
 
   const cartCount = items.reduce((sum, i) => sum + i.quantity, 0);
   const displayText = user?.name || user?.email || "";
-
-  // Знаходимо останнє гостьове замовлення
-  useEffect(() => {
-    if (isAuthenticated) {
-      setGuestOrderLink(null);
-      return;
-    }
-    try {
-      const guestTokens: Record<string, string> = JSON.parse(
-        localStorage.getItem("guestOrderTokens") || "{}"
-      );
-      const entries = Object.entries(guestTokens);
-      if (entries.length > 0) {
-        const [lastId, lastToken] = entries[entries.length - 1];
-        setGuestOrderLink(`/orders/${lastId}?token=${lastToken}`);
-      }
-    } catch {
-      setGuestOrderLink(null);
-    }
-  }, [isAuthenticated, orders]);
 
   const handleUserClick = () => {
     if (isAuthenticated) {
@@ -204,8 +183,6 @@ const Header = () => {
               )}
             </div>
 
-            
-
             {/* FAVORITE */}
             <div
               onClick={() => { disableScroll(); setShowFavorite(true); }}
@@ -233,36 +210,30 @@ const Header = () => {
             </div>
 
           </div>
-          
         </div>
 
-        {/* GUEST ORDER LINK (NEW POSITION) */}
-{!isAuthenticated && guestOrderLink && (
-  <div className="w-full border-t border-black/5 bg-gray-50">
-    <div className="max-w-[1440px] mx-auto px-4 lg:px-20 py-2 flex justify-center">
-      <Link
-        href={guestOrderLink}
-        className="flex items-center gap-2 text-sm text-gray-700 hover:text-black transition font-medium"
-      >
-        <svg
-          className="w-4 h-4 opacity-70"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          strokeWidth={2}
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-          />
-        </svg>
-
-        <span>Ваше замовлення оформлено → переглянути</span>
-      </Link>
-    </div>
-  </div>
-)}
+        {/* GUEST ORDER BANNER — показується 30 хв після оформлення */}
+        {!isAuthenticated && showGuestBanner && guestBannerLink && (
+          <div className="max-w-[1440px] mx-auto px-4 lg:px-20 py-1 flex justify-center">
+            <Link
+              href={guestBannerLink}
+              className="flex items-center gap-1.5 text-[12px] text-[#2e7d32] hover:text-[#1b5e20] transition"
+            >
+              <svg
+                className="w-3.5 h-3.5 opacity-70"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+              <span className="opacity-80 hover:opacity-100 transition">
+                Замовлення оформлено - переглянути
+              </span>
+            </Link>
+          </div>
+        )}
 
         {/* MOBILE MENU */}
         {open && (
@@ -283,14 +254,14 @@ const Header = () => {
                 ))}
               </nav>
 
-              {/* Для гостя — посилання на замовлення в мобільному меню */}
-              {!isAuthenticated && guestOrderLink && (
+              {/* Для гостя — посилання в мобільному меню (теж тільки 30 хв) */}
+              {!isAuthenticated && showGuestBanner && guestBannerLink && (
                 <Link
-                  href={guestOrderLink}
+                  href={guestBannerLink}
                   onClick={() => setOpen(false)}
-                  className="text-sm text-gray-600 underline"
+                  className="text-sm text-[#2e7d32] underline"
                 >
-                  Моє замовлення
+                  Замовлення оформлено — переглянути
                 </Link>
               )}
 

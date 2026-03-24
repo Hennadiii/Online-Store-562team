@@ -33,6 +33,8 @@ export const OrderProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const [showGuestBanner, setShowGuestBanner] = useState(false);
   const [guestBannerLink, setGuestBannerLink] = useState<string | null>(null);
+  // undefined = ще не ініціалізовано, null = гість, string = userId авторизованого
+  const [currentUserId, setCurrentUserId] = useState<string | null | undefined>(undefined);
 
   // Відновлюємо банер з localStorage
   useEffect(() => {
@@ -55,19 +57,66 @@ export const OrderProvider = ({ children }: { children: ReactNode }) => {
     } catch {}
   }, []);
 
+  // Ефект 1: визначаємо початковий userId при монтуванні (відновлення сесії після reload)
   useEffect(() => {
-    const loadOrders = async () => {
+    const initUser = async () => {
       try {
         const token = authService.getAccessToken();
-
         if (token) {
-          // Авторизований — завантажуємо з бекенду по userId
           const profile = await authService.getMe();
-          if (profile?.id) {
-            const userOrders = await fetchOrdersByUser(profile.id);
-            setOrders(userOrders);
-            if (userOrders.length > 0) setOrder(userOrders[0]);
-          }
+          setCurrentUserId(profile?.id ?? null);
+        } else {
+          setCurrentUserId(null);
+        }
+      } catch {
+        setCurrentUserId(null);
+      }
+    };
+
+    initUser();
+  }, []);
+
+  // Ефект 2: слухаємо події auth:login і auth:logout з AuthContext.
+  // При логіні — встановлюємо новий userId (тригерить Ефект 3 → завантажить замовлення).
+  // При логауті — скидаємо в null (Ефект 3 очистить стейт і завантажить гостьові).
+  useEffect(() => {
+    const handleLogin = (e: Event) => {
+      const userId = (e as CustomEvent<{ userId?: string }>).detail?.userId;
+      setCurrentUserId(userId ?? null);
+    };
+
+    const handleLogout = () => {
+      setCurrentUserId(null);
+    };
+
+    window.addEventListener("auth:login", handleLogin);
+    window.addEventListener("auth:logout", handleLogout);
+
+    return () => {
+      window.removeEventListener("auth:login", handleLogin);
+      window.removeEventListener("auth:logout", handleLogout);
+    };
+  }, []);
+
+  // Ефект 3: завантажуємо замовлення щоразу, коли змінюється currentUserId.
+  // undefined = ще не ініціалізовано → пропускаємо.
+  // null     = гість              → завантажуємо з localStorage.
+  // string   = userId             → завантажуємо з бекенду тільки цього юзера.
+  useEffect(() => {
+    if (currentUserId === undefined) return;
+
+    const loadOrders = async () => {
+      // Обов'язково очищаємо перед завантаженням — щоб не світились чужі замовлення
+      setOrders([]);
+      setOrder(null);
+      setLoading(true);
+
+      try {
+        if (currentUserId) {
+          // Авторизований — запит до бекенду з конкретним userId
+          const userOrders = await fetchOrdersByUser(currentUserId);
+          setOrders(userOrders);
+          if (userOrders.length > 0) setOrder(userOrders[0]);
           setLoading(false);
           return;
         }
@@ -115,14 +164,13 @@ export const OrderProvider = ({ children }: { children: ReactNode }) => {
     };
 
     loadOrders();
-  }, []);
+  }, [currentUserId]);
 
   const addOrder = (newOrder: Order) => {
     setOrder(newOrder);
     setOrders((prev) => {
       const updated = [newOrder, ...prev.filter((o) => o.id !== newOrder.id)];
       try {
-        // Зберігаємо в localStorage тільки guest замовлення
         if (newOrder.guestToken) {
           localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
 
@@ -145,10 +193,8 @@ export const OrderProvider = ({ children }: { children: ReactNode }) => {
             setShowGuestBanner(false);
             localStorage.removeItem(BANNER_KEY);
           }, BANNER_TTL_MS);
-        } else {
-          // User замовлення — зберігаємо тільки в пам'яті (state)
-          // localStorage не використовуємо — дані беруться з бекенду
         }
+        // User замовлення — localStorage не використовуємо, дані з бекенду
       } catch {}
       return updated;
     });

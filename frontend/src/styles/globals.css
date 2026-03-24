@@ -5,8 +5,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
-
 body,
 html,
 :host,
@@ -15,19 +13,34 @@ html,
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-/* Дуже важливо для мобільних — прибирає зайвий скрол */
-html, body {
+
+html {
+  /* html скролить увесь document — це нормально */
   overflow-x: hidden;
+  height: 100%;
+}
+
+body {
+  /*
+    height: 100% — body розтягується рівно під html, не більше.
+    Це виключає появу власного scroll context на body.
+    Скролить тільки html → один скролбар.
+
+    overflow-x: hidden залишаємо для захисту від горизонтального переповнення.
+    overflow-y НЕ встановлюємо на body — браузер сам не додасть скролбар
+    якщо body.clientHeight >= body.scrollHeight.
+  */
+  overflow-x: hidden;
+  height: 100%;
   width: 100%;
   max-width: 100vw;
 }
 
-/* Захист від overflow у будь-якому контейнері */
 * {
   box-sizing: border-box;
 }
 
-/* БУРГЕР (только mobile) */
+/* БУРГЕР (тільки mobile) */
 @keyframes slideIn {
   from {
     transform: translateX(-100%);

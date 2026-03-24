@@ -7,7 +7,6 @@ import CatalogItem from "@/components/shared/catalogItem";
 import Pagination from "@/components/shared/pagination";
 import { Button } from "@/components/ui/button";
 import { useOrderContext } from "@/context/OrderContext";
-import { useAuthContext } from "@/context/AuthContext";
 import { products } from "@/data/products";
 import { useState } from "react";
 import Link from "next/link";
@@ -21,6 +20,7 @@ const statusMap: Record<string, string> = {
   PAID: "Обробляється",
   SHIPPED: "Відправлено",
   DELIVERED: "Отримано",
+  RETURNED: "Повернено",
   created: "Нове",
 };
 
@@ -28,18 +28,15 @@ const ORDERS_PER_PAGE = 5;
 
 const MyOrders = () => {
   const { orders, loading } = useOrderContext();
-  const { user } = useAuthContext();
   const [activeStatus, setActiveStatus] = useState("Усі");
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Фільтруємо guest замовлення — показуємо тільки замовлення користувача
-  // Guest замовлення мають guestToken, user замовлення — ні
-  const userOrders = orders.filter((o) => !o.guestToken);
-
+  // OrderContext вже містить тільки замовлення поточного авторизованого користувача
+  // (завантажені по userId через бекенд). Додаткова фільтрація по userId не потрібна.
   const filteredOrders =
     activeStatus === "Усі"
-      ? userOrders
-      : userOrders.filter((o) => {
+      ? orders
+      : orders.filter((o) => {
           const mapped = statusMap[o.status] ?? o.status;
           return mapped === activeStatus;
         });

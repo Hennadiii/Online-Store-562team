@@ -10,7 +10,7 @@ interface AuthUser {
   email: string;
   role: string;
   name?: string;
-  phone?: string; // ← додано
+  phone?: string;
 }
 
 interface AuthContextType {
@@ -81,10 +81,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (!res.ok) throw new Error();
       const data = await res.json();
 
-      // Зберігаємо name і phone з /user/me
       setUser((prev) =>
-  prev ? { ...prev, name: data.name, phone: data.phone, email: data.email } : prev
-);
+        prev ? { ...prev, name: data.name, phone: data.phone, email: data.email } : prev
+      );
     } catch (e) {
       console.error("Failed to fetch user profile", e);
     }
@@ -105,11 +104,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const parsed = parseJwt(tokens.accessToken);
     setUser(parsed);
     fetchUserProfile(tokens.accessToken);
+    // Повідомляємо OrderContext що з'явився новий залогінений юзер
+    window.dispatchEvent(new CustomEvent("auth:login", { detail: { userId: parsed?.id } }));
   };
 
   const logout = async () => {
     await authService.logout();
     setUser(null);
+    // Повідомляємо OrderContext що юзер вийшов — треба очистити замовлення
+    window.dispatchEvent(new Event("auth:logout"));
   };
 
   return (

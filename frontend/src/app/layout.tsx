@@ -30,31 +30,21 @@ export default function RootLayout({
 }) {
   return (
     <html lang="uk">
-      {/*
-        Прибрано min-h-screen з <body>.
-        Проблема: min-h-screen робить body "незалежним scroll container"-ом —
-        Chrome бачить body.scrollHeight > body.clientHeight і малює
-        скролбар на body, а html скролить document. Виходить два скролбари.
-
-        Рішення: body отримує height: 100% через globals.css (тягнеться з html),
-        flex flex-col залишається для sticky footer,
-        min-h-screen переїздить на <main> щоб footer завжди був внизу.
-      */}
-      <body className={`${MontserratSans.className} antialiased flex flex-col`}>
-        <AuthProvider>
-          <AddressProvider>
-            <FavoritesProvider>
-              <CartProvider>
-                <OrderProvider>
-                  <Header />
-                  <main className="flex-1 min-h-screen">{children}</main>
-                  <Footer />
-                  <ScrollToTop />
-                </OrderProvider>
-              </CartProvider>
-            </FavoritesProvider>
-          </AddressProvider>
-        </AuthProvider>
+      <body className={`${MontserratSans.className} antialiased min-h-screen flex flex-col`}>
+      <AuthProvider>
+  <AddressProvider>
+    <FavoritesProvider>
+      <CartProvider>
+        <OrderProvider>
+          <Header />
+          <main className="flex-1">{children}</main>
+          <Footer />
+          <ScrollToTop />
+        </OrderProvider>
+      </CartProvider>
+    </FavoritesProvider>
+  </AddressProvider>
+</AuthProvider>
       </body>
     </html>
   );

@@ -1,19 +1,18 @@
-// OrderContext.tsx
-
 "use client";
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { Order } from "@/@types/order";
-import { fetchOrder } from "@/services/orderService";
+import { fetchOrder, fetchOrdersByUser } from "@/services/orderService";
+import { authService } from "@/services/authService";
 
 const STORAGE_KEY = "orders_data";
 const GUEST_TOKENS_KEY = "guestOrderTokens";
-const BANNER_KEY = "guestOrderBanner"; // 👈 новий ключ
-const BANNER_TTL_MS = 30 * 60 * 1000; // 30 хвилин
+const BANNER_KEY = "guestOrderBanner";
+const BANNER_TTL_MS = 30 * 60 * 1000;
 
 interface BannerData {
   link: string;
-  expiresAt: number; // timestamp
+  expiresAt: number;
 }
 
 interface OrderContextType {
@@ -35,7 +34,7 @@ export const OrderProvider = ({ children }: { children: ReactNode }) => {
   const [showGuestBanner, setShowGuestBanner] = useState(false);
   const [guestBannerLink, setGuestBannerLink] = useState<string | null>(null);
 
-  // 👇 При mount — відновлюємо банер з localStorage якщо TTL не минув
+  // Відновлюємо банер з localStorage
   useEffect(() => {
     try {
       const raw = localStorage.getItem(BANNER_KEY);
@@ -45,13 +44,11 @@ export const OrderProvider = ({ children }: { children: ReactNode }) => {
         if (remaining > 0) {
           setGuestBannerLink(banner.link);
           setShowGuestBanner(true);
-          // Таймер на залишок часу (а не на повні 30 хв знову)
           setTimeout(() => {
             setShowGuestBanner(false);
             localStorage.removeItem(BANNER_KEY);
           }, remaining);
         } else {
-          // TTL вже минув — прибираємо
           localStorage.removeItem(BANNER_KEY);
         }
       }
@@ -61,6 +58,21 @@ export const OrderProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const loadOrders = async () => {
       try {
+        const token = authService.getAccessToken();
+
+        if (token) {
+          // Авторизований — завантажуємо з бекенду по userId
+          const profile = await authService.getMe();
+          if (profile?.id) {
+            const userOrders = await fetchOrdersByUser(profile.id);
+            setOrders(userOrders);
+            if (userOrders.length > 0) setOrder(userOrders[0]);
+          }
+          setLoading(false);
+          return;
+        }
+
+        // Гість — завантажуємо з localStorage
         const raw = localStorage.getItem(STORAGE_KEY);
         if (!raw) { setLoading(false); return; }
 
@@ -75,8 +87,8 @@ export const OrderProvider = ({ children }: { children: ReactNode }) => {
 
         const refreshed = await Promise.all(
           cached.map(async (cachedOrder) => {
-            const token = guestTokens[cachedOrder.id];
-            const fresh = await fetchOrder(cachedOrder.id, token);
+            const guestToken = guestTokens[cachedOrder.id];
+            const fresh = await fetchOrder(cachedOrder.id, guestToken);
             if (!fresh) return cachedOrder;
             return {
               ...fresh,
@@ -110,9 +122,10 @@ export const OrderProvider = ({ children }: { children: ReactNode }) => {
     setOrders((prev) => {
       const updated = [newOrder, ...prev.filter((o) => o.id !== newOrder.id)];
       try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-
+        // Зберігаємо в localStorage тільки guest замовлення
         if (newOrder.guestToken) {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+
           const guestTokens: Record<string, string> = JSON.parse(
             localStorage.getItem(GUEST_TOKENS_KEY) || "{}"
           );
@@ -120,8 +133,6 @@ export const OrderProvider = ({ children }: { children: ReactNode }) => {
           localStorage.setItem(GUEST_TOKENS_KEY, JSON.stringify(guestTokens));
 
           const link = `/orders/${newOrder.id}?token=${newOrder.guestToken}`;
-
-          // 👇 Зберігаємо банер з абсолютним expiresAt
           const banner: BannerData = {
             link,
             expiresAt: Date.now() + BANNER_TTL_MS,
@@ -134,6 +145,9 @@ export const OrderProvider = ({ children }: { children: ReactNode }) => {
             setShowGuestBanner(false);
             localStorage.removeItem(BANNER_KEY);
           }, BANNER_TTL_MS);
+        } else {
+          // User замовлення — зберігаємо тільки в пам'яті (state)
+          // localStorage не використовуємо — дані беруться з бекенду
         }
       } catch {}
       return updated;

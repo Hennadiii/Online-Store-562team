@@ -136,3 +136,17 @@ export async function fetchOrder(id: string, token?: string): Promise<Order | nu
     return null;
   }
 }
+
+export async function fetchOrdersByUser(userId: string): Promise<Order[]> {
+  try {
+    const response = await fetch(
+      `${ORDER_API_URL}/orders/user/${userId}?page=0&pageSize=50`
+    );
+    if (!response.ok) return [];
+    const backends: BackendDisplayOrderDto[] = await response.json();
+    const orders = backends.map((b) => mapFromBackend(b));
+    return await Promise.all(orders.map(enrichItemsFromCatalog));
+  } catch {
+    return [];
+  }
+}

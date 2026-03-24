@@ -7,6 +7,7 @@ import Link from "next/link";
 import ProductCard from "@/components/shared/ProductCard";
 import { getProducts } from "@/services/productService";
 import type { ProductDto } from "@/types/product";
+import PopularSection from "@/components/shared/PopularSection";
 
 export const metadata = {
   title: "Cozy Corners | Home",
@@ -82,27 +83,8 @@ const HomePage: React.FC = async () => {
 
       {/* Popular Section */}
       <AnimatedSection className="mt-20 sm:mt-[90px]">
-        <div className="relative">
-          <h2 className="text-[50px] sm:text-[52px] md:text-[54px] uppercase mb-4">Популярне</h2>
-          <ul className="flex flex-wrap gap-2 sm:gap-4 mb-4">
-            {tabs.map((item, index) => (
-              <li key={index} className="p-2">
-                <a className="cursor-pointer">{item}</a>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-          {popularProducts.length > 0 ? (
-            popularProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))
-          ) : (
-            <p className="col-span-4 text-gray-400 text-sm">Популярні товари відсутні</p>
-          )}
-        </div>
-      </AnimatedSection>
+  <PopularSection products={popularProducts} />
+</AnimatedSection>
 
       {/* Contact Us */}
       <AnimatedSection className="mt-20 sm:mt-[90px] flex flex-col lg:flex-row justify-between gap-y-8 lg:gap-x-9">

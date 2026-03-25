@@ -1,15 +1,15 @@
 export const disableScroll = () => {
-  window.document.body.style.marginRight = `${
-    window.innerWidth - document.documentElement.clientWidth
-  }px`;
-  window.document.body.style.overflowY = "hidden";
+  const scrollBarWidth =
+    window.innerWidth - document.documentElement.clientWidth;
+
+  // 🔥 БЛОКИРУЕМ scroll на html, а не на body
+  document.documentElement.style.overflow = "hidden";
+
+  // чтобы не было сдвига из-за исчезновения скроллбара
+  document.body.style.marginRight = `${scrollBarWidth}px`;
 };
 
 export const enableScroll = () => {
-  const timer = setTimeout(() => {
-    window.document.body.style.overflowY = "auto";
-    window.document.body.style.marginRight = "0px";
-  }, 100);
-
-  return () => clearTimeout(timer);
+  document.documentElement.style.overflow = "";
+  document.body.style.marginRight = "";
 };

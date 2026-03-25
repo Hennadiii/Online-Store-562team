@@ -17,7 +17,7 @@ html,
 html {
   /* html скролить увесь document — це нормально */
   overflow-x: hidden;
-  height: 100%;
+  
 }
 
 body {
@@ -30,8 +30,8 @@ body {
     overflow-y НЕ встановлюємо на body — браузер сам не додасть скролбар
     якщо body.clientHeight >= body.scrollHeight.
   */
-  overflow-x: hidden;
-  height: 100%;
+  overflow-x: visible;
+  
   width: 100%;
   max-width: 100vw;
 }

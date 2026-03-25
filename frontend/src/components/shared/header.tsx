@@ -288,9 +288,22 @@ const Header = () => {
       </ModalWrapper>
 
       {/* SEARCH */}
-      <ModalWrapper showModal={showSearch} setShowModal={() => setShowsSearch(false)} center>
-        <SearchModal showModal={showSearch} setShowModal={() => setShowsSearch(false)} />
-      </ModalWrapper>
+<ModalWrapper
+  showModal={showSearch}
+  setShowModal={() => {
+    enableScroll();
+    setShowsSearch(false);
+  }}
+  center
+>
+  <SearchModal
+    showModal={showSearch}
+    setShowModal={() => {
+      enableScroll();
+      setShowsSearch(false);
+    }}
+  />
+</ModalWrapper>
 
       {/* FAVORITE */}
       <ModalWrapper

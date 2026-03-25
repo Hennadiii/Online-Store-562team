@@ -10,7 +10,9 @@ const ScrollUpButton = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      setShowButton(window.scrollY > SCROLL_THRESHOLD);
+      // window.scrollY завжди 0 коли скролить html а не body.
+      // document.documentElement.scrollTop працює в обох випадках.
+      setShowButton(document.documentElement.scrollTop > SCROLL_THRESHOLD);
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -18,7 +20,7 @@ const ScrollUpButton = () => {
   }, []);
 
   const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    document.documentElement.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (

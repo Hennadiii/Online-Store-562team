@@ -8,7 +8,6 @@ const staticPages: Record<string, string> = {
   "/delivery-and-payment": "Доставка і оплата",
   "/contacts": "Контакти",
   "/checkout": "Оформлення замовлення",
-  "/profile": "Мій профіль",
 
   // footer pages
   "/privacy-policy": "Політика конфіденційності",
@@ -17,12 +16,22 @@ const staticPages: Record<string, string> = {
 };
 
 export function getBreadcrumbs(pathname: string): Breadcrumb[] {
+  // Нормалізація: прибираємо trailing slash (крім кореня)
+  const path = pathname.length > 1 ? pathname.replace(/\/$/, "") : pathname;
+  console.log("[Breadcrumbs] pathname:", pathname, "→ path:", path); // временно
+
   const breadcrumbs: Breadcrumb[] = [
     { label: "Головна сторінка", link: "/" },
   ];
 
-  // /profile/*
-  if (pathname.startsWith("/profile/")) {
+  // /profile (точне співпадіння)
+  if (path === "/profile") {
+    breadcrumbs.push({ label: "Мій профіль" });
+    return breadcrumbs;
+  }
+
+  // /profile/* (підсторінки)
+  if (path.startsWith("/profile/")) {
     breadcrumbs.push({ label: "Мій профіль", link: "/profile" });
 
     const subPage: Record<string, string> = {
@@ -31,41 +40,41 @@ export function getBreadcrumbs(pathname: string): Breadcrumb[] {
       "/profile/address": "Адреси доставки",
     };
 
-    if (subPage[pathname]) {
-      breadcrumbs.push({ label: subPage[pathname] });
+    if (subPage[path]) {
+      breadcrumbs.push({ label: subPage[path] });
     }
 
     return breadcrumbs;
   }
 
-  // Статические страницы
-  if (staticPages[pathname]) {
-    breadcrumbs.push({ label: staticPages[pathname] });
+  // Статичні сторінки
+  if (staticPages[path]) {
+    breadcrumbs.push({ label: staticPages[path] });
     return breadcrumbs;
   }
 
   // /catalog
-  if (pathname === "/catalog") {
+  if (path === "/catalog") {
     breadcrumbs.push({ label: "Каталог" });
     return breadcrumbs;
   }
 
   // /catalog/:category
-  if (pathname.startsWith("/catalog/")) {
-    const category = decodeURIComponent(pathname.split("/")[2]);
+  if (path.startsWith("/catalog/")) {
+    const category = decodeURIComponent(path.split("/")[2]);
     breadcrumbs.push({ label: "Каталог", link: "/catalog" });
     breadcrumbs.push({ label: category });
     return breadcrumbs;
   }
 
   // /product/:id
-  if (pathname.startsWith("/product/")) {
+  if (path.startsWith("/product/")) {
     breadcrumbs.push({ label: "Каталог", link: "/catalog" });
     return breadcrumbs;
   }
 
   // /orders/:id
-  if (pathname.startsWith("/orders/")) {
+  if (path.startsWith("/orders/")) {
     breadcrumbs.push({ label: "Мої замовлення", link: "/profile/orders" });
     breadcrumbs.push({ label: "Деталі замовлення" });
     return breadcrumbs;

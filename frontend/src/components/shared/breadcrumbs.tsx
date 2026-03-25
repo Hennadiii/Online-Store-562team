@@ -22,6 +22,11 @@ export default function Breadcrumbs({ className }: BreadcrumbsProps) {
   const [items, setItems] = useState<Breadcrumb[]>(getBreadcrumbs(pathname));
 
   useEffect(() => {
+    if (pathname.startsWith("/product/")) return;
+    setItems(getBreadcrumbs(pathname));
+  }, [pathname]);
+
+  useEffect(() => {
     if (!pathname.startsWith("/product/")) return;
 
     const id = Number(pathname.split("/")[2]);
@@ -37,7 +42,7 @@ export default function Breadcrumbs({ className }: BreadcrumbsProps) {
         ]);
       })
       .catch(() => {
-        // якщо не вдалося завантажити — залишаємо дефолтні breadcrumbs
+        setItems(getBreadcrumbs(pathname));
       });
   }, [pathname]);
 

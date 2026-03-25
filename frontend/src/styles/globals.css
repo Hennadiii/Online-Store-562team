@@ -21,15 +21,7 @@ html {
 }
 
 body {
-  /*
-    height: 100% — body розтягується рівно під html, не більше.
-    Це виключає появу власного scroll context на body.
-    Скролить тільки html → один скролбар.
-
-    overflow-x: hidden залишаємо для захисту від горизонтального переповнення.
-    overflow-y НЕ встановлюємо на body — браузер сам не додасть скролбар
-    якщо body.clientHeight >= body.scrollHeight.
-  */
+ 
   overflow: hidden;
   width: 100%;
 }

@@ -7,11 +7,8 @@ import CatalogItem from "@/components/shared/catalogItem";
 import Pagination from "@/components/shared/pagination";
 import { Button } from "@/components/ui/button";
 import { useOrderContext } from "@/context/OrderContext";
-import { products } from "@/data/products";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-
-const recommended = products.slice(0, 4);
 
 const statuses = ["Усі", "Нове", "Обробляється", "Відправлено", "Отримано", "Повернено"];
 
@@ -31,8 +28,41 @@ const MyOrders = () => {
   const [activeStatus, setActiveStatus] = useState("Усі");
   const [currentPage, setCurrentPage] = useState(1);
 
-  // OrderContext вже містить тільки замовлення поточного авторизованого користувача
-  // (завантажені по userId через бекенд). Додаткова фільтрація по userId не потрібна.
+  // 🔥 recommended
+  const [recommended, setRecommended] = useState<any[]>([]);
+  const [loadingRecommended, setLoadingRecommended] = useState(true);
+
+  useEffect(() => {
+    fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/products?page=0&pageSize=12&sort=addedAt&order=desc`
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        const allProducts = data.content || [];
+
+        // 👉 1. Собираем ID товаров из заказов
+        const orderedProductIds = new Set(
+          orders.flatMap((order: any) =>
+            order.items?.map((item: any) => item.productId) || []
+          )
+        );
+
+        // 👉 2. Убираем уже купленные
+        const filtered = allProducts.filter(
+          (product: any) => !orderedProductIds.has(product.id)
+        );
+
+        // 👉 3. Перемешиваем (рандом)
+        const shuffled = filtered.sort(() => 0.5 - Math.random());
+
+        // 👉 4. Берём первые 4
+        setRecommended(shuffled.slice(0, 4));
+
+        setLoadingRecommended(false);
+      })
+      .catch(() => setLoadingRecommended(false));
+  }, [orders]);
+
   const filteredOrders =
     activeStatus === "Усі"
       ? orders
@@ -103,15 +133,21 @@ const MyOrders = () => {
           </h3>
 
           <section className="mt-6 sm:mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-            {recommended.map((product) => (
-              <CatalogItem
-                key={product.id}
-                title={product.title}
-                image={product.images[0]}
-                price={`${product.price.toLocaleString("uk-UA")} ₴`}
-                href={`/product/${product.id}`}
-              />
-            ))}
+            {loadingRecommended ? (
+              <p className="text-gray-400 text-center col-span-full">Завантаження...</p>
+            ) : recommended.length === 0 ? (
+              <p className="text-gray-400 text-center col-span-full">Немає товарів</p>
+            ) : (
+              recommended.map((product) => (
+                <CatalogItem
+                  key={product.id}
+                  title={product.title}
+                  image={product.images?.[0]}
+                  price={`${product.price?.toLocaleString("uk-UA")} ₴`}
+                  href={`/product/${product.id}`}
+                />
+              ))
+            )}
           </section>
 
           <Link href="/catalog" className="flex justify-center mt-8 sm:mt-12">

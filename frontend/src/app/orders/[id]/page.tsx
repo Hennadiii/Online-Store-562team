@@ -129,8 +129,8 @@ const OrderPage = () => {
           <h2 className="text-[20px] font-semibold mb-3">Контактні дані</h2>
           <div className="flex flex-col gap-1 text-sm">
             <p>{order.customer.firstName} {order.customer.lastName}</p>
-            <p>{order.customer.phone || order.recipient?.phone || ""}</p>
-            <p>{order.customer.email}</p>
+            <p>{order.customer.phone ?? ""}</p>
+            <p>{order.customer.email ?? ""}</p>
           </div>
         </div>
 

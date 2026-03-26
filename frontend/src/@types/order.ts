@@ -40,11 +40,15 @@ export interface CreateOrderDTO {
 // ── PostOrderDto (те що відправляємо на бекенд) ────────────────────────────
 
 export interface BackendPostOrderDto {
-  customerName: string;
+  // Було: customerName (один рядок) — тепер окремі поля
+  customerFirstName: string;
+  customerLastName: string;
+  customerPhone: string;
+  customerEmail: string;
   recipientName?: string;
   recipientPhone?: string;
   guest?: boolean;
-  userId?: string; 
+  userId?: string;
   orderItems: { productId: number; quantity: number }[];
   delivery: {
     deliveryMode: "SELF_PICKUP" | "COURIER_DELIVERY";
@@ -72,7 +76,11 @@ export interface BackendDisplayOrderItemDto {
 
 export interface BackendDisplayOrderDto {
   id: number;
-  customerName: string;
+  // Було: customerName (один рядок) — тепер окремі поля
+  customerFirstName: string;
+  customerLastName: string;
+  customerPhone: string;
+  customerEmail: string;
   recipientName?: string;
   recipientPhone?: string;
   guestToken?: string;

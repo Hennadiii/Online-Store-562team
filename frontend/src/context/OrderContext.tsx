@@ -25,6 +25,14 @@ interface OrderContextType {
   guestBannerLink: string | null;
 }
 
+// Сортування: від нових до старих
+const sortByDateDesc = (orders: Order[]): Order[] =>
+  [...orders].sort((a, b) => {
+    const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+    const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+    return dateB - dateA;
+  });
+
 const OrderContext = createContext<OrderContextType | null>(null);
 
 export const OrderProvider = ({ children }: { children: ReactNode }) => {
@@ -33,7 +41,6 @@ export const OrderProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const [showGuestBanner, setShowGuestBanner] = useState(false);
   const [guestBannerLink, setGuestBannerLink] = useState<string | null>(null);
-  // undefined = ще не ініціалізовано, null = гість, string = userId авторизованого
   const [currentUserId, setCurrentUserId] = useState<string | null | undefined>(undefined);
 
   // Відновлюємо банер з localStorage
@@ -57,7 +64,7 @@ export const OrderProvider = ({ children }: { children: ReactNode }) => {
     } catch {}
   }, []);
 
-  // Ефект 1: визначаємо початковий userId при монтуванні (відновлення сесії після reload)
+  // Ефект 1: визначаємо початковий userId при монтуванні
   useEffect(() => {
     const initUser = async () => {
       try {
@@ -76,9 +83,7 @@ export const OrderProvider = ({ children }: { children: ReactNode }) => {
     initUser();
   }, []);
 
-  // Ефект 2: слухаємо події auth:login і auth:logout з AuthContext.
-  // При логіні — встановлюємо новий userId (тригерить Ефект 3 → завантажить замовлення).
-  // При логауті — скидаємо в null (Ефект 3 очистить стейт і завантажить гостьові).
+  // Ефект 2: слухаємо події auth:login і auth:logout
   useEffect(() => {
     const handleLogin = (e: Event) => {
       const userId = (e as CustomEvent<{ userId?: string }>).detail?.userId;
@@ -98,36 +103,39 @@ export const OrderProvider = ({ children }: { children: ReactNode }) => {
     };
   }, []);
 
-  // Ефект 3: завантажуємо замовлення щоразу, коли змінюється currentUserId.
-  // undefined = ще не ініціалізовано → пропускаємо.
-  // null     = гість              → завантажуємо з localStorage.
-  // string   = userId             → завантажуємо з бекенду тільки цього юзера.
+  // Ефект 3: завантажуємо замовлення при зміні currentUserId
   useEffect(() => {
     if (currentUserId === undefined) return;
 
     const loadOrders = async () => {
-      // Обов'язково очищаємо перед завантаженням — щоб не світились чужі замовлення
       setOrders([]);
       setOrder(null);
       setLoading(true);
 
       try {
         if (currentUserId) {
-          // Авторизований — запит до бекенду з конкретним userId
+          // Авторизований — запит до бекенду
           const userOrders = await fetchOrdersByUser(currentUserId);
-          setOrders(userOrders);
-          if (userOrders.length > 0) setOrder(userOrders[0]);
+          // Сортуємо DESC: новіші замовлення зверху
+          const sorted = sortByDateDesc(userOrders);
+          setOrders(sorted);
+          if (sorted.length > 0) setOrder(sorted[0]);
           setLoading(false);
           return;
         }
 
         // Гість — завантажуємо з localStorage
         const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) { setLoading(false); return; }
+        if (!raw) {
+          setLoading(false);
+          return;
+        }
 
         const cached: Order[] = JSON.parse(raw);
-        setOrders(cached);
-        if (cached.length > 0) setOrder(cached[0]);
+        // Сортуємо одразу при відновленні з кешу
+        const sortedCached = sortByDateDesc(cached);
+        setOrders(sortedCached);
+        if (sortedCached.length > 0) setOrder(sortedCached[0]);
         setLoading(false);
 
         const guestTokens: Record<string, string> = JSON.parse(
@@ -135,13 +143,14 @@ export const OrderProvider = ({ children }: { children: ReactNode }) => {
         );
 
         const refreshed = await Promise.all(
-          cached.map(async (cachedOrder) => {
+          sortedCached.map(async (cachedOrder) => {
             const guestToken = guestTokens[cachedOrder.id];
             const fresh = await fetchOrder(cachedOrder.id, guestToken);
             if (!fresh) return cachedOrder;
             return {
               ...fresh,
               guestToken: cachedOrder.guestToken,
+              // Зберігаємо контактні дані клієнта з кешу — вони точні
               customer: cachedOrder.customer,
               recipient: cachedOrder.recipient ?? fresh.recipient,
               items: fresh.items.map((freshItem, i) => ({
@@ -154,9 +163,11 @@ export const OrderProvider = ({ children }: { children: ReactNode }) => {
           })
         );
 
-        setOrders(refreshed);
-        if (refreshed.length > 0) setOrder(refreshed[0]);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(refreshed));
+        // Зберігаємо вже посортований оновлений список
+        const sortedRefreshed = sortByDateDesc(refreshed);
+        setOrders(sortedRefreshed);
+        if (sortedRefreshed.length > 0) setOrder(sortedRefreshed[0]);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(sortedRefreshed));
 
       } catch {
         setLoading(false);
@@ -169,7 +180,8 @@ export const OrderProvider = ({ children }: { children: ReactNode }) => {
   const addOrder = (newOrder: Order) => {
     setOrder(newOrder);
     setOrders((prev) => {
-      const updated = [newOrder, ...prev.filter((o) => o.id !== newOrder.id)];
+      // Новий заказ завжди першим — сортування збережеться
+      const updated = sortByDateDesc([newOrder, ...prev.filter((o) => o.id !== newOrder.id)]);
       try {
         if (newOrder.guestToken) {
           localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
@@ -194,7 +206,6 @@ export const OrderProvider = ({ children }: { children: ReactNode }) => {
             localStorage.removeItem(BANNER_KEY);
           }, BANNER_TTL_MS);
         }
-        // User замовлення — localStorage не використовуємо, дані з бекенду
       } catch {}
       return updated;
     });

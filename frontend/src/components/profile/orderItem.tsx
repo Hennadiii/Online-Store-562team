@@ -7,7 +7,9 @@ interface Props {
 }
 
 const ProfileOrderItem: React.FC<Props> = ({ order }) => {
-  const date = new Date(order.createdAt).toLocaleString("uk-UA", {
+  // Бекенд повертає UTC без "Z" → додаємо щоб браузер правильно конвертував в локальний час
+  const utcString = order.createdAt.endsWith("Z") ? order.createdAt : order.createdAt + "Z";
+  const date = new Date(utcString).toLocaleString("uk-UA", {
     day: "numeric",
     month: "long",
     year: "numeric",

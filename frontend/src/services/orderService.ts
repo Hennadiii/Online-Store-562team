@@ -7,7 +7,12 @@ function mapToBackend(data: CreateOrderDTO, isGuest = false, userId?: string): B
   const { customer, recipient, delivery, items } = data;
 
   return {
-    customerName: `${customer.firstName} ${customer.lastName}`,
+    // Було: customerName: `${customer.firstName} ${customer.lastName}`
+    // Стало: окремі поля — бекенд більше не парсить рядок
+    customerFirstName: customer.firstName,
+    customerLastName: customer.lastName,
+    customerPhone: customer.phone,
+    customerEmail: customer.email,
     guest: isGuest,
     userId: isGuest ? undefined : userId,
     ...(recipient &&
@@ -52,10 +57,12 @@ function mapFromBackend(
     createdAt: backend.createdAt ?? new Date().toISOString(),
     guestToken: backend.guestToken,
     customer: original?.customer ?? {
-      firstName: backend.customerName?.split(" ")[0] ?? "",
-      lastName: backend.customerName?.split(" ").slice(1).join(" ") ?? "",
-      phone: "",
-      email: "",
+      // Було: backend.customerName?.split(" ") — ненадійний парсинг рядка
+      // Стало: читаємо окремі поля напряму, phone і email більше не губляться
+      firstName: backend.customerFirstName ?? "",
+      lastName: backend.customerLastName ?? "",
+      phone: backend.customerPhone ?? "",
+      email: backend.customerEmail ?? "",
     },
     recipient: original?.recipient ?? recipientFromBackend,
     delivery: original?.delivery ?? {
@@ -104,7 +111,11 @@ async function enrichItemsFromCatalog(order: Order): Promise<Order> {
   return { ...order, items: enrichedItems };
 }
 
-export async function submitOrder(data: CreateOrderDTO, isGuest = false, userId?: string): Promise<Order> {
+export async function submitOrder(
+  data: CreateOrderDTO,
+  isGuest = false,
+  userId?: string
+): Promise<Order> {
   const backendPayload = mapToBackend(data, isGuest, userId);
 
   const response = await fetch(`${ORDER_API_URL}/orders`, {
@@ -145,7 +156,12 @@ export async function fetchOrdersByUser(userId: string): Promise<Order[]> {
     if (!response.ok) return [];
     const backends: BackendDisplayOrderDto[] = await response.json();
     const orders = backends.map((b) => mapFromBackend(b));
-    return await Promise.all(orders.map(enrichItemsFromCatalog));
+    const enriched = await Promise.all(orders.map(enrichItemsFromCatalog));
+
+    // Страховка на фронті: сортуємо DESC на випадок якщо бекенд поверне не в тому порядку
+    return enriched.sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
   } catch {
     return [];
   }

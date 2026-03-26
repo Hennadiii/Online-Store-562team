@@ -55,7 +55,7 @@ const LoginForm: React.FC<Iauthorization> = ({
     }
   };
 
-  const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_AUTH_URL ?? "http://localhost:8081";
+  const BACKEND_URL = process.env.NEXT_PUBLIC_AUTH_API_URL ?? "http://localhost:8081";
 
 // В JSX:
 <div className="relative">

@@ -72,7 +72,12 @@ public class OrderManager {
                 .orElseThrow(() -> new OrderNotFoundException(""));
         entity.setItems(order.getItems());
         entity.setDelivery(order.getDelivery());
-        entity.setCustomerName(order.getCustomerName());
+        // Було: entity.setCustomerName(order.getCustomerName()) — поле видалено
+        // Стало: оновлюємо окремі поля клієнта
+        entity.setCustomerFirstName(order.getCustomerFirstName());
+        entity.setCustomerLastName(order.getCustomerLastName());
+        entity.setCustomerPhone(order.getCustomerPhone());
+        entity.setCustomerEmail(order.getCustomerEmail());
         entity.setRecipientName(order.getRecipientName());
         entity.setRecipientPhone(order.getRecipientPhone());
         entity.setUpdatedAt(LocalDateTime.now());

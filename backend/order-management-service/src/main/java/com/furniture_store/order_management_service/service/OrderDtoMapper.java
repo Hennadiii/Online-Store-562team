@@ -24,7 +24,12 @@ public class OrderDtoMapper {
         DisplayOrderDto orderDto = new DisplayOrderDto();
         orderDto.setId(order.getId());
         orderDto.setOrderItems(order.getItems().stream().map(orderItemMapper::toDto).toList());
-        orderDto.setCustomerName(order.getCustomerName());
+
+        orderDto.setCustomerFirstName(order.getCustomerFirstName());
+        orderDto.setCustomerLastName(order.getCustomerLastName());
+        orderDto.setCustomerPhone(order.getCustomerPhone());
+        orderDto.setCustomerEmail(order.getCustomerEmail());
+
         orderDto.setRecipientName(order.getRecipientName());
         orderDto.setRecipientPhone(order.getRecipientPhone());
         orderDto.setGuestToken(order.getGuestToken());
@@ -58,7 +63,12 @@ public class OrderDtoMapper {
         Order order = new Order();
         order.setId(orderDto.getId());
         order.setItems(orderDto.getOrderItems().stream().map(orderItemMapper::toEntity).toList());
-        order.setCustomerName(orderDto.getCustomerName());
+
+        order.setCustomerFirstName(orderDto.getCustomerFirstName());
+        order.setCustomerLastName(orderDto.getCustomerLastName());
+        order.setCustomerPhone(orderDto.getCustomerPhone());
+        order.setCustomerEmail(orderDto.getCustomerEmail());
+
         order.setRecipientName(orderDto.getRecipientName());
         order.setRecipientPhone(orderDto.getRecipientPhone());
         order.setUserId(orderDto.getUserId());

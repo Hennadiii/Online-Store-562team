@@ -26,7 +26,13 @@ public class Order {
     @ManyToOne(cascade = CascadeType.ALL)
     private Delivery delivery;
 
-    private String customerName;
+    // Було: тільки customerName (один рядок "Ім'я Прізвище")
+    // Стало: окремі поля для коректного маппінгу на фронт
+    private String customerFirstName;
+    private String customerLastName;
+    private String customerPhone;
+    private String customerEmail;
+
     private String recipientName;
     private String recipientPhone;
     private String guestToken;
@@ -40,9 +46,10 @@ public class Order {
     @Enumerated
     private OrderStatus status;
 
-    public Order(List<OrderItem> items, String customerName, Delivery delivery) {
+    public Order(List<OrderItem> items, String customerFirstName, String customerLastName, Delivery delivery) {
         this.delivery = delivery;
-        this.customerName = customerName;
+        this.customerFirstName = customerFirstName;
+        this.customerLastName = customerLastName;
         setItems(items);
     }
 

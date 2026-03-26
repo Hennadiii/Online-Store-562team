@@ -10,13 +10,19 @@ public class DisplayOrderDto {
 
     private Long id;
     private List<DisplayOrderItemDto> orderItems;
-    private String customerName;
+
+    // Окремі поля клієнта — потрібні для коректного відображення на фронті
+    private String customerFirstName;
+    private String customerLastName;
+    private String customerPhone;
+    private String customerEmail;
+
     private String recipientName;
     private String recipientPhone;
     private String guestToken;
     private String userId;
     private DeliveryDto delivery;
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private String status;
     private Double amount;

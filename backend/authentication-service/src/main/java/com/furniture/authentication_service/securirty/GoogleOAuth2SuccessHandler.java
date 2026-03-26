@@ -12,6 +12,8 @@ import com.furniture.authentication_service.dto.TokenResponse;
 
 import java.io.IOException;
 
+
+
 @Component
 public class GoogleOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
@@ -34,8 +36,10 @@ public void onAuthenticationSuccess(HttpServletRequest request,
     TokenResponse tokens = authService.loginOrRegisterOAuthUser(email, firstName, lastName);
 
     String frontendUrl = System.getenv().getOrDefault("FRONTEND_URL", "http://localhost:3000");
+    System.out.println(">>> FRONTEND_URL = " + frontendUrl); // временный лог
     getRedirectStrategy().sendRedirect(request, response,
         frontendUrl + "/auth/success?accessToken=" + tokens.getAccessToken()
                     + "&refreshToken=" + tokens.getRefreshToken());
+                    
 }
 }

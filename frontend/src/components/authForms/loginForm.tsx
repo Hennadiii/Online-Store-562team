@@ -55,6 +55,22 @@ const LoginForm: React.FC<Iauthorization> = ({
     }
   };
 
+  const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_AUTH_URL ?? "http://localhost:8081";
+
+// В JSX:
+<div className="relative">
+  <Button
+    type="button"
+    className="flex w-full gap-x-3 border-black pl-3 mt-2"
+    onClick={() => {
+      window.location.href = `${BACKEND_URL}/oauth2/authorization/google`;
+    }}
+  >
+    <Image width={24} height={24} src="/google.svg" alt="google" />
+    Увійти через Google
+  </Button>
+</div>
+
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
@@ -115,15 +131,14 @@ const LoginForm: React.FC<Iauthorization> = ({
       <div className="relative">
   <Button
     type="button"
-    disabled
-    className="flex w-full gap-x-3 border-black pl-3 mt-2 opacity-50 cursor-not-allowed"
+    className="flex w-full gap-x-3 border-black pl-3 mt-2"
+    onClick={() => {
+      window.location.href = `${BACKEND_URL}/oauth2/authorization/google`;
+    }}
   >
     <Image width={24} height={24} src="/google.svg" alt="google" />
     Увійти через Google
   </Button>
-  <span className="absolute -top-1 right-2 text-[10px] text-white bg-black  px-2 py-0.5 rounded-full">
-    Coming soon
-  </span>
 </div>
 
       {isModal && (

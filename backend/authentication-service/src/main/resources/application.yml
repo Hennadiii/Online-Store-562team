@@ -1,5 +1,5 @@
 server:
-  port: ${APP_SERVER_PORT} # Порт, на якому працює сервіс
+  port: ${APP_SERVER_PORT}
 
 app:
   link: ${VERIFICATION_APP_LINK}
@@ -11,35 +11,45 @@ logging:
 
 spring:
   application:
-    name: authentication-service # Назва сервісу
+    name: authentication-service
   data:
     jdbc:
       dialect: postgresql
   datasource:
-    url: ${SPRING_DATASOURCE_URL} # Підключення до контейнера PostgreSQL
+    url: ${SPRING_DATASOURCE_URL}
     username: ${SPRING_DATASOURCE_USERNAME}
     password: ${SPRING_DATASOURCE_PASSWORD}
-    driver-class-name: org.postgresql.Driver # JDBC драйвер
+    driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       dialect: org.hibernate.dialect.PostgreSQLDialect
-    show-sql: true # Відображати SQL-запити у логах
+    show-sql: true
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-        format_sql: true # Форматувати SQL у логах
+        format_sql: true
   flyway:
     enabled: true
     locations: classpath:db/migration
     baseline-on-migrate: true
     validate-on-migrate: true
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            scope:
+              - email
+              - profile
 
 jwt:
-  secret: ${SECRET}  # Секретний ключ для підпису токенів
+  secret: ${SECRET}
   accessToken:
-    expirationMs: 3600000 # Час життя Access Token (у мілісекундах)
+    expirationMs: 3600000
   refreshToken:
-    expirationMs: 36000000 # Час життя Refresh Token (у мілісекундах)
+    expirationMs: 36000000
   issuer: auth-service
 
 management:

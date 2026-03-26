@@ -245,4 +245,22 @@ public class AuthService {
             person.getPhone()
         );
     }
+
+    public TokenResponse loginOrRegisterOAuthUser(String email, String firstName, String lastName) {
+        Person person = personRepository.findByEmail(email).orElseGet(() -> {
+            Person newPerson = new Person();
+            newPerson.setEmail(email);
+            newPerson.setName((firstName != null ? firstName : "") + " " + (lastName != null ? lastName : "").trim());
+            newPerson.setPhone("");
+            newPerson.setRole(Role.USER);
+            newPerson.setEmailVerified(true);
+            newPerson.setBlocked(false);
+            newPerson.setPasswordHash(passwordEncoder.encode(UUID.randomUUID().toString()));
+            return personRepository.save(newPerson);
+        });
+    
+        String accessToken = tokenService.generateAccessToken(person);
+        String refreshToken = tokenService.generateRefreshToken(person);
+        return new TokenResponse(accessToken, refreshToken);
+    }
 }

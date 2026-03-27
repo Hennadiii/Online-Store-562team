@@ -16,6 +16,7 @@ jobs:
             "https://online-store-562team.onrender.com/products?page=0&size=1"
             "https://online-store-562team-zezi.onrender.com/api/carts/1"
             "https://order-management-service-vi3s.onrender.com/orders?page=0&pageSize=1"
+            "https://authentication-service-591y.onrender.com/actuator/health/liveness"
           )
           for url in "${urls[@]}"; do
             echo "Pinging $url..."

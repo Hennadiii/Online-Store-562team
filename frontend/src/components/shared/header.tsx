@@ -265,14 +265,7 @@ const Header = () => {
                 </Link>
               )}
 
-              {isAuthenticated && (
-                <button
-                  onClick={() => { logout(); setOpen(false); }}
-                  className="text-left"
-                >
-                  Вийти
-                </button>
-              )}
+              
             </div>
           </>
         )}

@@ -1,0 +1,49 @@
+server:
+#  port: ${APP_SERVER_PORT} # Порт, на якому працює сервіс
+  port: 6620 # Порт, на якому працює сервіс
+
+api:
+  gateway:
+    url: http://localhost:777
+
+logging:
+  level:
+    com.furniture.authentication_service.filter: DEBUG
+
+spring:
+  application:
+    name: authentication-service # Назва сервісу
+  data:
+    jdbc:
+      dialect: postgresql
+  datasource:
+#    url: ${SPRING_DATASOURCE_URL} # Підключення до контейнера PostgreSQL
+    url: jdbc:postgresql://localhost:5432/auth_service_db # Підключення до контейнера PostgreSQL
+#    username: ${SPRING_DATASOURCE_USERNAME}
+    username: postgres
+ #   password: ${SPRING_DATASOURCE_PASSWORD}
+    password: Qwe2rty1@sdd
+    driver-class-name: org.postgresql.Driver # JDBC драйвер
+  jpa:
+    hibernate:
+      dialect: org.hibernate.dialect.PostgreSQLDialect
+      ddl-auto: update # Автоматичне оновлення схеми (змінити на `validate` або `none` для продакшну)
+    show-sql: true # Відображати SQL-запити у логах
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true # Форматувати SQL у логах
+
+jwt:
+  secret: w5N8JtKQ0FlZThJOVXI3am1pRzVXZnI1bFJzSkhBRHc=  # Секретний ключ для підпису токенів
+  accessToken:
+    expirationMs: 3600000 # Час життя Access Token (у мілісекундах)
+  refreshToken:
+    expirationMs: 36000000 # Час життя Refresh Token (у мілісекундах)
+  issuer: auth-service
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"

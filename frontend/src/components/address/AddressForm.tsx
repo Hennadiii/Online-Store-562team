@@ -11,7 +11,7 @@ export interface AddressFormData {
     house: string;
     apartment?: string;
     floor?: string;
-    hasElevator?: boolean;
+    hasElevator: boolean;
   }
 
 export const isAddressValid = (data: AddressFormData) =>
@@ -35,7 +35,7 @@ export const isAddressValid = (data: AddressFormData) =>
     house: "",
     apartment: "",
     floor: "",
-    hasElevator: undefined,
+    hasElevator: false,
   };  
 
 const inputBase =

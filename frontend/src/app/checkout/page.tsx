@@ -28,24 +28,26 @@ const CheckoutPage = () => {
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const [deliveryMethod, setDeliveryMethod] = useState<"pickup" | "courier">("pickup");
-  const [selectedAddressId, setSelectedAddressId] = useState<number | null>(null);
+  const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null); // ← string (UUID)
   const [showNewAddressForm, setShowNewAddressForm] = useState(false);
   const [newAddressData, setNewAddressData] = useState<AddressFormData>(EMPTY_ADDRESS);
+  const [confirmedNewAddress, setConfirmedNewAddress] = useState<AddressFormData | null>(null); // ← новий стейт
   const [saveNewAddress, setSaveNewAddress] = useState(false);
+
+  const [expandedAddressId, setExpandedAddressId] = useState<string | null>(null);
 
   const [contact, setContact] = useState({
     firstName: "",
     lastName: "",
     phone: "",
     email: "",
-    // Поля адреси для гостя
     city: "",
     region: "",
     street: "",
     house: "",
     apartment: "",
     floor: "",
-    hasElevator: undefined as boolean | undefined,
+    hasElevator: false as boolean,
   });
 
   // Автопідстановка контактів для авторизованого
@@ -60,7 +62,7 @@ const CheckoutPage = () => {
     }));
     const def = getDefault();
     if (def) {
-      setSelectedAddressId(def.id);
+      setSelectedAddressId(def.id); // ← def.id тепер string
       setDeliveryMethod("courier");
     }
   }, [isAuthenticated, user?.name, user?.phone]);
@@ -75,37 +77,33 @@ const CheckoutPage = () => {
   const selectedAddress = addresses.find((a) => a.id === selectedAddressId) ?? null;
 
   const getDeliveryAddr = (): Address | AddressFormData | null => {
-    // Гість — адреса вбудована в contact
     if (!isAuthenticated && deliveryMethod === "courier") {
       return {
         firstName: contact.firstName,
         lastName: contact.lastName,
         phone: contact.phone,
-        city: contact.city ?? "",
-        region: contact.region ?? "",
-        street: contact.street ?? "",
-        house: contact.house ?? "",
+        city: contact.city,
+        region: contact.region,
+        street: contact.street,
+        house: contact.house,
         apartment: contact.apartment,
         floor: contact.floor,
         hasElevator: contact.hasElevator,
       };
     }
     if (selectedAddress) return selectedAddress;
-    if (showNewAddressForm && isAddressValid(newAddressData)) return newAddressData;
+    // ← confirmedNewAddress замість showNewAddressForm
+    if (confirmedNewAddress && isAddressValid(confirmedNewAddress)) return confirmedNewAddress;
     return null;
   };
 
-  const handleConfirmNewAddress = () => {
+  // ← прибрано setTimeout, додано confirmedNewAddress
+  const handleConfirmNewAddress = async () => {
     if (saveNewAddress) {
-      addAddress({ ...newAddressData });
+      await addAddress({ ...newAddressData, hasElevator: newAddressData.hasElevator ?? false });
       setSaveNewAddress(false);
-      setTimeout(() => {
-        setSelectedAddressId((prev) => {
-          const last = addresses[addresses.length - 1];
-          return last ? last.id : prev;
-        });
-      }, 0);
     }
+    setConfirmedNewAddress({ ...newAddressData }); // зберігаємо для getDeliveryAddr
     setNewAddressData(EMPTY_ADDRESS);
     setShowNewAddressForm(false);
     setErrors((prev) => ({ ...prev, address: "" }));
@@ -130,7 +128,6 @@ const CheckoutPage = () => {
 
     if (deliveryMethod === "courier") {
       if (!isAuthenticated) {
-        // Валідація полів адреси для гостя
         if (!contact.city?.trim()) e.city = "Введіть місто";
         if (!contact.street?.trim()) e.street = "Введіть вулицю";
         if (!contact.house?.trim()) e.house = "Введіть будинок";
@@ -153,16 +150,13 @@ const CheckoutPage = () => {
     if (deliveryMethod === "courier") {
       const addr = getDeliveryAddr();
       if (addr) {
-        const house = "house" in addr
-          ? (addr as Address).house
-          : (addr as AddressFormData).house;
-
+        // ← уніфікований маппінг, house скрізь однаково
         deliveryPayload = {
           method: deliveryMethod,
           city: addr.city,
           region: addr.region,
           street: addr.street,
-          build: house,
+          build: addr.house,
           apartament: addr.apartment ?? "",
           floor: addr.floor ?? "",
           elevator: addr.hasElevator ?? false,
@@ -253,6 +247,7 @@ const CheckoutPage = () => {
                     onChange={() => {
                       setDeliveryMethod(id as "pickup" | "courier");
                       setShowNewAddressForm(false);
+                      setConfirmedNewAddress(null); // ← скидаємо при зміні методу
                     }}
                     className="h-6 w-6"
                   />
@@ -266,47 +261,102 @@ const CheckoutPage = () => {
             {isAuthenticated && deliveryMethod === "courier" && (
               <div className="mt-6 flex flex-col gap-4">
 
-                {addresses.length > 0 && !showNewAddressForm && (
-                  <div className="flex flex-col gap-2">
-                    <p className="text-sm text-gray-500 font-medium">
-                      Виберіть адресу доставки:
+{addresses.length > 0 && !showNewAddressForm && (
+  <div className="flex flex-col gap-2">
+    <p className="text-sm text-gray-500 font-medium">
+      Виберіть адресу доставки:
+    </p>
+    {addresses.map((addr) => {
+      const isSelected = selectedAddressId === addr.id;
+      const isExpanded = expandedAddressId === addr.id;
+      return (
+        <div
+          key={addr.id}
+          className={`rounded-xl border transition-colors ${
+            isSelected ? "border-black bg-gray-50" : "border-gray-200 hover:border-gray-400"
+          }`}
+        >
+          {/* Головний рядок — клік вибирає */}
+          <div
+            className="flex items-start gap-3 px-4 py-3 cursor-pointer"
+            onClick={() => {
+              setSelectedAddressId(addr.id);
+              setConfirmedNewAddress(null);
+              setErrors((prev) => ({ ...prev, address: "" }));
+            }}
+          >
+            <input
+              type="radio"
+              name="deliveryAddress"
+              checked={isSelected}
+              onChange={() => {}}
+              className="mt-0.5 w-4 h-4 shrink-0"
+            />
+            <div className="flex-1 flex flex-col gap-0.5">
+              <span className="text-sm">
+                м. {addr.city}, вул. {addr.street} {addr.house}
+                {addr.apartment ? `, кв. ${addr.apartment}` : ""}
+              </span>
+              {addr.isDefault && (
+                <span className="inline-flex w-fit bg-black text-white text-[10px] px-2 py-0.5 rounded-full tracking-wide">
+                  Основна
+                </span>
+              )}
+            </div>
+            {/* Кнопка expand — окремий клік щоб не конфліктував з radio */}
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                setExpandedAddressId((prev) => prev === addr.id ? null : addr.id);
+              }}
+              className="text-gray-400 hover:text-black transition-colors ml-auto shrink-0 mt-0.5"
+              aria-label="Деталі адреси"
+            >
+              <svg
+                className={`w-4 h-4 transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`}
+                fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+          </div>
+
+          {/* Розгорнуті деталі */}
+          {isExpanded && (
+            <div className="px-4 pb-4 pt-1 border-t border-gray-100 flex flex-col gap-1.5 text-sm text-gray-600">
+              <p><span className="text-gray-400 text-xs">Отримувач:</span> {addr.firstName} {addr.lastName}</p>
+              <p><span className="text-gray-400 text-xs">Телефон:</span> {addr.phone}</p>
+              <p><span className="text-gray-400 text-xs">Адреса:</span> м. {addr.city}{addr.region ? `, ${addr.region} обл.` : ""}, вул. {addr.street} {addr.house}
+                {addr.apartment ? `, кв. ${addr.apartment}` : ""}
+                {addr.floor ? `, поверх ${addr.floor}` : ""}
+              </p>
+              <p><span className="text-gray-400 text-xs">Ліфт:</span> {addr.hasElevator ? "є" : "немає"}</p>
+            </div>
+          )}
+        </div>
+      );
+    })}
+  </div>
+)}
+
+                {/* Показуємо підтверджену нову адресу якщо не збереглась */}
+                {!showNewAddressForm && confirmedNewAddress && !selectedAddress && (
+                  <div className="px-4 py-3 rounded-xl border border-black bg-gray-50 text-sm">
+                    <p className="font-medium mb-0.5">Нова адреса (не збережена)</p>
+                    <p className="text-gray-600">
+                      м. {confirmedNewAddress.city}, вул. {confirmedNewAddress.street} {confirmedNewAddress.house}
                     </p>
-                    {addresses.map((addr) => (
-                      <label
-                        key={addr.id}
-                        className={`flex items-start gap-3 px-4 py-3 rounded-xl border cursor-pointer transition-colors ${
-                          selectedAddressId === addr.id
-                            ? "border-black bg-gray-50"
-                            : "border-gray-200 hover:border-gray-400"
-                        }`}
-                      >
-                        <input
-                          type="radio"
-                          name="deliveryAddress"
-                          checked={selectedAddressId === addr.id}
-                          onChange={() => {
-                            setSelectedAddressId(addr.id);
-                            setErrors((prev) => ({ ...prev, address: "" }));
-                          }}
-                          className="mt-0.5 w-4 h-4 shrink-0"
-                        />
-                        <div className="flex flex-col gap-0.5">
-                          <span className="text-sm">
-                            м. {addr.city}, вул. {addr.street} {addr.house}
-                            {addr.apartment ? `, кв. ${addr.apartment}` : ""}
-                          </span>
-                          {addr.isDefault && (
-                            <span className="inline-flex w-fit bg-black text-white text-[10px] px-2 py-0.5 rounded-full tracking-wide">
-                              Основна
-                            </span>
-                          )}
-                        </div>
-                      </label>
-                    ))}
+                    <button
+                      onClick={() => setConfirmedNewAddress(null)}
+                      className="text-xs text-gray-400 hover:text-red-500 mt-1 transition-colors"
+                    >
+                      Скасувати
+                    </button>
                   </div>
                 )}
 
-                {addresses.length === 0 && !showNewAddressForm && (
+                {addresses.length === 0 && !showNewAddressForm && !confirmedNewAddress && (
                   <p className="text-sm text-gray-400">У вас ще немає збережених адрес</p>
                 )}
 
@@ -344,6 +394,7 @@ const CheckoutPage = () => {
                     onClick={() => {
                       setShowNewAddressForm(true);
                       setSelectedAddressId(null);
+                      setConfirmedNewAddress(null);
                       setNewAddressData(EMPTY_ADDRESS);
                     }}
                     className="flex items-center gap-2 text-sm text-gray-600 hover:text-black transition-colors"

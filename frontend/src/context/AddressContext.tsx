@@ -1,88 +1,104 @@
 "use client";
 
-import { createContext, useContext, useState, ReactNode } from "react";
+import {
+  createContext, useContext, useState,
+  useEffect, useCallback, ReactNode,
+} from "react";
+import { useAuthContext } from "@/context/AuthContext";
+import { authService } from "@/services/authService"; // ← додати імпорт
+import {
+  fetchAddresses, createAddress, updateAddress as apiUpdate,
+  deleteAddress as apiDelete, setDefaultAddress,
+  AddressPayload,
+} from "@/services/addressService";
 
 export interface Address {
-  id: number;
+  id: string;
   firstName: string;
   lastName: string;
   phone: string;
   city: string;
-  region: string;
+  region?: string;
   street: string;
   house: string;
   apartment?: string;
   floor?: string;
-  hasElevator?: boolean;
+  hasElevator: boolean;
   isDefault: boolean;
 }
 
-const MOCK_ADDRESSES: Address[] = [
-  {
-    id: 1,
-    firstName: "Марина",
-    lastName: "Зоряна",
-    phone: "+380332190033",
-    city: "Львів",
-    region: "Львівська",
-    street: "Стрийська",
-    house: "4/21",
-    apartment: "5",
-    floor: "2",
-    hasElevator: true,
-    isDefault: true,
-  },
-  {
-    id: 2,
-    firstName: "Марина",
-    lastName: "Зоряна",
-    phone: "+380332190033",
-    city: "Київ",
-    region: "Київська",
-    street: "Святошинська",
-    house: "8/95",
-    apartment: "10",
-    floor: "",
-    hasElevator: false,
-    isDefault: false,
-  },
-];
-
 interface AddressContextType {
   addresses: Address[];
-  addAddress: (a: Omit<Address, "id" | "isDefault">) => void;
-  updateAddress: (id: number, a: Omit<Address, "id" | "isDefault">) => void;
-  deleteAddress: (id: number) => void;
-  setDefault: (id: number) => void;
+  loading: boolean;
+  addAddress: (data: AddressPayload) => Promise<void>;
+  updateAddress: (id: string, data: AddressPayload) => Promise<void>;
+  deleteAddress: (id: string) => Promise<void>;
+  setDefault: (id: string) => Promise<void>;
   getDefault: () => Address | undefined;
+  reload: () => Promise<void>;
 }
 
 const AddressContext = createContext<AddressContextType | null>(null);
 
 export const AddressProvider = ({ children }: { children: ReactNode }) => {
-  const [addresses, setAddresses] = useState<Address[]>(MOCK_ADDRESSES);
+  const { isAuthenticated } = useAuthContext();
+  const [addresses, setAddresses] = useState<Address[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  const addAddress = (data: Omit<Address, "id" | "isDefault">) =>
-    setAddresses((prev) => [...prev, { ...data, id: Date.now(), isDefault: false }]);
+  const load = useCallback(async () => {
+    const token = authService.getAccessToken(); // ← читаємо токен напряму
+    if (!isAuthenticated || !token) {
+      setAddresses([]);
+      return;
+    }
+    setLoading(true);
+    try {
+      setAddresses(await fetchAddresses(token));
+    } catch {
+      setAddresses([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [isAuthenticated]);
 
-  const updateAddress = (id: number, data: Omit<Address, "id" | "isDefault">) =>
-    setAddresses((prev) => prev.map((a) => (a.id === id ? { ...a, ...data } : a)));
+  useEffect(() => { load(); }, [load]);
 
-  const deleteAddress = (id: number) =>
-    setAddresses((prev) => {
-      const filtered = prev.filter((a) => a.id !== id);
-      const wasDefault = prev.find((a) => a.id === id)?.isDefault;
-      if (wasDefault && filtered.length > 0) filtered[0].isDefault = true;
-      return filtered;
-    });
+  const addAddress = async (data: AddressPayload) => {
+    const token = authService.getAccessToken();
+    if (!token) return;
+    await createAddress(token, data);
+    await load();
+  };
 
-  const setDefault = (id: number) =>
-    setAddresses((prev) => prev.map((a) => ({ ...a, isDefault: a.id === id })));
+  const updateAddress = async (id: string, data: AddressPayload) => {
+    const token = authService.getAccessToken();
+    if (!token) return;
+    await apiUpdate(token, id, data);
+    await load();
+  };
+
+  const deleteAddress = async (id: string) => {
+    const token = authService.getAccessToken();
+    if (!token) return;
+    await apiDelete(token, id);
+    await load();
+  };
+
+  const setDefault = async (id: string) => {
+    const token = authService.getAccessToken();
+    if (!token) return;
+    await setDefaultAddress(token, id);
+    await load();
+  };
 
   const getDefault = () => addresses.find((a) => a.isDefault);
 
   return (
-    <AddressContext.Provider value={{ addresses, addAddress, updateAddress, deleteAddress, setDefault, getDefault }}>
+    <AddressContext.Provider value={{
+      addresses, loading,
+      addAddress, updateAddress, deleteAddress,
+      setDefault, getDefault, reload: load,
+    }}>
       {children}
     </AddressContext.Provider>
   );

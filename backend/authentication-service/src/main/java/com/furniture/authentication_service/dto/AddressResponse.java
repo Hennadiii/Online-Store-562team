@@ -6,6 +6,8 @@ import lombok.Data;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 @Data
 @Builder
 public class AddressResponse {
@@ -20,6 +22,8 @@ public class AddressResponse {
     private String apartment;
     private String floor;
     private boolean hasElevator;
+
+    @JsonProperty("isDefault")
     private boolean isDefault;
     private LocalDateTime createdAt;
 }

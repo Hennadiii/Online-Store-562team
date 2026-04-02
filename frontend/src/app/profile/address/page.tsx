@@ -5,6 +5,7 @@ import ProfileSidebar from "@/components/profile/sidebar";
 import AnimatedSection from "@/components/shared/animatedSection";
 import Modal from "@/components/modals/modal";
 import { useAddressContext, Address } from "@/context/AddressContext";
+import { useAuthContext } from "@/context/AuthContext";
 import AddressForm, { AddressFormData, EMPTY_ADDRESS, isAddressValid } from "@/components/address/AddressForm";
 
 interface AddressCardProps {
@@ -21,40 +22,65 @@ const AddressCard = ({ address, onSetDefault, onEdit, onDelete }: AddressCardPro
     <div className={`relative rounded-2xl border p-5 transition-all duration-200 ${
       isDefault ? "border-black bg-gray-50 shadow-sm" : "border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm"
     }`}>
+
+      {/* ✅ Плашка "Основна" — тільки для default адреси */}
       {isDefault && (
         <span className="absolute top-4 right-4 text-[10px] font-semibold uppercase tracking-widest text-white bg-black rounded-full px-2.5 py-1">
-          Основний
+          Основна
         </span>
       )}
+
       <div className="flex flex-col gap-1 pr-24 mb-4">
         <p className="font-semibold text-sm">{firstName} {lastName}</p>
         <p className="text-sm text-gray-500">{phone}</p>
         <p className="text-sm text-gray-700 mt-1 leading-relaxed">
-          м. {city}, {region} обл., вул. {street} {house}
+          м. {city}{region ? `, ${region} обл.` : ""}, вул. {street} {house}
           {apartment ? `, кв. ${apartment}` : ""}
           {floor ? `, поверх ${floor}` : ""}
         </p>
-        <p className="text-xs text-gray-400 mt-0.5">
-          Ліфт: {hasElevator ? "є" : "немає"}
-        </p>
+        <p className="text-sm text-gray-400 mt-0.5">
+  Ліфт:{" "}
+  <span
+    className={
+      hasElevator
+        ? "text-black font-semibold text-sm"
+        : "text-gray-700 font-semibold text-sm"
+    }
+  >
+    {hasElevator ? "є" : "немає"}
+  </span>
+</p>
       </div>
 
       <div className="flex items-center gap-3 pt-3 border-t border-gray-100">
+
+        {/* ✅ Кнопка "Зробити основною" — тільки для НЕ default адрес */}
         {!isDefault && (
-          <button onClick={onSetDefault} className="text-xs text-gray-600 hover:text-black transition-colors flex items-center gap-1.5">
+          <button
+            onClick={onSetDefault}
+            className="text-xs text-gray-600 hover:text-black transition-colors flex items-center gap-1.5"
+          >
             <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
             </svg>
-            Зробити основним
+            Зробити основною
           </button>
         )}
-        <button onClick={onEdit} className="text-xs text-gray-600 hover:text-black transition-colors flex items-center gap-1.5 ml-auto">
+
+        <button
+          onClick={onEdit}
+          className="text-xs text-gray-600 hover:text-black transition-colors flex items-center gap-1.5 ml-auto"
+        >
           <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
           </svg>
           Редагувати
         </button>
-        <button onClick={onDelete} className="text-xs text-red-400 hover:text-red-600 transition-colors flex items-center gap-1.5">
+
+        <button
+          onClick={onDelete}
+          className="text-xs text-red-400 hover:text-red-600 transition-colors flex items-center gap-1.5"
+        >
           <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
           </svg>
@@ -67,31 +93,46 @@ const AddressCard = ({ address, onSetDefault, onEdit, onDelete }: AddressCardPro
 
 const AddressBookPage = () => {
   const { addresses, addAddress, updateAddress, deleteAddress, setDefault } = useAddressContext();
+  const { user } = useAuthContext(); // ← для автопідстановки
 
-  // ← id тепер string (UUID)
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editDraft, setEditDraft] = useState<AddressFormData>(EMPTY_ADDRESS);
   const [showAddForm, setShowAddForm] = useState(false);
   const [newAddress, setNewAddress] = useState<AddressFormData>(EMPTY_ADDRESS);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
 
+  // ✅ Автопідстановка з профілю при відкритті форми
+  const handleOpenAddForm = () => {
+    if (!showAddForm) {
+      const nameParts = user?.name?.split(" ") || [];
+      setNewAddress({
+        ...EMPTY_ADDRESS,
+        firstName: nameParts[0] || "",
+        lastName:  nameParts.slice(1).join(" ") || "",
+        phone:     user?.phone || "",
+      });
+    } else {
+      setNewAddress(EMPTY_ADDRESS);
+    }
+    setShowAddForm((v) => !v);
+  };
+
   const handleOpenEdit = (addr: Address) => {
     setEditDraft({
-      firstName: addr.firstName,
-      lastName: addr.lastName,
-      phone: addr.phone,
-      city: addr.city,
-      region: addr.region ?? "",
-      street: addr.street,
-      house: addr.house,
-      apartment: addr.apartment ?? "",
-      floor: addr.floor ?? "",
+      firstName:   addr.firstName,
+      lastName:    addr.lastName,
+      phone:       addr.phone,
+      city:        addr.city,
+      region:      addr.region ?? "",
+      street:      addr.street,
+      house:       addr.house,
+      apartment:   addr.apartment ?? "",
+      floor:       addr.floor ?? "",
       hasElevator: addr.hasElevator,
     });
     setEditingId(addr.id);
   };
 
-  // ← async/await для всіх методів
   const handleSaveEdit = async () => {
     if (!editingId) return;
     await updateAddress(editingId, {
@@ -126,9 +167,11 @@ const AddressBookPage = () => {
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl sm:text-2xl font-semibold">Адреси доставки</h2>
             <button
-              onClick={() => setShowAddForm((v) => !v)}
+              onClick={handleOpenAddForm} // ← замінено
               className={`flex items-center gap-2 px-4 h-[40px] text-sm font-medium transition-all duration-200 border ${
-                showAddForm ? "border-gray-300 text-gray-600 hover:bg-gray-100" : "border-black bg-black text-white hover:bg-gray-800"
+                showAddForm
+                  ? "border-gray-300 text-gray-600 hover:bg-gray-100"
+                  : "border-black bg-black text-white hover:bg-gray-800"
               }`}
             >
               {showAddForm ? (
@@ -170,7 +213,10 @@ const AddressBookPage = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
               <p className="text-sm">Адрес ще немає</p>
-              <button onClick={() => setShowAddForm(true)} className="mt-3 text-sm underline hover:text-black transition-colors">
+              <button
+                onClick={handleOpenAddForm} // ← замінено
+                className="mt-3 text-sm underline hover:text-black transition-colors"
+              >
                 Додати першу адресу
               </button>
             </div>
@@ -217,7 +263,7 @@ const AddressBookPage = () => {
             <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
               <button
                 onClick={() => handleDelete(deleteConfirmId)}
-                className="w-full sm:w-auto px-8 h-[44px] rounded-xl bg-red-500 text-white hover:bg-red-600 transition-colors text-sm font-medium"
+                className="w-full sm:w-auto px-8 h-[44px] rounded-xl bg-red text-white hover:bg-red transition-colors text-sm font-medium"
               >
                 Видалити
               </button>

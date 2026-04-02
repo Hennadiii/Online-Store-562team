@@ -195,7 +195,7 @@ const SettingsPage = () => {
             {profileApiError && <p className="text-xs text-red-600 mb-4">{profileApiError}</p>}
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-2">
-              {(["lastName", "firstName"] as const).map((field) => (
+              {(["firstName", "lastName"] as const).map((field) => (
                 <div key={field} className="flex flex-col gap-1.5">
                   <label className="text-xs text-gray-600 font-medium">{FIELD_LABELS[field]}</label>
                   <input

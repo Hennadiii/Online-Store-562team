@@ -5,7 +5,6 @@ interface FormValues {
   lastName: string;
   phone: string;
   email: string;
-  // Поля адреси — опціональні, тільки для гостя при courier
   city?: string;
   region?: string;
   street?: string;
@@ -20,11 +19,10 @@ interface Props {
   values: FormValues;
   errors: Record<string, string>;
   onChange: (field: string, value: string | boolean | undefined) => void;
-  showAddressFields?: boolean; // true = гість + courier
+  showAddressFields?: boolean;
 }
 
 const contactFields = [
-  
   { id: "firstName", label: "Імʼя",     placeholder: "Введіть ваше імʼя" },
   { id: "lastName",  label: "Прізвище", placeholder: "Введіть ваше прізвище" },
   { id: "phone",     label: "Телефон",  placeholder: "+ 380 (__) ___ __ __" },
@@ -40,7 +38,7 @@ const addressFields = [
   { id: "floor",     label: "Поверх",   placeholder: "№" },
 ];
 
-const inputBase = "h-[43px] w-full border-b-[1px] px-2 py-3 outline-none";
+const inputBase = "h-[43px] w-full border-b-[1px] px-2 py-3 outline-none transition-colors duration-200";
 
 const ContactInfoForm: React.FC<Props> = ({
   className, values, errors, onChange, showAddressFields = false,
@@ -48,9 +46,9 @@ const ContactInfoForm: React.FC<Props> = ({
   return (
     <div className={cn("flex w-full flex-col gap-y-[34px]", className)}>
 
-      {/* Контактні поля */}
       {contactFields.map(({ id, label, placeholder }) => (
-        <div key={id} className="flex w-full flex-col gap-y-[7px]">
+        // ← data-field для автоскролу
+        <div key={id} data-field={id} className="flex w-full flex-col gap-y-[7px]">
           <label htmlFor={id} className="text-[12px] leading-[120%] text-accent">
             {label}
           </label>
@@ -58,16 +56,18 @@ const ContactInfoForm: React.FC<Props> = ({
             id={id}
             value={(values[id as keyof FormValues] as string) ?? ""}
             onChange={(e) => onChange(id, e.target.value)}
-            className={cn(inputBase, errors[id] ? "border-red-500" : "border-gray-300")}
+            className={cn(
+              inputBase,
+              errors[id] ? "border-red" : "border-gray-300"
+            )}
             placeholder={placeholder}
           />
           {errors[id] && (
-            <span style={{ color: "red" }} className="text-xs">{errors[id]}</span>
+            <span className="text-xs text-red">{errors[id]}</span>
           )}
         </div>
       ))}
 
-      {/* Поля адреси — тільки для гостя при courier */}
       {showAddressFields && (
         <>
           <div className="border-t border-gray-200 pt-2">
@@ -75,7 +75,7 @@ const ContactInfoForm: React.FC<Props> = ({
           </div>
 
           {addressFields.map(({ id, label, placeholder }) => (
-            <div key={id} className="flex w-full flex-col gap-y-[7px]">
+            <div key={id} data-field={id} className="flex w-full flex-col gap-y-[7px]">
               <label htmlFor={id} className="text-[12px] leading-[120%] text-accent">
                 {label}
               </label>
@@ -83,17 +83,19 @@ const ContactInfoForm: React.FC<Props> = ({
                 id={id}
                 value={(values[id as keyof FormValues] as string) ?? ""}
                 onChange={(e) => onChange(id, e.target.value)}
-                className={cn(inputBase, errors[id] ? "border-red-500" : "border-gray-300")}
+                className={cn(
+                  inputBase,
+                  errors[id] ? "border-red" : "border-gray-300"
+                )}
                 placeholder={placeholder}
               />
               {errors[id] && (
-                <span style={{ color: "red" }} className="text-xs">{errors[id]}</span>
+                <span className="text-xs text-red">{errors[id]}</span>
               )}
             </div>
           ))}
 
-          {/* Ліфт */}
-          <div className="flex flex-col gap-y-[7px]">
+          <div data-field="hasElevator" className="flex flex-col gap-y-[7px]">
             <label className="text-[12px] leading-[120%] text-accent">
               Вантажний ліфт
             </label>
@@ -120,7 +122,7 @@ const ContactInfoForm: React.FC<Props> = ({
               </label>
             </div>
             {errors.hasElevator && (
-              <span style={{ color: "red" }} className="text-xs">{errors.hasElevator}</span>
+              <span className="text-xs text-red">{errors.hasElevator}</span>
             )}
           </div>
         </>

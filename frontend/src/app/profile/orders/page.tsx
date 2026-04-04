@@ -7,7 +7,7 @@ import CatalogItem from "@/components/shared/catalogItem";
 import Pagination from "@/components/shared/pagination";
 import { Button } from "@/components/ui/button";
 import { useOrderContext } from "@/context/OrderContext";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 
 const statuses = ["Усі", "Нове", "Обробляється", "Відправлено", "Отримано", "Повернено"];
@@ -31,6 +31,8 @@ const MyOrders = () => {
   // 🔥 recommended
   const [recommended, setRecommended] = useState<any[]>([]);
   const [loadingRecommended, setLoadingRecommended] = useState(true);
+
+  const isFirstRender = useRef(true);
 
   useEffect(() => {
     fetch(
@@ -62,6 +64,18 @@ const MyOrders = () => {
       })
       .catch(() => setLoadingRecommended(false));
   }, [orders]);
+
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+  
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }, [currentPage]);
 
   const filteredOrders =
     activeStatus === "Усі"

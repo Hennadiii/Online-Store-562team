@@ -3,6 +3,7 @@ import TeamList from "@/components/about-us/teamList";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
+import EmailForm from "@/components/shared/EmailForm";
 
 export const metadata = {
   title: "Cozy Corners | Про нас",
@@ -123,18 +124,7 @@ const AboutUsPage = () => {
             допоможе створити стильний та комфортний інтер’єр.
           </p>
 
-          <form className="mt-[60px]">
-            <input
-              type="email"
-              required
-              className="h-[40px] w-full border-b-[1px] px-2 focus:outline-none"
-              placeholder="Email"
-            />
-
-            <Button type="submit" className="mt-8 w-full" variant="black">
-              Відправити
-            </Button>
-          </form>
+          <EmailForm />
 
           <p className="mt-6 text-[14px] leading-[120%] text-center lg:text-left">
             Ваша інформація буде збережена в обліковому записі магазину.

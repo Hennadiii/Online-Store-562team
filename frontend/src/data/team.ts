@@ -1,7 +1,7 @@
 export const teamMembers = [
   {
     image: "/ivan.png",
-    name: "Попович Іван",
+    name: "Іван Попович",
     role: "Front-end developer",
     time: "1 рік",
     description: "React, Next.js, Typescript, Redux, Tailwind CSS",
@@ -16,7 +16,7 @@ export const teamMembers = [
   },
   {
     image: "/katerina.png",
-    name: "Тарасюк Катерина",
+    name: "Катерина Тарасюк",
     role: "UX-UI Designer",
     time: "8 місяців",
     description:

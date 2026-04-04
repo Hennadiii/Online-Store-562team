@@ -9,6 +9,8 @@ import { getProducts } from "@/services/productService";
 import type { ProductDto } from "@/types/product";
 import PopularSection from "@/components/shared/PopularSection";
 
+import EmailForm from "@/components/shared/EmailForm";
+
 export const metadata = {
   title: "Cozy Corners | Home",
   description: "Офіційна основна сторінка нашого сайту.",
@@ -68,10 +70,16 @@ const HomePage: React.FC = async () => {
             <Button className="w-[250px] sm:w-[297px]" variant="second">Консультація</Button>
           </div>
 
-          <div className="absolute bottom-4 right-4 flex items-center gap-2 text-white text-xs sm:text-sm">
-            <span>Ліжко Вівіана</span>
-            <BedArrow className="h-[17px] w-[118px] text-[#948d80] transition-all group-hover:scale-110 group-hover:text-white" />
-          </div>
+          <Link
+  href="/product/20"
+  className="absolute bottom-4 right-4 flex items-center gap-2 text-white text-xs sm:text-sm group hover:opacity-90 transition"
+>
+  <span className="hover:underline">
+    Ліжко Вівіана
+  </span>
+
+  <BedArrow className="h-[17px] w-[118px] text-[#948d80] transition-all group-hover:scale-110 group-hover:text-white" />
+</Link>
         </div>
       </AnimatedSection>
 
@@ -97,17 +105,7 @@ const HomePage: React.FC = async () => {
             Не знаєте, як обрати меблі для вашого простору? Залиште email, і наш дизайнер допоможе створити стильний та комфортний інтер'єр.
           </p>
 
-          <form className="mt-8 sm:mt-[105px] flex flex-col gap-4">
-            <input
-              type="email"
-              required
-              className="h-[40px] w-full border-b-[1px] px-2 focus:outline-none"
-              placeholder="Email"
-            />
-            <Button type="submit" className="w-full" variant="black">
-              Відправити
-            </Button>
-          </form>
+          <EmailForm />
 
           <p className="mt-4 sm:mt-[22px] text-[14px] sm:text-[16px] leading-[120%]">
             Ваша інформація буде збережена в обліковому записі магазину. Продовжуючи, ви погоджуєтеся з

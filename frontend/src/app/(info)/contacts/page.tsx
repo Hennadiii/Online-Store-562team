@@ -1,5 +1,6 @@
 import AnimatedSection from "@/components/shared/animatedSection";
 import { Button } from "@/components/ui/button";
+import ContactForm from "@/components/shared/ContactForm";
 
 export const metadata = {
   title: "Cozy Corners | Контакти",
@@ -12,8 +13,7 @@ const ContactsPage = () => {
       <AnimatedSection className="mt-[60px]">
 
         {/* ===== Заголовок ===== */}
-        <h1 className="uppercase text-center font-semibold leading-tight
-          text-[clamp(28px,5vw,48px)]">
+        <h1 className="text-h2 mt-14 text-center uppercase w-full flex justify-center">
           Контакти
         </h1>
 
@@ -47,59 +47,7 @@ const ContactsPage = () => {
           </div>
 
           {/* ===== Premium форма ===== */}
-          <form className="w-full lg:max-w-[547px] flex flex-col gap-8">
-
-            {/* Input block */}
-            <div className="group flex flex-col gap-2">
-              <label className="text-sm text-accent transition-all group-focus-within:text-black">
-                Імʼя
-              </label>
-              <input
-                className="w-full h-[48px] px-3 border-b border-black/40
-                focus:border-black focus:outline-none
-                transition-all duration-300
-                placeholder:text-black/40"
-                placeholder="Введіть ваше імʼя"
-              />
-            </div>
-
-            <div className="group flex flex-col gap-2">
-              <label className="text-sm text-accent transition-all group-focus-within:text-black">
-                Email
-              </label>
-              <input
-                type="email"
-                className="w-full h-[48px] px-3 border-b border-black/40
-                focus:border-black focus:outline-none
-                transition-all duration-300
-                placeholder:text-black/40"
-                placeholder="Введіть ваше email"
-              />
-            </div>
-
-            <div className="group flex flex-col gap-2">
-              <label className="text-sm text-accent transition-all group-focus-within:text-black">
-                Повідомлення
-              </label>
-              <textarea
-                className="w-full min-h-[120px] px-3 py-2 border-b border-black/40
-                focus:border-black focus:outline-none
-                transition-all duration-300
-                resize-none
-                placeholder:text-black/40"
-                placeholder="Текст повідомлення"
-              />
-            </div>
-
-            {/* Кнопка */}
-            <Button
-              className="mt-4 w-full lg:w-auto border-black
-              hover:bg-black hover:text-white
-              transition-all duration-300">
-              Відправити
-            </Button>
-
-          </form>
+          <ContactForm />
         </div>
 
       </AnimatedSection>

@@ -8,6 +8,7 @@ import ProductCard from "@/components/shared/ProductCard";
 import { getProducts } from "@/services/productService";
 import type { ProductDto } from "@/types/product";
 import PopularSection from "@/components/shared/PopularSection";
+import ConsultationButton from "@/components/modals/ConsultationButton";
 
 import EmailForm from "@/components/shared/EmailForm";
 
@@ -67,7 +68,7 @@ const HomePage: React.FC = async () => {
             <Link href="/catalog">
               <Button className="w-[250px] sm:w-[297px]">Каталог</Button>
             </Link>
-            <Button className="w-[250px] sm:w-[297px]" variant="second">Консультація</Button>
+            <ConsultationButton />
           </div>
 
           <Link

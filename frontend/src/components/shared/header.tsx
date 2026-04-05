@@ -123,10 +123,27 @@ const Header = () => {
 
           {/* DESKTOP NAV */}
           <nav className="hidden lg:flex gap-8">
-            {menuLinks.map(({ href, label }) => (
-              <Link key={href} href={href}>{label}</Link>
-            ))}
-          </nav>
+            
+  {menuLinks.map(({ href, label }) => (
+    <Link
+      key={href}
+      href={href}
+      className="
+        relative inline-block p-2
+        transition-colors duration-300 hover:text-[#3C767E]
+        after:content-['']
+        after:absolute after:left-0 after:bottom-0
+        after:h-[2px] after:w-0
+        after:bg-[#3C767E]
+        after:transition-all after:duration-500
+        after:ease-out
+        hover:after:w-full
+      "
+    >
+      {label}
+    </Link>
+  ))}
+</nav>
 
           {/* ICONS */}
           <div className="flex gap-6 items-center">

@@ -153,8 +153,8 @@ const HomePage: React.FC = async () => {
               У нашому асортименті — меблі від найкращих виробників, які задовольнять найвибагливіші смаки.
             </p>
             <Link href="/about-us">
-              <Button className="mt-6 w-full border-black">Більше про нас</Button>
-            </Link>
+  <Button variant="black" className="mt-6 w-full">Більше про нас</Button>
+</Link>
           </div>
         </div>
       </AnimatedSection>

@@ -329,9 +329,13 @@ export default function ConsultationModal({ isOpen, onClose }: ConsultationModal
                       if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSubmitHelp(); }
                     }}
                   />
-                  <Button onClick={handleSubmitHelp} disabled={!messageText.trim()} className="w-full">
-                    Далі →
-                  </Button>
+                  <Button
+  onClick={handleSubmitHelp}
+  variant={messageText.trim() ? "black" : "ghost"}
+  className="w-full"
+>
+  Далі →
+</Button>
                 </div>
               )}
 
@@ -379,19 +383,20 @@ export default function ConsultationModal({ isOpen, onClose }: ConsultationModal
                     : <p className="text-[#aaa] text-[12px]">Формат: +380 XX XXX XX XX</p>
                   }
 
-                  <Button
-                    onClick={handleSubmitContact}
-                    disabled={isSubmitting || !isContactValid}
-                    className="w-full"
-                  >
-                    {isSubmitting ? "Відправляємо..." : "Відправити заявку"}
-                  </Button>
+<Button
+  onClick={handleSubmitContact}
+  disabled={isSubmitting}
+  variant={isContactValid && !isSubmitting ? "black" : "ghost"}
+  className="w-full"
+>
+  {isSubmitting ? "Відправляємо..." : "Відправити заявку"}
+</Button>
                 </div>
               )}
 
               {/* Step: done */}
               {step === "done" && (
-                <Button onClick={onClose} variant="second" className="w-full">
+                <Button onClick={onClose} variant="black" className="w-full">
                   Закрити чат
                 </Button>
               )}

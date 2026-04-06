@@ -4,14 +4,13 @@ import { cn } from "../../utils/twMerge";
 
 const buttonsVariants = cva(
   "text-center px-8 py-4 uppercase text-[20px] w-full h-[56px] duration-500 flex items-center justify-center transition-colors border-[1px] border-white hover:text-accent hover:border-accent active:bg-accent active:text-white disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none",
-
   {
     variants: {
       variant: {
         default: "bg-white text-black",
         second: "bg-transparent text-white",
-        black:
-          "text-white bg-black hover:text-black hover:bg-white border-accent",
+        black: "text-white bg-black hover:text-black hover:bg-white border-accent",
+        ghost: "bg-[#e8e8e8] text-[#aaa] border-[#e8e8e8] hover:text-[#aaa] hover:border-[#e8e8e8] cursor-not-allowed pointer-events-none",
       },
     },
     defaultVariants: {

@@ -25,7 +25,7 @@ const HomePage: React.FC = async () => {
   // Завантажуємо всі товари (перша сторінка, 50 позицій)
   let allProducts: ProductDto[] = [];
   try {
-    const res = await getProducts({ page: 0, pageSize: 50 });
+    const res = await getProducts({ page: 0, pageSize: 70 });
     allProducts = res.content;
   } catch {
     allProducts = [];
